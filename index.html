@@ -155,6 +155,33 @@
             <div class="hint">경과연수에 따른 잔가율을 적용해 시가표준액을 계산합니다.</div>
           </div>
         </div>
+
+        <div class="field" style="border-top:1px solid var(--line);padding-top:14px;">
+          <label class="lbl">감면 (지방세특례제한법)</label>
+          <select id="c-gamyeon" onchange="onGamyeon();cCalc()">
+            <option value="none">감면 없음</option>
+            <option value="disabled">장애인용 (§17)</option>
+            <option value="veteran">국가유공자 등 (§29)</option>
+            <option value="multi3">다자녀 3자녀 이상 (§22의2)</option>
+            <option value="multi2">다자녀 2자녀 (§22의2)</option>
+            <option value="light">경형자동차·경차 (§67)</option>
+            <option value="ev">전기자동차 (§66④)</option>
+            <option value="fcev">수소전기자동차 (§66④)</option>
+          </select>
+          <div id="c-gamyeon-req" class="hint"></div>
+          <div id="c-elig-box" class="hidden" style="margin-top:8px;">
+            <div class="seg" id="c-elig">
+              <button data-v="1" aria-pressed="false" onclick="pick('c-elig','1',cCalc)">대상 차량 요건 충족 → 전액면제</button>
+              <button data-v="0" aria-pressed="true" onclick="pick('c-elig','0',cCalc)">요건 미충족</button>
+            </div>
+          </div>
+          <div id="c-seat-box" class="hidden" style="margin-top:8px;">
+            <div class="seg" id="c-seat">
+              <button data-v="small" aria-pressed="true" onclick="pick('c-seat','small',cCalc)">6인 이하 승용</button>
+              <button data-v="big" aria-pressed="false" onclick="pick('c-seat','big',cCalc)">7인승 이상·승합·화물</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -208,7 +235,7 @@
       <li><b>자동차 취득세</b> — 과세표준(신규: 공급가액 / 이전: 신고가액과 시가표준액 중 큰 값 / 무상: 시가표준액) × 세율. 비영업 승용 7%·경차 4%, 승합·화물 비영업 5%·경차 4%, 영업 4%(지방세법 §12). 자동차 취득분은 <b>지방교육세·농어촌특별세가 붙지 않아 0원</b>이며, 취득세만 납부합니다. 시가표준액 = 기준가격 × 경과연수별 잔가율(2026년 표).</li>
       <li><b>가산세</b> — 신고기한(취득일부터 60일) 경과 시 무신고 20% + 납부지연가산세(1일 0.022%). "신고납부분" 탭에서 산출.</li>
     </ul>
-    <div class="disc">※ 실무 참고용 개산입니다. 감면(지방세특례제한법)은 아직 미반영 — 다음 단계에서 추가 예정. 시가표준액·세액은 위택스 "지방세 미리계산"으로 확정하세요. 시가표준액표는 매년 1월 갱신됩니다.</div>
+    <div class="disc">※ 실무 참고용 개산입니다. 감면(지특법 §17·§29·§22의2·§66·§67)은 요건·한도·최소납부세제·추징 조건이 있어, 요건 충족 여부는 선택값에 따라 계산됩니다. 최종 세액·감면액은 위택스 "지방세 미리계산"으로 확정하세요. 시가표준액표는 매년 1월 갱신됩니다.</div>
   </div>
 </div>
 
@@ -251,15 +278,60 @@ function cCalc(){
   if(!base){ box.innerHTML='<div class="empty">과세표준을 입력하세요.</div>'; return; }
   var rate=taxRate(chong,use,light);
   var acq=Math.floor(base*rate/10)*10;
-  var tot=acq;
+  var g=gamyeon(acq); // {reduce, pay, label, note}
+  var tot=g.pay;
   var h='';
   h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   h+='<div class="row"><div class="rk">취득세<small>세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':'')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   h+='<div class="row sub"><div class="rk">지방교육세 · 농어촌특별세<small>자동차 취득분은 비과세(0원)</small></div><div class="rv">0 원</div></div>';
+  if(g.reduce>0||g.label){
+    h+='<div class="row"><div class="rk" style="color:var(--teal)">감면 ('+g.label+')<small>'+(g.note||'')+'</small></div><div class="rv" style="color:var(--teal)">− '+won(g.reduce)+' 원</div></div>';
+  }
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+='<div class="info">취득일부터 <b>60일 이내</b> 신고·납부. 기한 초과 시 무신고 20% + 납부지연가산세는 "신고납부분" 탭에서 계산됩니다.</div>';
-  h+='<div class="warn">감면(지특법)은 미반영입니다. 감면 대상이면 별도 확인하세요.</div>';
+  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스로 확정하세요.</div>';
   box.innerHTML=h;
+}
+
+/* 감면 요건 안내문 */
+var GAMYEON_REQ={
+  none:'',
+  disabled:'중증(1~3급)·시각 4급 등 장애인이 보철·생업용으로 취득하는 1대. 대상 차량: 2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜. 본인 또는 세대 공동명의. 요건 충족 시 전액면제(최소납부 배제). 등록 후 1년 내 부득이한 사유 없이 이전 시 추징. (2027.12.31.까지)',
+  veteran:'국가유공자(상이 1~7급) 등이 취득하는 1대. 대상 차량 범위는 장애인용과 동일. 요건 충족 시 전액면제. (2027.12.31.까지)',
+  multi3:'18세 미만 자녀 3명 이상 양육자가 양육 목적으로 취득하는 1대. 6인 이하 승용은 140만원 한도, 7인승 이상·승합·화물은 200만원 이하 면제·초과 시 15% 납부. (2027.12.31.까지)',
+  multi2:'18세 미만 자녀 2명 양육자가 취득하는 1대. 취득세 50% 경감(6인 이하 승용은 70만원 한도). (2027.12.31.까지)',
+  light:'경형자동차(배기량 1,000cc 미만 등). 취득세 75만원까지 면제, 초과분만 과세. (2027.12.31.까지)',
+  ev:'환경친화적 자동차법상 전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2026.12.31.까지)',
+  fcev:'수소전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2027.12.31.까지)'
+};
+function onGamyeon(){
+  var v=document.getElementById('c-gamyeon').value;
+  document.getElementById('c-gamyeon-req').textContent=GAMYEON_REQ[v]||'';
+  document.getElementById('c-elig-box').classList.toggle('hidden', !(v==='disabled'||v==='veteran'));
+  document.getElementById('c-seat-box').classList.toggle('hidden', !(v==='multi3'||v==='multi2'));
+}
+function gamyeon(acq){
+  var v=document.getElementById('c-gamyeon').value;
+  var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차'}[v]||'';
+  if(v==='none') return {reduce:0,pay:acq,label:'',note:''};
+  var r10=function(n){return Math.floor(n/10)*10;};
+  if(v==='disabled'||v==='veteran'){
+    if(pressed('c-elig')==='1') return {reduce:acq,pay:0,label:label,note:'요건 충족 → 전액면제'};
+    return {reduce:0,pay:acq,label:label,note:'요건 미충족 → 감면 없음'};
+  }
+  if(v==='multi3'){
+    if(pressed('c-seat')==='small'){ var rd=Math.min(acq,1400000); return {reduce:rd,pay:acq-rd,label:label,note:'6인 이하 승용 140만원 한도'}; }
+    if(acq<=2000000) return {reduce:acq,pay:0,label:label,note:'200만원 이하 전액면제'};
+    var pay=r10(acq*0.15); return {reduce:acq-pay,pay:pay,label:label,note:'200만원 초과 → 산출세액 15% 납부'};
+  }
+  if(v==='multi2'){
+    var half=r10(acq*0.5);
+    if(pressed('c-seat')==='small'){ var rd2=Math.min(half,700000); return {reduce:rd2,pay:acq-rd2,label:label,note:'50% 경감·6인 이하 승용 70만원 한도'}; }
+    return {reduce:half,pay:acq-half,label:label,note:'취득세 50% 경감'};
+  }
+  if(v==='light'){ var rl=Math.min(acq,750000); return {reduce:rl,pay:acq-rl,label:label,note:'75만원 한도 면제'}; }
+  if(v==='ev'||v==='fcev'){ var re=Math.min(acq,1400000); return {reduce:re,pay:acq-re,label:label,note:'140만원 한도 면제'}; }
+  return {reduce:0,pay:acq,label:'',note:''};
 }
 
 /* ---------- 차명 검색 ---------- */
