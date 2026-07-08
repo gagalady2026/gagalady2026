@@ -222,7 +222,6 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div id="c-cc-box"><label class="lbl">배기량 (cc)</label><input type="text" id="c-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"></div>
               <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="cCalc()"></div>
-              <div><label class="lbl">즉시매도 할인율 (%)</label><input type="number" id="c-discount" step="0.1" placeholder="선택" style="text-align:right;font-weight:600" oninput="cCalc()"></div>
             </div>
             <label class="lbl" style="margin-top:8px">연료</label>
             <div class="seg" id="c-eco">
@@ -230,7 +229,7 @@
               <button data-v="hybrid" aria-pressed="false" onclick="pick('c-eco','hybrid',cCalc)">하이브리드</button>
               <button data-v="1" aria-pressed="false" onclick="pick('c-eco','1',cCalc)">전기·수소</button>
             </div>
-            <div class="hint">매입액 = 취득세 과세표준 × 지역별 요율(5,000원 미만 단수 버림). 할인율을 넣으면 즉시매도 실부담금도 표시됩니다.</div>
+            <div class="hint">매입액 = 취득세 과세표준 × 지역별 요율(5,000원 미만 단수 버림). 즉시매도 시 실부담금은 은행·일자별 할인율에 따라 달라집니다.</div>
           </div>
         </div>
       </div>
@@ -346,11 +345,6 @@ function cCalc(){
     var R=b.R, warnBadge = R.verified ? '<span class="badge">✓ 조례 검증</span>' : '<span class="badge" style="background:#FFF3E0;color:#9A5B00">⚠ 잠정</span>';
     h+='<div class="docs" style="border-color:'+(R.verified?'var(--teal-soft)':'#FCE3AE')+'"><h4>🧾 '+R.label+' 채권 매입 '+warnBadge+'</h4>';
     h+='<div class="row" style="padding-top:0"><div class="rk">채권 매입액<small>'+(b.rate>0?'과표 × '+(b.rate*100)+'% (5천원 단수 버림)':(b.note||'매입 대상 아님'))+'</small></div><div class="rv" style="color:var(--teal)">'+won(b.amt)+' 원</div></div>';
-    var disc=Number(document.getElementById('c-discount').value)||0;
-    if(disc>0 && b.amt>0){
-      var burden=Math.floor(b.amt*disc/100/10)*10;
-      h+='<div class="row" style="border:0"><div class="rk">즉시매도 예상 실부담금<small>매입액 × 할인율 '+disc+'%</small></div><div class="rv">'+won(burden)+' 원</div></div>';
-    }
     if(b.note && b.rate>0) h+='<div class="sub" style="margin-top:6px">'+b.note+'</div>';
     if(!R.verified){
       h+='<div class="sub" style="color:#9A5B00">⚠ 조례 원문 미확인 잠정 요율입니다'+(R.type==='광역시'?' (광역시 도시철도채권은 요율 체계가 달라 특히 확인 필요)':'')+'. 위택스/채권 창구 값과 대조하고, 다르면 해당 조례를 올려주시면 검증값으로 반영합니다.</div>';
