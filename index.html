@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>지방세 가산세 계산기</title>
+<style>
+  :root{
+    --paper:#F4F6F9; --surface:#FFFFFF; --ink:#161E2E; --muted:#5C6675;
+    --line:#E3E7EE; --line-strong:#CDD4DF; --teal:#115E59; --teal-soft:#E7F1F0;
+    --seal:#B4382B; --seal-soft:#FBECEA;
+    --shadow:0 1px 2px rgba(22,30,46,.06), 0 8px 28px rgba(22,30,46,.06); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px;}
+
+  header.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:20px;}
+  .title-block h1{font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0;}
+  .title-block p{margin:5px 0 0;color:var(--muted);font-size:12.5px;letter-spacing:-.01em;}
+  .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--teal);margin-bottom:6px;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:5px;width:fit-content;box-shadow:var(--shadow);}
+  .tab{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:13.5px;
+    font-weight:700;letter-spacing:-.01em;color:var(--muted);padding:9px 16px;border-radius:8px;transition:.15s;}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;}
+  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px;}
+  .card h2{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 15px;}
+
+  /* 공통 납부일 바 */
+  .paybar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .paybar label{font-size:13.5px;font-weight:700;}
+  .paybar .sub{font-size:11.5px;color:var(--muted);font-weight:500;}
+
+  label.lbl{display:block;font-size:12px;font-weight:600;margin-bottom:5px;letter-spacing:-.01em;color:var(--muted);}
+  input[type=text],input[type=date],select{width:100%;font-family:inherit;font-size:14.5px;color:var(--ink);
+    background:#fff;border:1px solid var(--line-strong);border-radius:9px;padding:9px 11px;transition:.15s;
+    font-variant-numeric:tabular-nums;}
+  input[type=text]{text-align:right;font-weight:600;}
+  input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft);}
+  .money-wrap{position:relative;}
+  .money-wrap .won{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12.5px;pointer-events:none;}
+  .money-wrap input{padding-right:28px;}
+
+  /* 체납 건 카드 */
+  .brow{border:1px solid var(--line);border-radius:12px;padding:15px 16px 13px;margin-bottom:12px;background:#fff;position:relative;}
+  .brow-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .brow-head .no{font-size:12.5px;font-weight:800;color:var(--teal);letter-spacing:.02em;}
+  .brow-head .rm{appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px;}
+  .brow-head .rm:hover{background:var(--seal-soft);color:var(--seal);}
+  .fgrid{display:grid;grid-template-columns:1.3fr .9fr 1.1fr 1.1fr;gap:10px;}
+  @media(max-width:680px){.fgrid{grid-template-columns:1fr 1fr;}}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;margin-top:10px;}
+  .badge.sin{background:var(--teal-soft);color:var(--teal);}
+  .badge.gu{background:#FFF3E0;color:#9A5B00;}
+  .brow-res{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .brow-res .detail{font-size:11.5px;color:var(--muted);}
+  .brow-res .sub{font-size:15px;font-weight:800;white-space:nowrap;}
+  .brow-res .sub small{font-weight:600;font-size:12px;margin-left:2px;color:var(--muted);}
+
+  .addbtn{appearance:none;width:100%;border:1.5px dashed var(--line-strong);background:#fff;color:var(--teal);
+    font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;border-radius:10px;padding:12px;transition:.15s;}
+  .addbtn:hover{border-color:var(--teal);background:var(--teal-soft);}
+
+  /* 합계 */
+  .grand{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;}
+  .grand .line{display:flex;justify-content:space-between;font-size:13.5px;padding:6px 0;}
+  .grand .line .k{color:var(--muted);font-weight:600;}
+  .grand .line .v{font-weight:700;}
+  .total{margin-top:14px;padding:16px 18px;border:1.5px solid var(--seal);border-radius:12px;background:var(--seal-soft);
+    display:flex;justify-content:space-between;align-items:center;}
+  .total .tk{font-size:13px;font-weight:800;color:var(--seal);}
+  .total .tv{font-size:26px;font-weight:800;color:var(--seal);letter-spacing:-.02em;}
+  .total .tv .u{font-size:15px;font-weight:700;margin-left:2px;}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:8px 0;}
+  .warn{margin-top:12px;font-size:12px;color:#8a5a00;background:#FFF7E6;border:1px solid #FCE3AE;border-radius:8px;padding:9px 11px;}
+
+  /* 신고납부분 */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr;}}
+  .field{margin-bottom:14px;}
+  .seg{display:flex;flex-wrap:wrap;gap:6px;}
+  .seg button{appearance:none;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+    border:1px solid var(--line-strong);background:#fff;color:var(--muted);border-radius:8px;padding:8px 11px;transition:.15s;}
+  .seg button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft);color:var(--teal);}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);}
+  .row:first-of-type{padding-top:0;}
+  .row .rk{font-size:13.5px;}.row .rk small{display:block;color:var(--muted);font-size:11px;margin-top:2px;}
+  .row .rv{font-size:15px;font-weight:700;white-space:nowrap;}
+
+  .actions{display:flex;gap:10px;margin-top:6px;margin-bottom:22px;}
+  .btn{appearance:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border-radius:9px;
+    padding:10px 16px;transition:.15s;border:1px solid var(--line-strong);background:#fff;color:var(--ink);}
+  .btn:hover{border-color:var(--ink);}
+  .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+  .basis{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);}
+  .basis h3{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin:0 0 12px;}
+  .basis ul{margin:0;padding-left:18px;}
+  .basis li{font-size:12.5px;color:var(--muted);margin-bottom:7px;line-height:1.6;}
+  .basis li b{color:var(--ink);font-weight:700;}
+  .disclaimer{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);line-height:1.55;}
+  .hidden{display:none !important;}
+  @media print{body{background:#fff;} .tabs,.actions,.addbtn,.brow-head .rm{display:none;} .card,.basis,.grand{box-shadow:none;border-color:var(--line-strong);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="title-block">
+      <span class="kicker">지방세 징수 · 실무 계산</span>
+      <h1>지방세 가산세 계산기</h1>
+      <p>세목만 고르면 신·구 체계 자동 판정 · 체납 여러 건 합산 &nbsp;|&nbsp; 지방세기본법 §55 · 구 지방세징수법 §30·§31</p>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="계산 유형">
+    <button class="tab" id="tab-gozi" role="tab" aria-selected="true" onclick="switchMode('gozi')">고지분 체납 (재산세·자동차세·주민세 등)</button>
+    <button class="tab" id="tab-shingo" role="tab" aria-selected="false" onclick="switchMode('shingo')">신고납부분 (취득세·등록면허세 등)</button>
+  </div>
+
+  <!-- ================= 고지분 ================= -->
+  <div id="mode-gozi">
+    <div class="card">
+      <div class="paybar">
+        <label for="g-pay">낼 날짜 (납부 예정일)</label>
+        <input type="date" id="g-pay" style="width:auto" oninput="recalcGozi()" />
+        <span class="sub">이 날짜 기준으로 아래 모든 체납 건의 가산세를 계산합니다.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>체납 건 입력</h2>
+      <div id="rows"></div>
+      <button class="addbtn" onclick="addRow()">＋ 체납 건 추가</button>
+    </div>
+
+    <div class="grand">
+      <h2 style="font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;">합계</h2>
+      <div id="grand-body"><div class="empty">낼 날짜와 체납 건을 입력하면 합계가 표시됩니다.</div></div>
+    </div>
+  </div>
+
+  <!-- ================= 신고납부분 ================= -->
+  <div id="mode-shingo" class="hidden">
+    <div class="grid2">
+      <div class="card">
+        <h2>입력 — 신고납부분</h2>
+        <div class="field"><label class="lbl">본세 (미납·과소납부 세액)</label>
+          <div class="money-wrap"><input type="text" id="s-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);calcShingo()" /><span class="won">원</span></div></div>
+        <div class="field"><label class="lbl">신고 유형</label>
+          <div class="seg" id="s-type">
+            <button data-v="none" aria-pressed="true" onclick="pickType('none')">정상신고</button>
+            <button data-v="no" aria-pressed="false" onclick="pickType('no')">무신고 20%</button>
+            <button data-v="under" aria-pressed="false" onclick="pickType('under')">과소신고 10%</button>
+            <button data-v="fraud_no" aria-pressed="false" onclick="pickType('fraud_no')">부정무신고 40%</button>
+            <button data-v="fraud_under" aria-pressed="false" onclick="pickType('fraud_under')">부정과소 40%</button>
+          </div></div>
+        <div class="field"><label class="lbl">법정납부기한</label><input type="date" id="s-due" oninput="calcShingo()" /></div>
+        <div class="field"><label class="lbl">자진납부일 (또는 납세고지일)</label><input type="date" id="s-pay" oninput="calcShingo()" /></div>
+      </div>
+      <div class="card"><h2>산정 결과</h2>
+        <div id="s-result"><div class="empty">본세 · 납부기한 · 납부일을 입력하세요.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" onclick="resetAll()">초기화</button>
+    <button class="btn primary" onclick="window.print()">인쇄 / PDF 저장</button>
+  </div>
+
+  <div class="basis">
+    <h3>산정 근거 · 적용 이자율</h3>
+    <ul>
+      <li><b>체계 자동 판정</b> — 세목의 과세연도가 <b>2024년 이후</b>면 납부지연가산세(지기법 §55), <b>2023년 이전</b>이면 구 가산금·중가산금(구 지방세징수법 §30·§31). 기준은 납세의무 성립일 2024.1.1.입니다.</li>
+      <li><b>납부지연가산세(2024~)</b> — 최초 <b>3%</b> + 매 1개월 <b>0.66%</b>(=1일 0.022%×30), 최대 60개월. 세액 <b>45만원 미만</b>은 월가산 미적용.</li>
+      <li><b>구 가산금(~2023)</b> — 가산금 <b>3%</b> + 매월 중가산금 <b>0.75%</b>, 최대 60개월. 세액 <b>30만원 미만</b>은 중가산금 미적용.</li>
+      <li><b>신고납부분</b> — 무신고 20%·과소 10%(부정 40%) + 납부지연가산세(1일 0.022%, 2022.6.7. 전 0.025%, 본세 75% 한도).</li>
+    </ul>
+    <div class="disclaimer">※ 실무 참고용 개산 도구입니다. 월 경과는 납기와 같은 일자를 기준으로 세며 월말·윤년 등 일부 경계는 개산될 수 있습니다. 자동차세 수시분·신규분 등 성립일이 과세연도와 다른 경우는 세목에서 ‘기타(직접 지정)’를 선택하세요. 최종 금액은 위택스 산출값으로 확정하시기 바랍니다.</div>
+  </div>
+</div>
+
+<script>
+  var DAY=86400000;
+  /* 세목: 과세연도로 신·구 판정. gu(직접 지정)만 수동 토글 */
+  var SEMOK=[
+    {v:'jaesan',  t:'재산세'},
+    {v:'jadongcha',t:'자동차세(정기분)'},
+    {v:'jumin',   t:'주민세'},
+    {v:'deungrok',t:'등록면허세(면허분)'},
+    {v:'jawon',   t:'지역자원시설세'},
+    {v:'etc',     t:'기타(직접 지정)'}
+  ];
+  var YEARS=(function(){var a=[];for(var y=2026;y>=2016;y--)a.push(y);return a;})();
+  var rid=0;
+
+  function fmt(el){var v=el.value.replace(/[^0-9]/g,'');el.value=v?Number(v).toLocaleString('ko-KR'):'';}
+  function won(n){return Math.floor(n).toLocaleString('ko-KR');}
+  function addMonths(d,m){var y=d.getFullYear(),mo=d.getMonth()+m,day=d.getDate();var res=new Date(y,mo,1);
+    var last=new Date(res.getFullYear(),res.getMonth()+1,0).getDate();res.setDate(Math.min(day,last));return res;}
+  function monthsElapsed(due,pay,cap){if(pay<=due)return 0;var c=0;while(c<cap){if(addMonths(due,c+1)<=pay)c++;else break;}return c;}
+  function dval(id){var v=document.getElementById(id).value;return v?new Date(v+'T00:00:00'):null;}
+
+  function switchMode(m){var g=m==='gozi';
+    document.getElementById('mode-gozi').classList.toggle('hidden',!g);
+    document.getElementById('mode-shingo').classList.toggle('hidden',g);
+    document.getElementById('tab-gozi').setAttribute('aria-selected',g);
+    document.getElementById('tab-shingo').setAttribute('aria-selected',!g);}
+
+  /* ---------- 체납 건 행 ---------- */
+  function addRow(){
+    rid++; var id=rid;
+    var semokOpts=SEMOK.map(function(s){return '<option value="'+s.v+'">'+s.t+'</option>';}).join('');
+    var yearOpts=YEARS.map(function(y){return '<option value="'+y+'"'+(y===2025?' selected':'')+'>'+y+'년분</option>';}).join('');
+    var div=document.createElement('div');
+    div.className='brow'; div.dataset.id=id;
+    div.innerHTML=
+      '<div class="brow-head"><span class="no">체납 '+id+'</span>'
+      +'<button class="rm" title="삭제" onclick="rmRow('+id+')">✕</button></div>'
+      +'<div class="fgrid">'
+        +'<div><label class="lbl">세목 (무슨 세금)</label><select id="r'+id+'-semok" onchange="onSemok('+id+');recalcGozi()">'+semokOpts+'</select></div>'
+        +'<div id="r'+id+'-yearwrap"><label class="lbl">과세연도</label><select id="r'+id+'-year" onchange="recalcGozi()">'+yearOpts+'</select></div>'
+        +'<div id="r'+id+'-guwrap" class="hidden"><label class="lbl">적용 체계</label><select id="r'+id+'-gu" onchange="recalcGozi()"><option value="0">신 납부지연가산세</option><option value="1">구 가산금</option></select></div>'
+        +'<div><label class="lbl">체납 세액</label><div class="money-wrap"><input type="text" id="r'+id+'-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);recalcGozi()"/><span class="won">원</span></div></div>'
+        +'<div><label class="lbl">고지서 납부기한</label><input type="date" id="r'+id+'-due" oninput="recalcGozi()"/></div>'
+      +'</div>'
+      +'<div id="r'+id+'-res"></div>';
+    document.getElementById('rows').appendChild(div);
+    recalcGozi();
+  }
+  function rmRow(id){var el=document.querySelector('.brow[data-id="'+id+'"]');if(el)el.remove();recalcGozi();}
+  function onSemok(id){
+    var etc=document.getElementById('r'+id+'-semok').value==='etc';
+    document.getElementById('r'+id+'-yearwrap').classList.toggle('hidden',etc);
+    document.getElementById('r'+id+'-guwrap').classList.toggle('hidden',!etc);
+  }
+
+  function calcRow(tax,due,pay,isOld){
+    if(!tax||!due||!pay||pay<=due) return {ok:false};
+    var first=Math.floor(tax*0.03/10)*10;
+    var months=monthsElapsed(due,pay,60);
+    var rate=isOld?0.0075:0.0066, th=isOld?300000:450000;
+    var applyM=tax>=th, monthly=applyM?Math.floor(tax*rate*months/10)*10:0;
+    return {ok:true,first:first,months:months,monthly:monthly,rate:rate,th:th,applyM:applyM,penalty:first+monthly,total:tax+first+monthly};
+  }
+
+  function recalcGozi(){
+    var pay=dval('g-pay');
+    var rows=document.querySelectorAll('#rows .brow');
+    var sumTax=0,sumPen=0,valid=0;
+    rows.forEach(function(r){
+      var id=r.dataset.id;
+      var semok=document.getElementById('r'+id+'-semok').value;
+      var tax=Number((document.getElementById('r'+id+'-tax').value||'').replace(/[^0-9]/g,''))||0;
+      var due=dval('r'+id+'-due');
+      var isOld;
+      if(semok==='etc'){ isOld=document.getElementById('r'+id+'-gu').value==='1'; }
+      else { var yr=Number(document.getElementById('r'+id+'-year').value); isOld=yr<2024; }
+      var badge='<span class="badge '+(isOld?'gu':'sin')+'">'+(isOld?'구 가산금 체계 (~2023)':'납부지연가산세 체계 (2024~)')+'</span>';
+      var res=document.getElementById('r'+id+'-res');
+      if(!pay){ res.innerHTML=badge; return; }
+      var c=calcRow(tax,due,pay,isOld);
+      if(!c.ok){
+        res.innerHTML=badge+'<div class="brow-res"><span class="detail">세액·납부기한을 입력하세요 (납기 이내면 가산세 없음).</span><span class="sub">0<small>원</small></span></div>';
+        return;
+      }
+      sumTax+=tax; sumPen+=c.penalty; valid++;
+      var mLabel=isOld?'중가산금':'월가산';
+      var mText=c.applyM?('+ '+mLabel+' '+(c.rate*100).toFixed(2)+'%×'+c.months+'개월 '+won(c.monthly)+'원'):('+ '+mLabel+' 미적용(세액 '+won(c.th)+'원 미만)');
+      res.innerHTML=badge
+        +'<div class="brow-res"><span class="detail">최초 3% '+won(c.first)+'원 '+mText+(c.months>=60?' · 60개월 한도':'')+'</span>'
+        +'<span class="sub">'+won(c.total)+'<small>원</small></span></div>';
+    });
+    var body=document.getElementById('grand-body');
+    if(!pay||valid===0){ body.innerHTML='<div class="empty">낼 날짜와 체납 건을 입력하면 합계가 표시됩니다.</div>'; return; }
+    body.innerHTML=
+      '<div class="line"><span class="k">본세 합계 ('+valid+'건)</span><span class="v">'+won(sumTax)+' 원</span></div>'
+      +'<div class="line"><span class="k">가산세 합계</span><span class="v">'+won(sumPen)+' 원</span></div>'
+      +'<div class="total"><span class="tk">총 납부할 금액</span><span class="tv">'+won(sumTax+sumPen)+'<span class="u">원</span></span></div>';
+  }
+
+  /* ---------- 신고납부분 ---------- */
+  var sType='none';
+  function pickType(v){sType=v;document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});calcShingo();}
+  function calcShingo(){
+    var tax=Number((document.getElementById('s-tax').value||'').replace(/[^0-9]/g,''))||0;
+    var due=dval('s-due'), pay=dval('s-pay'), box=document.getElementById('s-result');
+    if(!tax||!due||!pay){box.innerHTML='<div class="empty">본세 · 납부기한 · 납부일을 입력하세요.</div>';return;}
+    if(pay<=due){box.innerHTML='<div class="empty">납부일이 납기 이내입니다. 납부지연가산세가 없습니다.</div>';return;}
+    var rr=0,rl='';
+    if(sType==='no'){rr=.20;rl='무신고가산세 (20%)';}else if(sType==='under'){rr=.10;rl='과소신고가산세 (10%)';}
+    else if(sType==='fraud_no'){rr=.40;rl='부정무신고가산세 (40%)';}else if(sType==='fraud_under'){rr=.40;rl='부정과소신고가산세 (40%)';}
+    var rp=Math.floor(tax*rr/10)*10;
+    var CH=new Date(2022,5,7), pStart=new Date(due.getTime()+DAY), total=Math.floor((pay-due)/DAY);
+    var dOld=0,dNew=0;
+    if(pay<CH)dOld=total; else if(pStart>=CH)dNew=total; else{dOld=Math.floor((new Date(CH.getTime()-DAY)-due)/DAY);dNew=total-dOld;}
+    var interest=tax*0.00025*dOld+tax*0.00022*dNew, cap=tax*0.75, capped=interest>cap;
+    var lp=Math.floor(Math.min(interest,cap)/10)*10, tot=tax+rp+lp;
+    var h='';
+    h+='<div class="row"><div class="rk">본세'+((sType==='under'||sType==='fraud_under')?'<small>과소납부 세액</small>':'')+'</div><div class="rv">'+won(tax)+' 원</div></div>';
+    if(rr>0)h+='<div class="row"><div class="rk">'+rl+'<small>세액 × '+(rr*100)+'%</small></div><div class="rv">'+won(rp)+' 원</div></div>';
+    var rd=dOld>0?('세액 × '+total+'일 (0.025% '+dOld+'일 + 0.022% '+dNew+'일)'):('세액 × '+total+'일 × 0.022%');
+    h+='<div class="row"><div class="rk">납부지연가산세<small>'+rd+'</small></div><div class="rv">'+won(lp)+' 원</div></div>';
+    h+='<div class="total" style="margin-top:14px;"><span class="tk">총 납부할 금액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
+    if(capped)h+='<div class="warn">납부지연가산세가 본세 75% 한도로 조정되었습니다.</div>';
+    box.innerHTML=h;
+  }
+
+  function resetAll(){
+    document.getElementById('rows').innerHTML=''; rid=0; addRow();
+    document.getElementById('g-pay').value='';
+    document.querySelectorAll('#mode-shingo input').forEach(function(i){i.value='';}); pickType('none');
+    recalcGozi();
+  }
+  /* 초기 1건 */
+  addRow();
+</script>
+</body>
+</html>
