@@ -1,332 +1,971 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>지방세 가산세 계산기</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>취득세 민원 도우미</title>
 <style>
-  :root{
-    --paper:#F4F6F9; --surface:#FFFFFF; --ink:#161E2E; --muted:#5C6675;
-    --line:#E3E7EE; --line-strong:#CDD4DF; --teal:#115E59; --teal-soft:#E7F1F0;
-    --seal:#B4382B; --seal-soft:#FBECEA;
-    --shadow:0 1px 2px rgba(22,30,46,.06), 0 8px 28px rgba(22,30,46,.06); --radius:14px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{background:var(--paper);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
-    line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;}
-  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px;}
+:root{
+  --navy:#1B3A5C; --navy-deep:#122A44; --paper:#FAF9F5; --card:#FFFFFF;
+  --ink:#26303B; --sub:#5C6875; --line:#DCD9D0; --line-soft:#EAE8E1;
+  --sky:#EEF3F8; --sky-deep:#DCE7F1; --seal:#B5352C; --seal-soft:#FBEFEE;
+  --ok:#1D6E4E; --ok-soft:#E6F3ED; --warn:#8A5B12; --warn-soft:#FBF3E2;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;
+  background:var(--paper);color:var(--ink);line-height:1.65;letter-spacing:-0.01em}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:1rem}
 
-  header.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
-    border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:20px;}
-  .title-block h1{font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0;}
-  .title-block p{margin:5px 0 0;color:var(--muted);font-size:12.5px;letter-spacing:-.01em;}
-  .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--teal);margin-bottom:6px;}
+/* ---------- header ---------- */
+.hd{background:var(--navy);color:#fff}
+.hd-in{max-width:960px;margin:0 auto;padding:26px 20px 0}
+.hd-eyebrow{font-size:.8rem;letter-spacing:.22em;color:#A9C0D8;font-weight:600}
+.hd-title{font-size:1.7rem;font-weight:800;letter-spacing:-0.03em;margin:6px 0 2px}
+.hd-title .thin{font-weight:300;color:#C6D6E6}
+.hd-sub{font-size:.88rem;color:#B9CBDD;margin-bottom:18px}
+.tabs{display:flex;gap:2px}
+.tab{appearance:none;border:0;background:rgba(255,255,255,.08);color:#C9D8E7;
+  padding:11px 20px;font-size:.95rem;font-weight:600;border-radius:10px 10px 0 0}
+.tab:hover{background:rgba(255,255,255,.16)}
+.tab.on{background:var(--paper);color:var(--navy);font-weight:800}
+.tab .lock{font-size:.78em;opacity:.75;margin-left:4px}
 
-  .tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--surface);border:1px solid var(--line);
-    border-radius:12px;padding:5px;width:fit-content;box-shadow:var(--shadow);}
-  .tab{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:13.5px;
-    font-weight:700;letter-spacing:-.01em;color:var(--muted);padding:9px 16px;border-radius:8px;transition:.15s;}
-  .tab[aria-selected="true"]{background:var(--ink);color:#fff;}
-  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 70px}
+.view{display:none}.view.on{display:block}
 
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px;}
-  .card h2{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 15px;}
+/* ---------- common ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.notice{border-radius:var(--radius);padding:13px 16px;font-size:.9rem;margin:14px 0}
+.notice.warn{background:var(--warn-soft);color:var(--warn);border:1px solid #EBDBB6}
+.notice.info{background:var(--sky);color:var(--navy);border:1px solid var(--sky-deep)}
+.notice.danger{background:var(--seal-soft);color:var(--seal);border:1px solid #EFCFCB}
+.btn{border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:8px;
+  padding:11px 20px;font-size:.98rem;font-weight:700}
+.btn:hover{background:var(--navy-deep)}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn.ghost:hover{background:var(--sky)}
+.btn.small{padding:6px 12px;font-size:.85rem;font-weight:600}
+.btn.danger{background:#fff;border-color:#D8B3AF;color:var(--seal)}
+.btn.danger:hover{background:var(--seal-soft)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+h2.sec{font-size:1.25rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
+p.sec-sub{font-size:.92rem;color:var(--sub);margin-bottom:18px}
+.footnote{font-size:.82rem;color:var(--sub);margin-top:26px;padding-top:16px;border-top:1px solid var(--line-soft)}
 
-  /* 공통 납부일 바 */
-  .paybar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-  .paybar label{font-size:13.5px;font-weight:700;}
-  .paybar .sub{font-size:11.5px;color:var(--muted);font-weight:500;}
+/* ---------- calculator wizard ---------- */
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.crumb{font-size:.8rem;background:var(--sky);color:var(--navy);border:1px solid var(--sky-deep);
+  border-radius:99px;padding:4px 12px;font-weight:600}
+.crumb b{font-weight:800}
+.q-title{font-size:1.15rem;font-weight:800;margin-bottom:4px}
+.q-desc{font-size:.9rem;color:var(--sub);margin-bottom:16px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:var(--radius);
+  padding:15px 16px;text-align:left;transition:border-color .12s, background .12s}
+.opt:hover{border-color:var(--navy);background:var(--sky)}
+.opt .o-t{font-weight:800;font-size:1rem;display:block}
+.opt .o-d{font-size:.82rem;color:var(--sub);display:block;margin-top:3px;line-height:1.5}
+.calc-nav{display:flex;justify-content:space-between;margin-top:22px}
+.field label{display:block;font-weight:700;font-size:.95rem;margin-bottom:8px}
+.money-row{display:flex;gap:8px;align-items:center}
+.money-row input{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;
+  font-size:1.15rem;font-weight:700;text-align:right;letter-spacing:.02em}
+.money-row input:focus{outline:2px solid var(--navy);border-color:var(--navy)}
+.money-row .unit{font-weight:700;color:var(--sub)}
+.money-echo{font-size:.9rem;color:var(--navy);font-weight:700;margin-top:8px;min-height:1.4em}
+.chk{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:13px 15px;margin-top:10px;background:#fff}
+.chk input{margin-top:4px;width:17px;height:17px;accent-color:var(--navy)}
+.chk .c-t{font-weight:700;font-size:.95rem}
+.chk .c-d{font-size:.83rem;color:var(--sub)}
 
-  label.lbl{display:block;font-size:12px;font-weight:600;margin-bottom:5px;letter-spacing:-.01em;color:var(--muted);}
-  input[type=text],input[type=date],select{width:100%;font-family:inherit;font-size:14.5px;color:var(--ink);
-    background:#fff;border:1px solid var(--line-strong);border-radius:9px;padding:9px 11px;transition:.15s;
-    font-variant-numeric:tabular-nums;}
-  input[type=text]{text-align:right;font-weight:600;}
-  input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft);}
-  .money-wrap{position:relative;}
-  .money-wrap .won{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12.5px;pointer-events:none;}
-  .money-wrap input{padding-right:28px;}
+/* ---------- result = 고지서 ---------- */
+.bill{position:relative;background:#fff;border:1px solid var(--line);border-radius:4px;
+  padding:30px 30px 24px;box-shadow:0 1px 0 var(--line);overflow:hidden}
+.bill:before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--navy)}
+.bill-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);
+  padding-bottom:12px;margin-bottom:6px}
+.bill-head h3{font-size:1.3rem;font-weight:800;letter-spacing:.18em}
+.bill-head .meta{font-size:.78rem;color:var(--sub);text-align:right;line-height:1.5}
+.bill-row{display:flex;justify-content:space-between;padding:11px 2px;border-bottom:1px dashed var(--line);
+  font-size:.97rem;gap:12px}
+.bill-row .k{color:var(--sub)}
+.bill-row .k b{color:var(--ink);font-weight:700}
+.bill-row .v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bill-row.minus .v{color:var(--seal)}
+.bill-total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 2px 4px}
+.bill-total .k{font-weight:800;font-size:1.05rem}
+.bill-total .v{font-weight:800;font-size:1.7rem;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.stamp{position:absolute;right:26px;bottom:70px;width:92px;height:92px;border:3px solid var(--seal);
+  border-radius:50%;color:var(--seal);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1rem;letter-spacing:.14em;transform:rotate(-12deg);opacity:.5;
+  pointer-events:none;text-align:center;line-height:1.3}
+.bill-note{font-size:.8rem;color:var(--sub);margin-top:14px;line-height:1.6}
+.result-docs{margin-top:18px}
 
-  /* 체납 건 카드 */
-  .brow{border:1px solid var(--line);border-radius:12px;padding:15px 16px 13px;margin-bottom:12px;background:#fff;position:relative;}
-  .brow-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-  .brow-head .no{font-size:12.5px;font-weight:800;color:var(--teal);letter-spacing:.02em;}
-  .brow-head .rm{appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px;}
-  .brow-head .rm:hover{background:var(--seal-soft);color:var(--seal);}
-  .fgrid{display:grid;grid-template-columns:1.3fr .9fr 1.1fr 1.1fr;gap:10px;}
-  @media(max-width:680px){.fgrid{grid-template-columns:1fr 1fr;}}
-  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;margin-top:10px;}
-  .badge.sin{background:var(--teal-soft);color:var(--teal);}
-  .badge.gu{background:#FFF3E0;color:#9A5B00;}
-  .brow-res{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);
-    display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
-  .brow-res .detail{font-size:11.5px;color:var(--muted);}
-  .brow-res .sub{font-size:15px;font-weight:800;white-space:nowrap;}
-  .brow-res .sub small{font-weight:600;font-size:12px;margin-left:2px;color:var(--muted);}
+/* ---------- docs tab ---------- */
+.doc-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.pill{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 16px;
+  font-size:.9rem;font-weight:600;color:var(--sub)}
+.pill.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+.doc-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+.doc-card h4{font-size:1.02rem;font-weight:800}
+.doc-card .cat{font-size:.75rem;color:var(--navy);background:var(--sky);border-radius:4px;
+  padding:2px 8px;font-weight:700;margin-left:8px;vertical-align:2px}
+.doc-items{margin:10px 0 0;list-style:none}
+.doc-items li{position:relative;padding:6px 0 6px 26px;font-size:.94rem;border-bottom:1px dashed var(--line-soft)}
+.doc-items li:last-child{border-bottom:0}
+.doc-items li:before{content:"";position:absolute;left:2px;top:12px;width:13px;height:13px;
+  border:1.5px solid var(--navy);border-radius:3px}
+.doc-note{font-size:.83rem;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:8px 12px;margin-top:10px}
 
-  .addbtn{appearance:none;width:100%;border:1.5px dashed var(--line-strong);background:#fff;color:var(--teal);
-    font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;border-radius:10px;padding:12px;transition:.15s;}
-  .addbtn:hover{border-color:var(--teal);background:var(--teal-soft);}
+/* ---------- staff ---------- */
+.gate{max-width:420px;margin:40px auto;text-align:center}
+.gate input{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:12px;text-align:center;
+  font-size:1.1rem;letter-spacing:.3em;margin:14px 0}
+.staff-layout{display:grid;grid-template-columns:230px 1fr;gap:22px;align-items:start}
+.toc{position:sticky;top:14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:10px}
+.toc button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;
+  border-radius:7px;font-size:.9rem;color:var(--ink);font-weight:600}
+.toc button:hover{background:var(--sky)}
+.toc button.on{background:var(--navy);color:#fff;font-weight:700}
+.st-sec{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
+.st-sec > summary{list-style:none;padding:15px 20px;font-weight:800;font-size:1.02rem;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:10px}
+.st-sec > summary::-webkit-details-marker{display:none}
+.st-sec > summary:hover{background:var(--sky)}
+.st-sec > summary .arrow{color:var(--sub);font-size:.8rem;transition:transform .15s}
+.st-sec[open] > summary .arrow{transform:rotate(90deg)}
+.st-body{padding:0 20px 18px;border-top:1px solid var(--line-soft)}
+.blk{margin-top:16px}
+.blk-label{display:inline-block;font-size:.76rem;font-weight:800;letter-spacing:.08em;border-radius:4px;
+  padding:3px 10px;margin-bottom:7px}
+.blk-label.l업무설명{background:var(--sky);color:var(--navy)}
+.blk-label.l받을서류{background:var(--ok-soft);color:var(--ok)}
+.blk-label.l부과포인트{background:#F0EBFA;color:#5A3E9E}
+.blk-label.l주의{background:var(--seal-soft);color:var(--seal)}
+.blk-label.lFAQ{background:var(--warn-soft);color:var(--warn)}
+.blk-label.l처리사례{background:#EFEDE6;color:#6B665A}
+.blk-text{font-size:.93rem}
+.blk-text p{margin:5px 0}
+.blk-text ul{margin:5px 0 5px 20px}
+.blk-text li{margin:3px 0}
+.blk-text .q{font-weight:700;color:var(--navy);margin-top:10px}
+.visual{margin:16px 0;padding:16px;background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;overflow-x:auto}
+.visual svg{display:block;margin:0 auto;max-width:100%}
+.staff-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+.mode-badge{font-size:.8rem;font-weight:800;color:var(--seal);background:var(--seal-soft);
+  border:1px solid #EFCFCB;border-radius:99px;padding:4px 12px}
 
-  /* 합계 */
-  .grand{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;}
-  .grand .line{display:flex;justify-content:space-between;font-size:13.5px;padding:6px 0;}
-  .grand .line .k{color:var(--muted);font-weight:600;}
-  .grand .line .v{font-weight:700;}
-  .total{margin-top:14px;padding:16px 18px;border:1.5px solid var(--seal);border-radius:12px;background:var(--seal-soft);
-    display:flex;justify-content:space-between;align-items:center;}
-  .total .tk{font-size:13px;font-weight:800;color:var(--seal);}
-  .total .tv{font-size:26px;font-weight:800;color:var(--seal);letter-spacing:-.02em;}
-  .total .tv .u{font-size:15px;font-weight:700;margin-left:2px;}
-  .empty{color:var(--muted);font-size:13px;text-align:center;padding:8px 0;}
-  .warn{margin-top:12px;font-size:12px;color:#8a5a00;background:#FFF7E6;border:1px solid #FCE3AE;border-radius:8px;padding:9px 11px;}
+/* ---------- admin editing ---------- */
+.edit-box{border:1.5px dashed var(--seal);border-radius:8px;padding:12px;margin-top:12px;background:#FFFDFC}
+.edit-box label{font-size:.8rem;font-weight:700;color:var(--seal);display:block;margin-bottom:4px}
+.edit-box input[type=text],.edit-box textarea{width:100%;border:1px solid var(--line);border-radius:6px;
+  padding:8px 10px;font-size:.9rem;margin-bottom:8px}
+.edit-box textarea{min-height:110px;line-height:1.6;resize:vertical}
+.edit-actions{display:flex;gap:6px;flex-wrap:wrap}
+dialog{border:1px solid var(--line);border-radius:12px;padding:24px;max-width:520px;width:92%}
+dialog::backdrop{background:rgba(20,30,42,.45)}
 
-  /* 신고납부분 */
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
-  @media(max-width:680px){.grid2{grid-template-columns:1fr;}}
-  .field{margin-bottom:14px;}
-  .seg{display:flex;flex-wrap:wrap;gap:6px;}
-  .seg button{appearance:none;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
-    border:1px solid var(--line-strong);background:#fff;color:var(--muted);border-radius:8px;padding:8px 11px;transition:.15s;}
-  .seg button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft);color:var(--teal);}
-  .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);}
-  .row:first-of-type{padding-top:0;}
-  .row .rk{font-size:13.5px;}.row .rk small{display:block;color:var(--muted);font-size:11px;margin-top:2px;}
-  .row .rv{font-size:15px;font-weight:700;white-space:nowrap;}
-
-  .actions{display:flex;gap:10px;margin-top:6px;margin-bottom:22px;}
-  .btn{appearance:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border-radius:9px;
-    padding:10px 16px;transition:.15s;border:1px solid var(--line-strong);background:#fff;color:var(--ink);}
-  .btn:hover{border-color:var(--ink);}
-  .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff;}
-  .btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
-
-  .basis{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);}
-  .basis h3{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin:0 0 12px;}
-  .basis ul{margin:0;padding-left:18px;}
-  .basis li{font-size:12.5px;color:var(--muted);margin-bottom:7px;line-height:1.6;}
-  .basis li b{color:var(--ink);font-weight:700;}
-  .disclaimer{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);line-height:1.55;}
-  .hidden{display:none !important;}
-  @media print{body{background:#fff;} .tabs,.actions,.addbtn,.brow-head .rm{display:none;} .card,.basis,.grand{box-shadow:none;border-color:var(--line-strong);}}
+@media (max-width:760px){
+  .staff-layout{grid-template-columns:1fr}
+  .toc{position:static;display:flex;flex-wrap:wrap;gap:4px}
+  .toc button{width:auto}
+  .hd-title{font-size:1.35rem}
+  .stamp{width:74px;height:74px;font-size:.85rem;right:14px}
+}
+@media print{
+  .hd,.tabs,.calc-nav,.staff-tools,.toc,.btn{display:none !important}
+  body{background:#fff}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <header class="head">
-    <div class="title-block">
-      <span class="kicker">지방세 징수 · 실무 계산</span>
-      <h1>지방세 가산세 계산기</h1>
-      <p>세목만 고르면 신·구 체계 자동 판정 · 체납 여러 건 합산 &nbsp;|&nbsp; 지방세기본법 §55 · 구 지방세징수법 §30·§31</p>
-    </div>
-  </header>
-
-  <div class="tabs" role="tablist" aria-label="계산 유형">
-    <button class="tab" id="tab-gozi" role="tab" aria-selected="true" onclick="switchMode('gozi')">고지분 체납 (재산세·자동차세·주민세 등)</button>
-    <button class="tab" id="tab-shingo" role="tab" aria-selected="false" onclick="switchMode('shingo')">신고납부분 (취득세·등록면허세 등)</button>
+<header class="hd">
+  <div class="hd-in">
+    <div class="hd-eyebrow">지방세 민원 도우미</div>
+    <div class="hd-title">취득세 <span class="thin">미리 계산하고, 서류까지 한 번에</span></div>
+    <div class="hd-sub" id="hd-sub">부동산 취득세 모의계산 · 신고 시 필요서류 안내</div>
+    <nav class="tabs">
+      <button class="tab on" data-tab="calc">취득세 계산기</button>
+      <button class="tab" data-tab="docs">신고 서류 안내</button>
+      <button class="tab" data-tab="staff">직원 전용 <span class="lock">🔒</span></button>
+    </nav>
   </div>
+</header>
 
-  <!-- ================= 고지분 ================= -->
-  <div id="mode-gozi">
-    <div class="card">
-      <div class="paybar">
-        <label for="g-pay">낼 날짜 (납부 예정일)</label>
-        <input type="date" id="g-pay" style="width:auto" oninput="recalcGozi()" />
-        <span class="sub">이 날짜 기준으로 아래 모든 체납 건의 가산세를 계산합니다.</span>
-      </div>
-    </div>
+<main class="wrap">
 
-    <div class="card">
-      <h2>체납 건 입력</h2>
-      <div id="rows"></div>
-      <button class="addbtn" onclick="addRow()">＋ 체납 건 추가</button>
-    </div>
+  <!-- ================= 계산기 ================= -->
+  <section class="view on" id="view-calc">
+    <h2 class="sec">취득세 모의계산</h2>
+    <p class="sec-sub">아래 질문에 차례로 답하면 예상 세액과 신고 시 필요한 서류를 알려드립니다.</p>
+    <div class="card" id="calc-root"></div>
+    <p class="footnote">※ 본 계산 결과는 참고용 모의계산으로 법적 효력이 없습니다. 실제 세액은 신고 내용, 시가인정액, 감면 요건 심사 등에 따라 달라질 수 있으며, 정확한 세액은 시청 세무과 취득세 담당(창구)에서 확인해 주시기 바랍니다.
+    <span id="rate-basis"></span></p>
+  </section>
 
-    <div class="grand">
-      <h2 style="font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;">합계</h2>
-      <div id="grand-body"><div class="empty">낼 날짜와 체납 건을 입력하면 합계가 표시됩니다.</div></div>
-    </div>
-  </div>
+  <!-- ================= 서류 안내 ================= -->
+  <section class="view" id="view-docs">
+    <h2 class="sec">취득유형별 신고 서류 안내</h2>
+    <p class="sec-sub">해당하는 취득유형을 선택하면 신고 시 가져오실 서류를 확인할 수 있습니다.</p>
+    <div class="doc-filter" id="doc-filter"></div>
+    <div id="docs-root"></div>
+    <p class="footnote">※ 개별 사안에 따라 추가 서류가 필요할 수 있습니다. 방문 전 세무과에 전화로 확인하시면 두 번 걸음을 줄일 수 있습니다.</p>
+  </section>
 
-  <!-- ================= 신고납부분 ================= -->
-  <div id="mode-shingo" class="hidden">
-    <div class="grid2">
-      <div class="card">
-        <h2>입력 — 신고납부분</h2>
-        <div class="field"><label class="lbl">본세 (미납·과소납부 세액)</label>
-          <div class="money-wrap"><input type="text" id="s-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);calcShingo()" /><span class="won">원</span></div></div>
-        <div class="field"><label class="lbl">신고 유형</label>
-          <div class="seg" id="s-type">
-            <button data-v="none" aria-pressed="true" onclick="pickType('none')">정상신고</button>
-            <button data-v="no" aria-pressed="false" onclick="pickType('no')">무신고 20%</button>
-            <button data-v="under" aria-pressed="false" onclick="pickType('under')">과소신고 10%</button>
-            <button data-v="fraud_no" aria-pressed="false" onclick="pickType('fraud_no')">부정무신고 40%</button>
-            <button data-v="fraud_under" aria-pressed="false" onclick="pickType('fraud_under')">부정과소 40%</button>
-          </div></div>
-        <div class="field"><label class="lbl">법정납부기한</label><input type="date" id="s-due" oninput="calcShingo()" /></div>
-        <div class="field"><label class="lbl">자진납부일 (또는 납세고지일)</label><input type="date" id="s-pay" oninput="calcShingo()" /></div>
-      </div>
-      <div class="card"><h2>산정 결과</h2>
-        <div id="s-result"><div class="empty">본세 · 납부기한 · 납부일을 입력하세요.</div></div>
-      </div>
-    </div>
-  </div>
+  <!-- ================= 직원 전용 ================= -->
+  <section class="view" id="view-staff">
+    <div id="staff-root"></div>
+  </section>
 
-  <div class="actions">
-    <button class="btn" onclick="resetAll()">초기화</button>
-    <button class="btn primary" onclick="window.print()">인쇄 / PDF 저장</button>
-  </div>
+</main>
 
-  <div class="basis">
-    <h3>산정 근거 · 적용 이자율</h3>
-    <ul>
-      <li><b>체계 자동 판정</b> — 세목의 과세연도가 <b>2024년 이후</b>면 납부지연가산세(지기법 §55), <b>2023년 이전</b>이면 구 가산금·중가산금(구 지방세징수법 §30·§31). 기준은 납세의무 성립일 2024.1.1.입니다.</li>
-      <li><b>납부지연가산세(2024~)</b> — 최초 <b>3%</b> + 매 1개월 <b>0.66%</b>(=1일 0.022%×30), 최대 60개월. 세액 <b>45만원 미만</b>은 월가산 미적용.</li>
-      <li><b>구 가산금(~2023)</b> — 가산금 <b>3%</b> + 매월 중가산금 <b>0.75%</b>, 최대 60개월. 세액 <b>30만원 미만</b>은 중가산금 미적용.</li>
-      <li><b>신고납부분</b> — 무신고 20%·과소 10%(부정 40%) + 납부지연가산세(1일 0.022%, 2022.6.7. 전 0.025%, 본세 75% 한도).</li>
-    </ul>
-    <div class="disclaimer">※ 실무 참고용 개산 도구입니다. 월 경과는 납기와 같은 일자를 기준으로 세며 월말·윤년 등 일부 경계는 개산될 수 있습니다. 자동차세 수시분·신규분 등 성립일이 과세연도와 다른 경우는 세목에서 ‘기타(직접 지정)’를 선택하세요. 최종 금액은 위택스 산출값으로 확정하시기 바랍니다.</div>
-  </div>
-</div>
+<!-- ===== 직원용 시각화 자료 (SVG) ===== -->
+
+<template id="v-frame">
+<svg viewBox="0 0 640 470" width="640" role="img" aria-label="취득세 계산 구조 9단계">
+<style>.ft{font:700 14px sans-serif;fill:#1B3A5C}.fs{font:400 12px sans-serif;fill:#5C6875}.fn{font:800 13px sans-serif;fill:#fff}</style>
+<g><rect x="30" y="10" width="580" height="40" rx="8" fill="#EEF3F8" stroke="#DCE7F1"/><text x="60" y="35" class="ft">① 과세대상 확인</text><text x="330" y="35" class="fs">과세대상 맞음? (부동산·차량·시설물 …)</text></g>
+<g><rect x="30" y="58" width="580" height="40" rx="8" fill="#EEF3F8" stroke="#DCE7F1"/><text x="60" y="83" class="ft">② 납세지</text><text x="330" y="83" class="fs">부동산=소재지, 차량=사용본거지</text></g>
+<g><rect x="30" y="106" width="580" height="40" rx="8" fill="#FBF3E2" stroke="#EBDBB6"/><text x="60" y="131" class="ft">③ 매도·매수인 관계</text><text x="330" y="131" class="fs">기타 / 특수관계인 / 배우자·직계존비속</text></g>
+<g><rect x="30" y="154" width="580" height="40" rx="8" fill="#FBF3E2" stroke="#EBDBB6"/><text x="60" y="179" class="ft">④ 취득원인</text><text x="330" y="179" class="fs">원시(신축)·유상(매매)·무상(증여/상속)·간주</text></g>
+<g><rect x="30" y="202" width="580" height="40" rx="8" fill="#EEF3F8" stroke="#DCE7F1"/><text x="60" y="227" class="ft">⑤ 취득일자</text><text x="330" y="227" class="fs">신축=사용승인일 / 유상=잔금일 / 증여=계약일 / 상속=사망일</text></g>
+<g><rect x="30" y="250" width="580" height="46" rx="8" fill="#B5352C"/><text x="60" y="272" class="fn">⑥ 과세표준(취득가액)</text><text x="330" y="272" style="font:400 12px sans-serif;fill:#F6D9D6">③·④에 따라 결정 — 입력 시 최우선 주의</text><text x="60" y="289" style="font:400 11px sans-serif;fill:#F6D9D6">매매가액 · 시가인정액 · 사실상취득가격 · 시가표준액</text></g>
+<g><rect x="30" y="304" width="580" height="46" rx="8" fill="#B5352C"/><text x="60" y="326" class="fn">⑦ 세율</text><text x="330" y="326" style="font:400 12px sans-serif;fill:#F6D9D6">주택? 다주택? 85㎡ 이하? 세율특례?</text><text x="60" y="343" style="font:400 11px sans-serif;fill:#F6D9D6">= 산출세액</text></g>
+<g><rect x="30" y="358" width="580" height="46" rx="8" fill="#B5352C"/><text x="60" y="380" class="fn">⑧ 세액공제·감면</text><text x="330" y="380" style="font:400 12px sans-serif;fill:#F6D9D6">지특법 규정 확인 (생애최초·출산양육 등)</text><text x="60" y="397" style="font:400 11px sans-serif;fill:#F6D9D6">= 결정세액</text></g>
+<g><rect x="30" y="412" width="580" height="40" rx="8" fill="#EEF3F8" stroke="#DCE7F1"/><text x="60" y="437" class="ft">⑨ 기납부세액 차감</text><text x="330" y="437" class="fs">수정신고·추징 시 확인 = 차감납부할세액</text></g>
+<text x="620" y="466" text-anchor="end" class="fs">민원의 대부분은 ⑥·⑦·⑧ — 입력도 이 셋을 제일 조심</text>
+</svg>
+</template>
+
+<template id="v-relation">
+<svg viewBox="0 0 660 400" width="660" role="img" aria-label="유상취득 시 매도인과의 관계 판단 흐름도">
+<defs><marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#5C6875" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+<style>.bt{font:700 13px sans-serif;fill:#1B3A5C}.bs{font:400 11px sans-serif;fill:#5C6875}.ln{stroke:#5C6875;stroke-width:1.2;fill:none}.lb{font:600 11px sans-serif;fill:#8A5B12}</style>
+<rect x="230" y="10" width="200" height="46" rx="10" fill="#1B3A5C"/><text x="330" y="30" text-anchor="middle" style="font:800 14px sans-serif;fill:#fff">유상거래(매매) 접수</text><text x="330" y="47" text-anchor="middle" style="font:400 11px sans-serif;fill:#C6D6E6">관계부터 확인</text>
+<line class="ln" x1="330" y1="56" x2="330" y2="86" marker-end="url(#ar1)"/>
+<rect x="235" y="90" width="190" height="40" rx="20" fill="#FBF3E2" stroke="#EBDBB6"/><text x="330" y="115" text-anchor="middle" class="bt">매도인과 무슨 관계?</text>
+<path class="ln" d="M235 110 L110 110 L110 160" marker-end="url(#ar1)"/>
+<line class="ln" x1="330" y1="130" x2="330" y2="160" marker-end="url(#ar1)"/>
+<path class="ln" d="M425 110 L550 110 L550 160" marker-end="url(#ar1)"/>
+<g><rect x="30" y="164" width="160" height="64" rx="10" fill="#E6F3ED" stroke="#BBDCCB"/><text x="110" y="188" text-anchor="middle" class="bt">아무 관계 없음</text><text x="110" y="206" text-anchor="middle" class="bs">과세표준=매매가액</text><text x="110" y="220" text-anchor="middle" class="bs">세율=유상취득</text></g>
+<g><rect x="250" y="164" width="160" height="64" rx="10" fill="#FBF3E2" stroke="#EBDBB6"/><text x="330" y="184" text-anchor="middle" class="bt">특수관계인</text><text x="330" y="201" text-anchor="middle" class="bs">형제·친인척·법인 등</text><text x="330" y="217" text-anchor="middle" class="bs">부당행위계산 검토</text></g>
+<g><rect x="470" y="164" width="160" height="64" rx="10" fill="#FBEFEE" stroke="#EFCFCB"/><text x="550" y="184" text-anchor="middle" class="bt">배우자·직계존비속</text><text x="550" y="201" text-anchor="middle" class="bs">원칙은 "증여"</text><text x="550" y="217" text-anchor="middle" class="bs">대가 입증 시만 유상</text></g>
+<line class="ln" x1="330" y1="228" x2="330" y2="262" marker-end="url(#ar1)"/>
+<g><rect x="215" y="266" width="230" height="72" rx="10" fill="#fff" stroke="#DCD9D0"/><text x="330" y="288" text-anchor="middle" class="bt">저가양수 여부 확인</text><text x="330" y="306" text-anchor="middle" class="bs">시가인정액-매매가 차액이 3억↑</text><text x="330" y="321" text-anchor="middle" class="bs">또는 시가인정액의 5%↑ 낮으면</text><text x="330" y="335" text-anchor="middle" style="font:700 11px sans-serif;fill:#B5352C">→ 과세표준 = 시가인정액</text></g>
+<line class="ln" x1="550" y1="228" x2="550" y2="262" marker-end="url(#ar1)"/>
+<g><rect x="450" y="266" width="200" height="86" rx="10" fill="#fff" stroke="#DCD9D0"/><text x="550" y="286" text-anchor="middle" class="bt">"대가 준 거 맞음?"</text><text x="550" y="303" text-anchor="middle" class="bs">계좌이체내역 +</text><text x="550" y="317" text-anchor="middle" class="bs">"니 재산으로 준 거 맞음?"</text><text x="550" y="331" text-anchor="middle" class="bs">소득금액증명원(본인 것만)</text><text x="550" y="347" text-anchor="middle" style="font:700 11px sans-serif;fill:#B5352C">입증 안 되면 → 증여 과세</text></g>
+<text x="110" y="260" text-anchor="middle" class="lb">바로 부과 OK</text>
+</svg>
+</template>
+
+<template id="v-house">
+<svg viewBox="0 0 660 430" width="660" role="img" aria-label="1세대 주택 수 판단 흐름도">
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#5C6875" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+<style>.bt2{font:700 13px sans-serif;fill:#1B3A5C}.bs2{font:400 11px sans-serif;fill:#5C6875}.ln2{stroke:#5C6875;stroke-width:1.2;fill:none}</style>
+<rect x="200" y="10" width="260" height="44" rx="10" fill="#1B3A5C"/><text x="330" y="37" text-anchor="middle" style="font:800 14px sans-serif;fill:#fff">개인의 "주택 유상취득" = 주택 수 세기</text>
+<line class="ln2" x1="330" y1="54" x2="330" y2="82" marker-end="url(#ar2)"/>
+<g><rect x="60" y="86" width="540" height="76" rx="10" fill="#EEF3F8" stroke="#DCE7F1"/>
+<text x="80" y="110" class="bt2">1단계 — "1세대" 확정 (취득일=잔금일 기준)</text>
+<text x="80" y="130" class="bs2">취득자 + 주민등록표상 가족(민법 §779, 동거인 제외) · 배우자·미혼 30세 미만 자녀는 주소 달라도 포함</text>
+<text x="80" y="148" class="bs2">예외: 30세 미만이라도 중위소득 40%↑ 소득 + 별도 주소 = 별도세대 · 65세↑ 부모 봉양 합가 = 별도세대</text></g>
+<line class="ln2" x1="330" y1="162" x2="330" y2="190" marker-end="url(#ar2)"/>
+<g><rect x="60" y="194" width="540" height="92" rx="10" fill="#EEF3F8" stroke="#DCE7F1"/>
+<text x="80" y="218" class="bt2">2단계 — 세대원 전원의 "주택 수" 합산</text>
+<text x="80" y="238" class="bs2">포함: 주택 + 조합원입주권 + 주택분양권 + 주거용 오피스텔 (2020.8.12. 이후 취득분)</text>
+<text x="80" y="256" class="bs2">제외: 공시가격 1억 이하 주택 · 상속 후 5년 이내 주택 · 무허가주택 · 공시 1억 이하 부속토지만 소유 등</text>
+<text x="80" y="274" class="bs2">분양권·입주권으로 취득하는 주택은 "분양권 계약일" 기준으로 주택 수를 센다 (1세대 판단은 잔금일)</text></g>
+<line class="ln2" x1="330" y1="286" x2="330" y2="314" marker-end="url(#ar2)"/>
+<rect x="235" y="318" width="190" height="38" rx="19" fill="#FBF3E2" stroke="#EBDBB6"/><text x="330" y="342" text-anchor="middle" class="bt2">취득 주택 포함 몇 채?</text>
+<path class="ln2" d="M235 337 L110 337 L110 372" marker-end="url(#ar2)"/>
+<line class="ln2" x1="330" y1="356" x2="330" y2="372" marker-end="url(#ar2)"/>
+<path class="ln2" d="M425 337 L550 337 L550 372" marker-end="url(#ar2)"/>
+<g><rect x="35" y="376" width="150" height="44" rx="10" fill="#E6F3ED" stroke="#BBDCCB"/><text x="110" y="395" text-anchor="middle" class="bt2">1~2주택</text><text x="110" y="411" text-anchor="middle" class="bs2">일반세율 1~3%</text></g>
+<g><rect x="255" y="376" width="150" height="44" rx="10" fill="#FBF3E2" stroke="#EBDBB6"/><text x="330" y="395" text-anchor="middle" class="bt2">3주택</text><text x="330" y="411" text-anchor="middle" class="bs2">8% (비조정 기준)</text></g>
+<g><rect x="475" y="376" width="150" height="44" rx="10" fill="#FBEFEE" stroke="#EFCFCB"/><text x="550" y="395" text-anchor="middle" class="bt2">4주택↑ · 법인</text><text x="550" y="411" text-anchor="middle" class="bs2">12% (법인은 무조건)</text></g>
+</svg>
+</template>
+
+<template id="v-counter">
+<svg viewBox="0 0 660 300" width="660" role="img" aria-label="창구 5분 처리 프로세스">
+<defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#5C6875" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+<style>.ct{font:800 13px sans-serif;fill:#fff}.cs{font:400 11px sans-serif;fill:#5C6875}.cn{stroke:#5C6875;stroke-width:1.2;fill:none}.step{font:700 12px sans-serif;fill:#1B3A5C}</style>
+<g><rect x="20" y="20" width="190" height="60" rx="10" fill="#1B3A5C"/><text x="115" y="45" text-anchor="middle" class="ct">1. 취득원인 파악</text><text x="115" y="65" text-anchor="middle" style="font:400 11px sans-serif;fill:#C6D6E6">"어떻게 취득하셨어요?"</text></g>
+<line class="cn" x1="210" y1="50" x2="240" y2="50" marker-end="url(#ar3)"/>
+<g><rect x="244" y="20" width="190" height="60" rx="10" fill="#1B3A5C"/><text x="339" y="45" text-anchor="middle" class="ct">2. 관계 확인 (유상)</text><text x="339" y="65" text-anchor="middle" style="font:400 11px sans-serif;fill:#C6D6E6">"매도인과 관계가?"</text></g>
+<line class="cn" x1="434" y1="50" x2="464" y2="50" marker-end="url(#ar3)"/>
+<g><rect x="468" y="20" width="172" height="60" rx="10" fill="#1B3A5C"/><text x="554" y="45" text-anchor="middle" class="ct">3. 서류 수령·대조</text><text x="554" y="65" text-anchor="middle" style="font:400 11px sans-serif;fill:#C6D6E6">유형별 받을서류 확인</text></g>
+<path class="cn" d="M554 80 L554 110 L115 110 L115 138" marker-end="url(#ar3)"/>
+<g><rect x="20" y="142" width="190" height="60" rx="10" fill="#B5352C"/><text x="115" y="167" text-anchor="middle" class="ct">4. 주택수·감면 확인</text><text x="115" y="187" text-anchor="middle" style="font:400 11px sans-serif;fill:#F6D9D6">중과? 생애최초? 85㎡?</text></g>
+<line class="cn" x1="210" y1="172" x2="240" y2="172" marker-end="url(#ar3)"/>
+<g><rect x="244" y="142" width="190" height="60" rx="10" fill="#B5352C"/><text x="339" y="167" text-anchor="middle" class="ct">5. 과세 입력</text><text x="339" y="187" text-anchor="middle" style="font:400 11px sans-serif;fill:#F6D9D6">⑥과표 ⑦세율 ⑧감면 주의</text></g>
+<line class="cn" x1="434" y1="172" x2="464" y2="172" marker-end="url(#ar3)"/>
+<g><rect x="468" y="142" width="172" height="60" rx="10" fill="#1D6E4E"/><text x="554" y="167" text-anchor="middle" class="ct">6. 고지서 출력·안내</text><text x="554" y="187" text-anchor="middle" style="font:400 11px sans-serif;fill:#D2E8DD">납부기한·방법 안내</text></g>
+<text x="20" y="240" class="step">막히면?</text>
+<text x="20" y="262" class="cs">① 어느 단계에서 막혔는지 확인 (①~⑨ 구조표) → ② 해당 취득유형 챕터의 "받을서류·부과포인트"만 보고 처리</text>
+<text x="20" y="282" class="cs">→ ③ 그래도 애매하면 처리사례·FAQ 검색 → ④ 판단 필요 사안은 접수만 하고 "확인 후 연락" (틀린 고지서보다 낫다)</text>
+</svg>
+</template>
+
+<script type="application/json" id="app-data">
+{
+  "version": 3,
+  "settings": {
+    "password": "0000",
+    "cityLabel": "○○시청 세무과",
+    "rateBasis": "2026.1. 지방세법 기준(담당자 검증 필요)"
+  },
+  "docs": [
+    {"id":"sale-normal","cat":"매매·분양","title":"부동산 매매 (일반)","items":["매매계약서","부동산 실거래신고필증","신분증"],"note":"잔금지급일부터 60일 이내 신고·납부"},
+    {"id":"sale-related","cat":"매매·분양","title":"부동산 매매 (형제·친인척 등 특수관계인 간)","items":["매매계약서","부동산 실거래신고필증","신분증"],"note":"시가인정액보다 3억 이상 또는 5% 이상 낮은 가격이면 과세표준이 시가인정액으로 결정될 수 있습니다"},
+    {"id":"sale-family","cat":"매매·분양","title":"부동산 매매 (배우자·직계존비속 간)","items":["매매계약서","부동산 실거래신고필증","대금 계좌이체 내역","매수인 본인의 소득금액증명원","신분증"],"note":"배우자·직계존비속 간 거래는 원칙적으로 증여로 봅니다. 실제 대가 지급과 자금출처가 입증되어야 매매로 인정됩니다"},
+    {"id":"sale-apt","cat":"매매·분양","title":"아파트 분양 (신축 분양권에 의한 취득)","items":["신분증","분양계약서 (옵션계약서 포함)","분양대금 납부확인서 (옵션 납부확인서 포함)","부동산 실거래신고필증","가족관계증명서","주민등록등본"],"note":"분양권을 전매로 취득한 경우: 최초 신고자의 실거래신고필증(또는 검인 분양계약서) + 전매 계약서·신고필증 추가. 증여받은 분양권은 검인된 증여계약서 추가"},
+    {"id":"gift-normal","cat":"증여","title":"증여 (일반)","items":["증여계약서 (검인)","증여자 인감증명서","신분증"],"note":"취득일(계약일)이 속하는 달의 말일부터 3개월 이내 신고·납부. 과세표준은 시가인정액이 원칙입니다"},
+    {"id":"gift-burden","cat":"증여","title":"부담부증여 (대출·보증금 등 채무 인수 조건 증여)","items":["증여계약서 (검인)","증여자 인감증명서","채무 입증서류 (등기부등본상 저당권, 금융기관 채무자변경확인서, 임대차계약서 등)","신분증"],"note":"채무액 부분은 유상취득, 나머지는 무상취득으로 나누어 과세됩니다. 신고기한은 전체를 증여와 같이 3개월"},
+    {"id":"gift-divorce","cat":"증여","title":"이혼에 따른 재산분할","items":["혼인관계증명서","재산분할협의서 (검인, 협의이혼) 또는 재산분할청구 결정문 (재판이혼)","신분증"],"note":"재산분할 특례세율(표준세율에서 2% 경감) 적용 대상입니다. 재산분할청구권은 이혼일부터 2년 내 행사"},
+    {"id":"inherit-no","cat":"상속","title":"상속 (협의 전 · 법정지분)","items":["피상속인(사망자) 기본증명서","피상속인 기준 가족관계증명서","신분증"],"note":"상속개시일(사망일)이 속하는 달의 말일부터 6개월 이내 신고·납부"},
+    {"id":"inherit-yes","cat":"상속","title":"상속 (상속재산분할 협의 완료)","items":["피상속인(사망자) 기본증명서","피상속인 기준 가족관계증명서","상속재산분할협의서","상속인 전원의 인감증명서","신분증"],"note":"협의서는 상속인별로 각각 작성·날인해도 인정됩니다. 무허가건물이 포함된 경우 인감증명서는 반드시 필요"},
+    {"id":"build-small","cat":"신축·기타","title":"건물 신축·증축 (개인, 연면적 200㎡ 미만)","items":["건축물대장","공사비용 증빙서류 (세금계산서·영수증 등)","신분증"],"note":"증빙이 없으면 공사비용 신고서에 직접 기재. 신고가액이 시가표준액보다 낮으면 시가표준액으로 과세될 수 있습니다"},
+    {"id":"build-big","cat":"신축·기타","title":"건물 신축·증축 (개인, 연면적 200㎡ 이상)","items":["건축물대장","설계·감리·시공(공사) 계약서","소방·승강기 등 추가 공사 계약서","각종 부담금 납부확인서 (농지보전부담금 등)","추가 납입 계좌이체 내역","토공사 비용 확인 서류 (지목변경 과세용)","신분증"],"note":"대지가 아닌 토지 위 신축은 지목변경 취득세가 함께 부과됩니다. 토공사·토목측량 비용은 구분해서 준비하시면 유리합니다"},
+    {"id":"build-corp","cat":"신축·기타","title":"건물 신축·증축 (법인)","items":["계정별원장 또는 공사 관련 세금계산서 일체","각종 부담금 납부확인서","법인 관련 서류 (법인등기부등본 등)"],"note":"전기·가스·상수도 인입비(분담금)는 과세표준에서 제외됩니다"},
+    {"id":"nohouse","cat":"신축·기타","title":"무허가주택 (매매·증여·상속)","items":["[매매] 매매계약서 원본 + 거래신고필증 원본 + 매도인 인감증명서 원본","[증여] 검인 증여계약서 원본 + 증여자 인감증명서 원본","[상속] 피상속인 기본·가족관계증명서 원본 + 상속인 전원 인감증명서 원본 + 상속재산분할협의서 원본"],"note":"무허가주택은 취득세에서 주택으로 보지 않아 일반세율이 적용됩니다 (과세표준은 주택가격 사용). 서류 원본은 재산세 부서로 이관됩니다"},
+    {"id":"exempt-first","cat":"감면 신청","title":"생애최초 주택 취득 감면 신청","items":["매매(분양)계약서","부동산 실거래신고필증","가족관계증명서","주민등록등본 (초본 불가)","감면신청서 (창구 비치)","신분증"],"note":"본인과 배우자 모두 주택 소유 이력이 없어야 하며, 취득가액 12억 이하 유상취득 시 최대 200만원 면제. 3개월 내 전입·실거주 등 사후관리 요건이 있습니다"},
+    {"id":"exempt-birth","cat":"감면 신청","title":"출산·양육 주택 취득 감면 신청","items":["매매(분양)계약서","부동산 실거래신고필증","출생 자녀가 기재된 가족관계증명서","주민등록등본","감면신청서 (창구 비치)","신분증"],"note":"출생신고 후 약 1주일 뒤 가족관계증명서에 자녀가 기재됩니다. 출산일 전 1년 ~ 후 5년 내 취득한 12억 이하 1주택, 최대 500만원 공제"}
+  ],
+  "staff": [
+    {"id":"ch-guide","title":"제0장 · 이 인수인계서 사용법","sections":[
+      {"id":"s-frame","title":"모든 취득세 문제는 9칸 중 하나다","visual":"v-frame","blocks":[
+        {"label":"업무설명","text":"취득세를 포함해 어떤 세금이든, 결국 ①과세대상 ②납세지 ③매도·매수인 관계 ④취득원인 ⑤취득일자 ⑥과세표준 ⑦세율 ⑧감면 ⑨기납부세액 — 이 9가지 중 하나에 대한 문제다.\n내용이 정리가 안 되면 이 9칸을 채워가면서 정리하면 이해되고 보기도 편하다.\n민원의 대부분은 ⑥·⑦·⑧ 관련이고, 과세 입력할 때도 ⑥·⑦·⑧을 제일 조심해야 한다."},
+        {"label":"부과포인트","text":"각 취득유형 챕터는 [업무설명 → 받을서류 → 부과포인트 → FAQ → 처리사례] 순서로 구성했다.\n- 최종 목표: 받을서류·부과포인트만 봐도 부과에 문제가 없게 하는 것\n- 기억할 민원은 처리사례에 기록하고, 반복되는 것은 FAQ로 옮길 것 (이 화면의 수정 모드에서 직접 추가 가능)"}
+      ]},
+      {"id":"s-counter","title":"창구 5분 처리 프로세스","visual":"v-counter","blocks":[
+        {"label":"업무설명","text":"창구에서는 눈앞에서 5분 안에 서류를 받고 고지서를 출력해야 한다. 순서를 몸에 익히면 절반은 끝난다.\n1. 취득원인 파악 → 2. (유상이면) 관계 확인 → 3. 유형별 받을서류 수령·대조 → 4. 주택수·감면 확인 → 5. 과세 입력(⑥⑦⑧ 주의) → 6. 고지서 출력·납부 안내"},
+        {"label":"주의","text":"판단이 서지 않는 사안을 눈치 보여서 즉석 처리하지 말 것. 서류만 접수하고 '확인 후 연락드리겠다'가 정답이다. 틀린 고지서 한 장이 나중에 경정·추징·민원 세 배로 돌아온다."}
+      ]},
+      {"id":"s-basic","title":"기본개념 요약 (①~⑨)","visual":null,"blocks":[
+        {"label":"업무설명","text":"② 납세지: 부동산=물건 소재지, 차량=사용본거지\n③ 관계: 유상취득일 때 [기타 / 특수관계인 / 배우자·직계존비속] 3가지로 구분. 신고서에 관계 표시하도록 개정됨\n④ 취득원인: 원시취득(신축)·유상취득(매매)·무상취득(증여·상속)·간주취득(지목변경 등). 유상취득이 제일 신경 쓸 게 많다\n⑤ 취득일자: 원시=사용승인일, 유상=잔금지급일, 증여=계약일, 상속=사망일, 간주=지목(구조)변경일 (지령 §20)\n⑥ 과세표준: ③·④에 따라 매매가액 / 시가인정액 / 사실상취득가격 / 시가표준액 중 결정\n⑨ 기납부세액: 수정신고·추징 때 기존 납부액 있는지만 확인"},
+        {"label":"부과포인트","text":"부동산 취득세의 구조 (감면 없을 때)\n- 본세 = 과표 × 세율\n- 지방교육세 = 과표 × (표준세율-2%) × 20%. 주택 유상은 [과표 × 주택세율 × 50% × 20%]\n- 농특세(본세분) = 과표 × 2% × 10% = 0.2%\n감면이 있을 때\n- 지방교육세 = 납부할세액 × 10%\n- 농특세(감면분) = 감면세액 × 20%\n- 85㎡ 이하 서민주택은 농특세 비과세"}
+      ]}
+    ]},
+    {"id":"ch-sale","title":"제1장 · 매매 (유상취득)","sections":[
+      {"id":"s-rel","title":"관계 확인이 항상 먼저다","visual":"v-relation","blocks":[
+        {"label":"업무설명","text":"유상취득이 들어오면 매수인·매도인 관계부터 파악한다. 관계에 따라 과세표준·세율이 3갈래로 갈린다.\n- 기타(아무 관계 없음): 과표=매매가액, 세율=유상취득. 바로 부과\n- 특수관계인(형제·친인척·법인과 그 임원 등): 세율은 매매지만, 저가양수면 과표=시가인정액\n- 배우자·직계존비속: 원칙 증여. 대가 지급이 입증될 때만 유상"},
+        {"label":"받을서류","text":"- 기타: 매매계약서, 부동산실거래신고필증\n- 특수관계인: 매매계약서, 부동산실거래신고필증\n- 배우자·직계존비속: 매매계약서, 부동산실거래신고필증, 계좌이체내역, 소득금액증명원"},
+        {"label":"부과포인트","text":"부당행위계산(지령 §18의2): 특수관계인으로부터 시가인정액보다 낮은 가격으로 취득 + 차액이 3억 이상이거나 시가인정액의 5% 이상 → 과세표준은 시가인정액\n배우자·직계존비속(지법 §7⑪): '대가 준 거 맞음?'(계좌이체) + '니 재산으로 준 거 맞음?'(소득금액증명) 둘 다 확인. 부부 간 거래는 매수인 본인 소득만 인정\n시가인정액이 여러 개면 취득일 전후로 계약일이 가장 가까운 것을 사용 (같으면 평균액). 시가인정액이 없으면 시가표준액 사용 가능"},
+        {"label":"FAQ","text":"Q. 모친이 아들에게 지분 50%를 7,400만원에 매매. 소득·이체 확인돼서 매매로 인정했는데 왜 과표는 시가인정액 1억 2,750만원?\n- 매매로 인정되어도 특수관계인 간 거래라 저가양수(차액 3억↑ 또는 5%↑)에 해당하면 과표는 시가인정액. 시가인정액 2억 5,500만원의 지분 절반을 적용한 것\nQ. 형제 간 매매, 시가인정액 자료가 아예 없음. 시가표준액으로 부당행위 판단해도 됨?\n- 가능. 시가인정액 산정이 어려우면 시가표준액 사용 (지법 §10의2②3)\nQ. 대물변제로 취득. 서류는?\n- 채무계약서 + 검인된 대물변제계약서. 실거래신고 대상이 아니라 검인으로 갈음. 과표는 Max(대물변제액, 시가인정액) — 24.1.1. 개정"},
+        {"label":"처리사례","text":"잔금지급일이 신고필증과 다르다며 이체내역을 가져온 경우: 실거래 변경신고를 하도록 안내하고 받는 것이 원칙. 잔금일 60일 내 미등기 시 등기해태과태료 문제도 있어 변경신고가 민원인에게도 유리하다.\n토지와 가설건축물을 묶은 계약서: 가설건축물은 빼고 부과. 가설은 축조신고 시점에 별도 부과."}
+      ]},
+      {"id":"s-house","title":"주택 유상취득 — 중과 판단 (제일 중요)","visual":"v-house","blocks":[
+        {"label":"업무설명","text":"주택 유상취득은 '1세대 주택 수'를 셀 줄 알아야 한다. 주택 취득세 문의의 대부분이 중과 여부다.\n판단은 반드시 2단계로 쪼개서: ①'1세대'가 누구까지인가 → ②그 세대의 '주택 수'가 몇인가."},
+        {"label":"받을서류","text":"매매계약서, 부동산실거래신고필증\n법인이 사택용(전용 60㎡ 이하 공동주택)으로 중과제외 받으려면: 사택사용계획서 + 직원명부 추가"},
+        {"label":"부과포인트","text":"1세대(지령 §28의3): 취득자 + 주민등록표상 가족(민법 §779, 동거인 제외)\n- 미혼 30세 미만 자녀: 원칙 같은 세대. 단, 중위소득 40% 이상 소득 + 별도 주소면 별도세대\n- 65세 이상 직계존속 봉양 합가: 별도세대로 봄\n- 취득 후 60일 내 그 주택으로 전입해 세대분리해도 별도세대 인정\n주택 수(지령 §28의4): 주택 + 입주권 + 분양권 + 주거용 오피스텔(20.8.12. 이후분)\n- 제외: 공시 1억 이하 주택, 상속 후 5년 내 주택, 무허가주택, 공시 1억 이하 부속토지만 소유, 가정어린이집·농어촌주택 등\n- 분양권·입주권으로 취득하는 주택: 1세대는 잔금일 기준, 주택 수는 분양권 '계약일' 기준\n- 지분·부속토지만 취득해도 중과 판단은 '전체 주택'의 시가표준액 기준 (1억 이하 여부)\n세율(비조정 기준): 1~2주택 일반(1~3%) / 3주택 8% / 4주택 이상·법인 12%\n법인은 무조건 중과. 예외는 '공시 1억 이하'와 '사택용' 정도만 기억"},
+        {"label":"FAQ","text":"Q. 무허가주택은 주택 수에 넣음?\n- 안 넣음. 취득할 때도 주택세율 미적용 (과표는 주택가격, 세율은 일반세율)\nQ. 3주택인데 취득 직후 1채 팔 예정. 일반세율?\n- 아니오. 일시적 2주택 예외만 있고 '일시적 3주택'은 없음. 잔금 전에 정리해야 주택 수에서 빠짐\nQ. 상속받은 주택 있는데 주택 수 포함?\n- 상속개시일부터 5년간 제외\nQ. 분양권 계약 후 결혼했는데 배우자가 유주택자. 중과?\n- 지령 §28의4⑥6 신설: 혼인 전 취득한 분양권으로 주택 취득 시 배우자가 혼인 전부터 소유한 주택은 제외\nQ. 다주택 중과 대상인데 생애최초 감면도 대상이면?\n- 감면 적용 시 중과세율 배제. 단, 추징 시에는 중과세율로 추징"},
+        {"label":"처리사례","text":"타 시군 주택가격이 잘못 산정되어(2층 사무실이 주택으로 잡힘) 1억을 넘긴 경우: 해당 지자체 재산세팀에 확인 요청 → 재산정 공문을 받아 1억 이하로 확인되면 주택 수에서 제외.\n동시에 2개 이상 취득하는 경우: 납세자가 정하는 순서대로 취득한 것으로 본다.\n상속 공동소유 주택은 지분 최대 상속인(같으면 거주자, 없으면 연장자)을 소유자로 본다."}
+      ]},
+      {"id":"s-apt","title":"일반분양 (아파트 분양)","visual":null,"blocks":[
+        {"label":"업무설명","text":"분양권에 의해 아파트를 취득하는 경우. 입주 시즌에는 창구가 이걸로 돌아간다. 입력 순서를 외워둘 것."},
+        {"label":"받을서류","text":"신분증, 분양계약서(옵션 포함), 분양금 납부확인서(옵션 포함), 부동산실거래신고필증, 가족관계증명서, 주민등록등본\n전매 시 추가: 최초 신고자의 신고필증(또는 검인 분양계약서), 전매 분양계약서(±프리미엄 반영), 전매 신고필증. 분양권 증여받았으면 검인 증여계약서"},
+        {"label":"부과포인트","text":"- 취득일자: 잔금완납일 (사용승인 전에 완납했으면 사용승인일)\n- 계약일자: 분양권 계약일 (전매 시 권리의무승계일)\n- 취득가액 = 프리미엄(±) + 각 대금납부확인서 입금액(할인 반영) - 부가세\n- 연체료는 과표 제외, 할인액은 반영. 마이너스 프리미엄도 반영 (단, 특수관계인 간 거래의 -프리미엄은 불인정)\n- 사용승인 '전'에 지출한 옵션·인테리어 비용은 과표 포함\n- 세대원·보유주택 확인 후 중과·감면 코드 입력. 전매·증여 이력이 화려하면 분양권 취득일 기준 주택 수 산정 주의\n- 농특세: 85㎡ 이하 비과세"},
+        {"label":"FAQ","text":"Q. 30세대 미만 단지라 실거래신고필증이 없다는데?\n- 맞음. 30세대 미만(건축법 적용)은 실거래신고 대상이 아니라 검인 대상. 검인된 분양계약서로 갈음\nQ. 중도금을 안 내고 잔금만 낸 상태면 취득일은?\n- 사실상 잔금지급일은 '마지막 남은 돈을 지급한 날'이므로 중도금 납부일이 취득일이 될 수 있음. 케이스 검토 필요"}
+      ]}
+    ]},
+    {"id":"ch-gift","title":"제2장 · 증여 (무상취득)","sections":[
+      {"id":"s-gift","title":"일반 증여 · 부담부증여","visual":null,"blocks":[
+        {"label":"업무설명","text":"증여의 과세표준은 '시가인정액'이 원칙 — 이것부터 기억. 배우자·직계존비속 간 유상거래가 인정되지 않는 경우에도 일반증여로 과세한다.\n부담부증여: 인수한 채무액만큼은 유상취득, 나머지는 무상취득으로 나눠서 과세."},
+        {"label":"받을서류","text":"- 일반 증여: 증여계약서(검인), 증여자 인감증명서\n- 부담부증여 추가: 채무 입증서류 — 등기부등본상 저당권 등, 금융기관 채무자변경확인서, 임대차계약서, 판결문·공정증서 등 (취득일 속한 달 말일부터 3개월 내 인수분)"},
+        {"label":"부과포인트","text":"- 시가표준액 1억 이하 부동산의 무상취득: 시가인정액과 시가표준액 중 납세자 선택 (지법 §10의2②2). 판단은 '실제 취득하는 부분' 기준 — 지분 50% 증여면 지분 해당 시가표준액으로 판단\n- 부담부증여 계산 예: 시가인정액 4억·채무 3억 → 3억 유상 + 1억 무상. 채무가 시가인정액보다 크면 전액 유상\n- 배우자·직계존비속 간에는 부담부증여 규정이 아니라 지법 §7⑪로 채무액 유상 여부 판단\n- 신고기한: 부담부증여도 전체를 증여와 동일하게 3개월 (24.1.1. 개정)\n- 임대인이 전소유자 명의인 임대차계약서도 인정 (임대인 지위 승계)"},
+        {"label":"FAQ","text":"Q. 시가인정액 없음, 시가표준액 10억, 채무 3억, 특수관계인 간 증여. 계산은?\n- 증여이므로 부당행위계산은 볼 필요 없음. 3억 유상 + 7억 무상으로 세율 적용\nQ. 명의신탁해지로 소유권 이전하면?\n- 신탁법상 신탁등기가 병행된 게 아니면 비과세 아님. 무상취득으로 과세 (종중 부동산 대부분 해당)\nQ. 이혼 재산분할은?\n- 특례세율(2% 경감) 적용. 서류: 혼인관계증명서 + 검인 재산분할협의서(협의이혼) 또는 결정문(재판이혼)"}
+      ]}
+    ]},
+    {"id":"ch-inherit","title":"제3장 · 상속","sections":[
+      {"id":"s-inherit","title":"일반 상속 · 1가구1주택 특례","visual":null,"blocks":[
+        {"label":"업무설명","text":"신고기한은 사망일이 속하는 달의 말일부터 6개월. 협의 여부에 따라 받을서류가 달라진다.\n'1가구 1주택 특례세율(0.8%)'의 1가구는 '1세대 주택 수'의 1세대와 다른 개념 — 별도세대 예외규정이 없다. 헷갈리지 말 것."},
+        {"label":"받을서류","text":"- 협의 전(법정지분): 피상속인 기본증명서, 피상속인 기준 가족관계증명서\n- 협의 완료: 위 서류 + 상속재산분할협의서 + 상속인 전원 인감증명서 (인감은 무허가건물 있을 때 필수)"},
+        {"label":"부과포인트","text":"- 세율: 농지 2.3% / 농지 외 2.8% / 1가구1주택 0.8% (특례 적용 시 85㎡ 초과여도 농특세 비과세)\n- 1가구: 상속인 + 주민등록표상 가족. 상속인의 배우자, 미혼 30세 미만 직계비속은 주소가 달라도 같은 가구로 봄\n- 무주택 상속인이 주택 2채를 상속받으면 특례 불가 (상속으로 '1주택'이 되는 경우만)\n- 상속재산분할협의서는 상속인별 개별 날인본도 인정"},
+        {"label":"처리사례","text":"피상속인이 무허가주택 소유 + 사망 10년 경과: 부과제척기간 도과로 과세 불가, 등기가 없어 등록면허세도 없음. 서류만 받아 재산세팀 이관.\n무허가+미등기 건물 혼재 상속: 전부 상속 취득세로 총 연면적 기준 과세. 나눌 실익 없음.\n협의 불성립으로 심판청구한 경우: 기본·가족관계증명서 + 상속재산분할 결정문 받으면 됨."}
+      ]}
+    ]},
+    {"id":"ch-build","title":"제4장 · 신축·증축·개수","sections":[
+      {"id":"s-build","title":"신축·증축 (원시취득)","visual":null,"blocks":[
+        {"label":"업무설명","text":"23년 과세표준 개편으로 개인 원시취득도 '사실상 취득가격'이 원칙. 도급계약을 했다면 설계·감리·시공계약서 3종은 기본으로 존재한다고 보면 된다 (100㎡ 초과면 기술지도계약서도 있음 → 도급계약의 방증).\n개인은 연면적 200㎡를 기준으로 서류 받는 강도를 조절."},
+        {"label":"받을서류","text":"- 법인: 계정별원장 또는 세금계산서·부담금 납부확인서 일체\n- 개인 200㎡ 이상: 건축물대장, 설계·감리·시공·소방계약서, 승강기·주차장 확인, 각종 부담금, 추가납입 이체내역, 토공사비용(지목변경 과세용)\n- 개인 200㎡ 미만: 건축물대장, 공사비 증빙(세금계산서·영수증). 없으면 공사비용 신고서 직접 기재, 너무 낮으면 시가표준액 과세"},
+        {"label":"부과포인트","text":"- 대지가 아닌 곳의 신축 = 신축 취득세 + 지목변경 취득세 2건\n- 과표 배분: 토목측량·토공사 → 지목변경 / 설계·감리·시공(토공사 외) → 신축\n- 토공사 구분이 안 되어 있으면: 전부 신축 과표에 넣고, 지목변경은 공시지가 변동분으로 부과 (민원인에게 불리하니 원가계산서·견적서 받아오게 안내)\n- 과표 제외: 전기·가스·상수도 인입비(분담금), 개발부담금·학교용지부담금 등 / 과표 포함: 농지보전부담금, 상·하수도 원인자부담금 등\n- 사실상 취득가격이 시가표준액보다 낮게 확인 안 되면 시가표준액으로 (지법 §10의4②)"},
+        {"label":"FAQ","text":"Q. 증축하면서 리모델링·인테리어까지 62억 공사. 전부 증축 과세?\n- 아니오. 증축(3.16%) + 대수선=개수(2.2%) + 단순인테리어(비과세)로 3분할. 배분 기준은 법인이 소명. 승강기 설치비는 개수로\nQ. 수기 견적서만 가져왔는데 인정?\n- 시가표준액보다 높으면 날짜·서명(도장) 받고 인정 가능\nQ. 사용승인 전 잔금 낸 분양자의 취득일은?\n- 건축주 원시취득일과 분양자 승계취득일 모두 사용승인일(임시사용승인일)\nQ. 미준공 건물에 보존·이전 등기가 된 경우?\n- 취득세가 아니라 등록면허세 대상. 이후 사용승인 나면 특례세율(2%) 취득세 별도"},
+        {"label":"처리사례","text":"개수(승강기 교체) 부과 틀: 과세대상=시설물(엘리베이터), 취득일=승강기 준공일, 과표=설치비용, 세율=개수 특례(지법 §15②). 서류는 세금계산서(또는 계정별원장) + 승강기 준공검사서."}
+      ]}
+    ]},
+    {"id":"ch-exempt","title":"제5장 · 주요 감면","sections":[
+      {"id":"s-first","title":"생애최초 주택 감면","visual":null,"blocks":[
+        {"label":"업무설명","text":"부동산 감면 중 최다 빈도. 본인+배우자가 주택 소유 사실이 없으면, 12억 이하 주택 유상취득(부담부증여 제외) 시 200만원 한도 면제. 미성년자 제외. 전화 문의가 많으니 FAQ를 계속 쌓을 것."},
+        {"label":"받을서류","text":"매매계약서, 부동산거래신고필증, 가족관계증명서, 주민등록등본(초본 불가 — 등본에만 1세대가 나옴), 감면신청서"},
+        {"label":"부과포인트","text":"- 감면 시 다주택 중과세율 배제 (지특법 §36의3). 추징할 때는 중과세율로 추징\n- 지분 취득: 본인 지분 비율로 한도 안분 (부부 공동 50:50 → 각 100만원 한도)\n- 다가구주택: 가구당 면적비율로 한도 안분. 구분소유적 공유관계면 거주 부분 비율로\n- 주거용 오피스텔·무허가주택 취득 이력은 무관 (주택으로 안 봄)\n- 분양권 보유도 무관 (지법 §11①8의 주택이 아님)\n- 상속 미등기 지분 보유는 감면 불가. 단, 추후 협의로 지분 포기 시 소급하여 무주택 인정 → 5년 내 경정청구로 환급 가능\n- 배우자의 과거 주택 이력: 이혼·사망 후 본인 단독 취득이면 가능"}
+      ]},
+      {"id":"s-birth","title":"출산·양육 주택 감면","visual":null,"blocks":[
+        {"label":"업무설명","text":"24.1.1. 시행. 생애최초와 비슷하지만 공제액이 커서(500만원) 생애최초 감면 후 출산한 경우 갈아타기 문의가 온다."},
+        {"label":"받을서류","text":"매매(분양)계약서, 실거래신고필증, 출생 자녀가 기재된 가족관계증명서(출생신고 후 약 1주일 소요), 주민등록등본, 감면신청서"},
+        {"label":"부과포인트","text":"- 요건: 자녀 출산 부모(미혼모·부 포함)가 해당 자녀와 상시 거주 목적으로, 출산일부터 5년 내(출산 전 1년 내 취득 포함) 취득가액 12억 이하 1주택 취득 + 1가구1주택(취득 후 3개월 내 포함)\n- 산출세액 500만원 이하 면제, 초과 시 500만원 공제\n- 추징: 3개월 내 상시거주 미개시, 또는 상시거주 3년 미만 상태에서 매각·증여·임대 등\n- 일몰(적용기한) 연장 여부는 매년 지특법 개정 확인할 것"}
+      ]}
+    ]}
+  ]
+}
+</script>
 
 <script>
-  var DAY=86400000;
-  /* 세목: 과세연도로 신·구 판정. gu(직접 지정)만 수동 토글 */
-  var SEMOK=[
-    {v:'jaesan',  t:'재산세'},
-    {v:'jadongcha',t:'자동차세(정기분)'},
-    {v:'jumin',   t:'주민세'},
-    {v:'deungrok',t:'등록면허세(면허분)'},
-    {v:'jawon',   t:'지역자원시설세'},
-    {v:'etc',     t:'기타(직접 지정)'}
-  ];
-  var YEARS=(function(){var a=[];for(var y=2026;y>=2016;y--)a.push(y);return a;})();
-  var rid=0;
+/* =====================================================================
+   취득세 민원 도우미
+   ---------------------------------------------------------------------
+   ◆ 데이터(서류 목록·인수인계서·설정)는 위 <script id="app-data"> JSON에
+     들어 있습니다. 직원 전용 화면의 [수정 모드]에서 고친 뒤
+     [수정본 HTML 내려받기]로 새 파일을 받아 서버 파일을 교체하세요.
+   ◆ 세율은 아래 이 스크립트 상단의 계산 함수(calcTax)에 있습니다.
+     법 개정 시 숫자를 수정하고 반드시 지방세법과 대조·검증하세요.
+   ===================================================================== */
+"use strict";
+const $=(s,el=document)=>el.querySelector(s), $$=(s,el=document)=>[...el.querySelectorAll(s)];
+const esc=t=>String(t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const won=n=>Math.floor(n).toLocaleString("ko-KR");
+const STORAGE_KEY="jibangse-acq-helper";
 
-  function fmt(el){var v=el.value.replace(/[^0-9]/g,'');el.value=v?Number(v).toLocaleString('ko-KR'):'';}
-  function won(n){return Math.floor(n).toLocaleString('ko-KR');}
-  function addMonths(d,m){var y=d.getFullYear(),mo=d.getMonth()+m,day=d.getDate();var res=new Date(y,mo,1);
-    var last=new Date(res.getFullYear(),res.getMonth()+1,0).getDate();res.setDate(Math.min(day,last));return res;}
-  function monthsElapsed(due,pay,cap){if(pay<=due)return 0;var c=0;while(c<cap){if(addMonths(due,c+1)<=pay)c++;else break;}return c;}
-  function dval(id){var v=document.getElementById(id).value;return v?new Date(v+'T00:00:00'):null;}
+/* ---------- 데이터 로드 ---------- */
+const EMBED=JSON.parse($("#app-data").textContent);
+let DATA=EMBED;
+try{
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(raw){const p=JSON.parse(raw); if(p&&p.version===EMBED.version) DATA=p;}
+}catch(e){/* 사생활 보호 모드 등에서는 임시저장 없이 동작 */}
+function saveLocal(){ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA));}catch(e){} }
+$("#rate-basis").textContent=" (세율 기준: "+DATA.settings.rateBasis+")";
 
-  function switchMode(m){var g=m==='gozi';
-    document.getElementById('mode-gozi').classList.toggle('hidden',!g);
-    document.getElementById('mode-shingo').classList.toggle('hidden',g);
-    document.getElementById('tab-gozi').setAttribute('aria-selected',g);
-    document.getElementById('tab-shingo').setAttribute('aria-selected',!g);}
+/* ---------- 탭 ---------- */
+$$(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+function showTab(id){
+  $$(".tab").forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
+  $$(".view").forEach(v=>v.classList.toggle("on",v.id==="view-"+id));
+  if(id==="staff") renderStaff();
+  window.scrollTo({top:0});
+}
 
-  /* ---------- 체납 건 행 ---------- */
-  function addRow(){
-    rid++; var id=rid;
-    var semokOpts=SEMOK.map(function(s){return '<option value="'+s.v+'">'+s.t+'</option>';}).join('');
-    var yearOpts=YEARS.map(function(y){return '<option value="'+y+'"'+(y===2025?' selected':'')+'>'+y+'년분</option>';}).join('');
-    var div=document.createElement('div');
-    div.className='brow'; div.dataset.id=id;
-    div.innerHTML=
-      '<div class="brow-head"><span class="no">체납 '+id+'</span>'
-      +'<button class="rm" title="삭제" onclick="rmRow('+id+')">✕</button></div>'
-      +'<div class="fgrid">'
-        +'<div><label class="lbl">세목 (무슨 세금)</label><select id="r'+id+'-semok" onchange="onSemok('+id+');recalcGozi()">'+semokOpts+'</select></div>'
-        +'<div id="r'+id+'-yearwrap"><label class="lbl">과세연도</label><select id="r'+id+'-year" onchange="recalcGozi()">'+yearOpts+'</select></div>'
-        +'<div id="r'+id+'-guwrap" class="hidden"><label class="lbl">적용 체계</label><select id="r'+id+'-gu" onchange="recalcGozi()"><option value="0">신 납부지연가산세</option><option value="1">구 가산금</option></select></div>'
-        +'<div><label class="lbl">체납 세액</label><div class="money-wrap"><input type="text" id="r'+id+'-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);recalcGozi()"/><span class="won">원</span></div></div>'
-        +'<div><label class="lbl">고지서 납부기한</label><input type="date" id="r'+id+'-due" oninput="recalcGozi()"/></div>'
-      +'</div>'
-      +'<div id="r'+id+'-res"></div>';
-    document.getElementById('rows').appendChild(div);
-    recalcGozi();
+/* =====================================================================
+   1. 취득세 계산기
+   ===================================================================== */
+const S={};           // 계산기 상태
+let stepIdx=0;
+const LABELS={
+  obj:{house:"주택",farm:"농지",land:"그 외 부동산"},
+  cause:{sale:"매매·유상",gift:"증여",inherit:"상속",build:"신축·증축"},
+  saletype:{old:"기존 주택 매매",apt:"아파트 분양"},
+  rel:{other:"일반 거래",related:"특수관계인 간",family:"배우자·직계존비속 간"},
+  buyer:{person:"개인",corp:"법인"},
+  exempt:{none:"감면 없음",first:"생애최초",birth:"출산·양육"}
+};
+
+function stepList(){
+  const st=["obj","cause"];
+  if(S.cause==="sale"){
+    if(S.obj==="house") st.push("saletype");
+    if(!(S.obj==="house"&&S.saletype==="apt")) st.push("rel");
+    if(S.obj==="house") st.push("buyer");
+    if(S.obj==="house"&&S.buyer==="person") st.push("count");
   }
-  function rmRow(id){var el=document.querySelector('.brow[data-id="'+id+'"]');if(el)el.remove();recalcGozi();}
-  function onSemok(id){
-    var etc=document.getElementById('r'+id+'-semok').value==='etc';
-    document.getElementById('r'+id+'-yearwrap').classList.toggle('hidden',etc);
-    document.getElementById('r'+id+'-guwrap').classList.toggle('hidden',!etc);
-  }
+  if(S.cause==="inherit"&&S.obj==="house") st.push("heir");
+  if(S.obj==="house") st.push("area");
+  st.push("price");
+  if(S.obj==="house"&&S.cause==="sale"&&S.buyer==="person") st.push("exempt");
+  st.push("result");
+  return st;
+}
+function set(k,v){ S[k]=v; go(1); }
+function go(d){
+  const list=stepList();
+  stepIdx=Math.min(Math.max(stepIdx+d,0),list.length-1);
+  renderCalc();
+}
+function restart(){ for(const k in S) delete S[k]; stepIdx=0; renderCalc(); }
 
-  function calcRow(tax,due,pay,isOld){
-    if(!tax||!due||!pay||pay<=due) return {ok:false};
-    var first=Math.floor(tax*0.03/10)*10;
-    var months=monthsElapsed(due,pay,60);
-    var rate=isOld?0.0075:0.0066, th=isOld?300000:450000;
-    var applyM=tax>=th, monthly=applyM?Math.floor(tax*rate*months/10)*10:0;
-    return {ok:true,first:first,months:months,monthly:monthly,rate:rate,th:th,applyM:applyM,penalty:first+monthly,total:tax+first+monthly};
-  }
+function crumbs(){
+  const parts=[];
+  if(S.obj) parts.push(LABELS.obj[S.obj]);
+  if(S.cause) parts.push(LABELS.cause[S.cause]);
+  if(S.saletype) parts.push(LABELS.saletype[S.saletype]);
+  if(S.rel&&S.cause==="sale") parts.push(LABELS.rel[S.rel]);
+  if(S.buyer==="corp") parts.push("법인");
+  if(S.count) parts.push((S.count>=4?"4주택 이상":S.count+"주택")+(S.adj?" · 조정지역":""));
+  if(S.cause==="inherit"&&S.heir!=null) parts.push(S.heir?"1가구 1주택":"일반 상속");
+  if(S.area) parts.push(S.area==="small"?"85㎡ 이하":"85㎡ 초과");
+  if(S.price) parts.push(won(S.price)+"원");
+  if(S.exempt&&S.exempt!=="none") parts.push(LABELS.exempt[S.exempt]+" 감면");
+  return parts.length?`<div class="crumbs">${parts.map(p=>`<span class="crumb">${esc(p)}</span>`).join("")}</div>`:"";
+}
+function opts(list){
+  return `<div class="opts">`+list.map(o=>
+    `<button class="opt" data-act="${o.act}"><span class="o-t">${o.t}</span>${o.d?`<span class="o-d">${o.d}</span>`:""}</button>`).join("")+`</div>`;
+}
+function nav(showNext){
+  return `<div class="calc-nav">
+    <button class="btn ghost" data-act="back" ${stepIdx===0?"disabled":""}>← 이전</button>
+    ${showNext?`<button class="btn" data-act="next">다음 →</button>`:`<button class="btn ghost" data-act="restart">처음부터</button>`}
+  </div>`;
+}
 
-  function recalcGozi(){
-    var pay=dval('g-pay');
-    var rows=document.querySelectorAll('#rows .brow');
-    var sumTax=0,sumPen=0,valid=0;
-    rows.forEach(function(r){
-      var id=r.dataset.id;
-      var semok=document.getElementById('r'+id+'-semok').value;
-      var tax=Number((document.getElementById('r'+id+'-tax').value||'').replace(/[^0-9]/g,''))||0;
-      var due=dval('r'+id+'-due');
-      var isOld;
-      if(semok==='etc'){ isOld=document.getElementById('r'+id+'-gu').value==='1'; }
-      else { var yr=Number(document.getElementById('r'+id+'-year').value); isOld=yr<2024; }
-      var badge='<span class="badge '+(isOld?'gu':'sin')+'">'+(isOld?'구 가산금 체계 (~2023)':'납부지연가산세 체계 (2024~)')+'</span>';
-      var res=document.getElementById('r'+id+'-res');
-      if(!pay){ res.innerHTML=badge; return; }
-      var c=calcRow(tax,due,pay,isOld);
-      if(!c.ok){
-        res.innerHTML=badge+'<div class="brow-res"><span class="detail">세액·납부기한을 입력하세요 (납기 이내면 가산세 없음).</span><span class="sub">0<small>원</small></span></div>';
-        return;
+const STEPS={
+  obj:()=>`<div class="q-title">무엇을 취득하시나요?</div>
+    <div class="q-desc">과세물건에 따라 세율 체계가 달라집니다.</div>`+
+    opts([
+      {act:"obj:house",t:"주택",d:"아파트·단독·연립 등 (건축물대장·등기부상 주택)"},
+      {act:"obj:farm",t:"농지",d:"전·답·과수원"},
+      {act:"obj:land",t:"그 외 부동산",d:"토지(농지 외)·상가·오피스텔·건물 등"}
+    ])+nav(false),
+
+  cause:()=>`<div class="q-title">어떻게 취득하시나요?</div>
+    <div class="q-desc">취득원인에 따라 세율·과세표준·신고기한이 달라집니다.</div>`+
+    opts([
+      {act:"cause:sale",t:"매매 (돈을 주고 삼)",d:"매매·분양·경매 등 유상취득 · 잔금일부터 60일 내 신고"},
+      {act:"cause:gift",t:"증여 (무상으로 받음)",d:"계약일이 속한 달 말일부터 3개월 내 신고"},
+      {act:"cause:inherit",t:"상속",d:"사망일이 속한 달 말일부터 6개월 내 신고"},
+      {act:"cause:build",t:"신축·증축",d:"건물을 새로 지음 · 사용승인일부터 60일 내 신고"}
+    ])+nav(false),
+
+  saletype:()=>`<div class="q-title">어떤 매매인가요?</div>
+    <div class="q-desc">신축 아파트 분양은 준비 서류가 다릅니다.</div>`+
+    opts([
+      {act:"saletype:old",t:"기존 주택 매매",d:"이미 지어진 주택을 개인·법인에게서 삼"},
+      {act:"saletype:apt",t:"아파트 분양 (분양권)",d:"분양권으로 신축 아파트를 취득 (전매 포함)"}
+    ])+nav(false),
+
+  rel:()=>`<div class="q-title">파는 사람(매도인)과의 관계는?</div>
+    <div class="q-desc">가족 간 거래는 과세표준과 세율 판단이 달라집니다.</div>`+
+    opts([
+      {act:"rel:other",t:"아무 관계 없음",d:"일반적인 거래"},
+      {act:"rel:related",t:"특수관계인",d:"형제자매·친인척, 본인이 임원인 법인 등"},
+      {act:"rel:family",t:"배우자 · 직계존비속",d:"부부, 부모↔자녀, 조부모↔손자녀"}
+    ])+
+    (S.rel==="family"?"":"")+nav(false),
+
+  buyer:()=>`<div class="q-title">누가 취득하나요?</div>
+    <div class="q-desc">법인의 주택 유상취득은 주택 수와 관계없이 중과세율(12%)이 적용됩니다.</div>`+
+    opts([
+      {act:"buyer:person",t:"개인",d:""},
+      {act:"buyer:corp",t:"법인",d:"공시가격 1억 이하 주택, 사원용 주택(60㎡ 이하) 등은 중과 제외 — 담당자 확인 필요"}
+    ])+nav(false),
+
+  count:()=>`<div class="q-title">이번 취득으로 우리 세대는 몇 주택이 되나요?</div>
+    <div class="q-desc">이번에 취득하는 주택을 <b>포함</b>하여, 1세대(주민등록표상 가족 전원)가 소유한
+      주택 + 분양권 + 조합원입주권 + 주거용 오피스텔 수입니다.<br>
+      공시가격 1억 이하 주택, 상속 후 5년 이내 주택 등은 빼고 셉니다. 판단이 어려우면 그대로 진행 후 창구에서 확인하세요.</div>
+    <label class="chk"><input type="checkbox" id="chk-adj" ${S.adj?"checked":""}>
+      <span><span class="c-t">취득하는 주택이 조정대상지역에 있음</span>
+      <span class="c-d">현재 대부분 지역은 비조정입니다. 체크하지 않으면 비조정 기준으로 계산합니다.</span></span></label>
+    <div style="height:12px"></div>`+
+    opts([
+      {act:"count:1",t:"1주택",d:"이번 주택이 유일"},
+      {act:"count:2",t:"2주택",d:""},
+      {act:"count:3",t:"3주택",d:""},
+      {act:"count:4",t:"4주택 이상",d:""}
+    ])+nav(false),
+
+  heir:()=>`<div class="q-title">상속으로 '1가구 1주택'이 되시나요?</div>
+    <div class="q-desc">무주택 가구가 상속으로 처음 1주택이 되는 경우 특례세율(0.8%)이 적용됩니다.
+      여기서 1가구는 상속인과 주민등록표상 가족 기준이며, 상속으로 2주택 이상이 되면 해당하지 않습니다.</div>`+
+    opts([
+      {act:"heir:1",t:"예 — 1가구 1주택",d:"가구 전체가 무주택이었고 상속으로 1주택이 됨"},
+      {act:"heir:0",t:"아니오 — 일반 상속",d:"기존 주택이 있거나 2주택 이상 상속"}
+    ])+nav(false),
+
+  area:()=>`<div class="q-title">전용면적이 85㎡ 이하인가요?</div>
+    <div class="q-desc">국민주택규모(85㎡) 이하 주택은 농어촌특별세가 비과세됩니다.</div>`+
+    opts([
+      {act:"area:small",t:"85㎡ 이하",d:"전용 25.7평 이하 (일반적인 국민평형 84㎡ 포함)"},
+      {act:"area:big",t:"85㎡ 초과",d:""}
+    ])+nav(false),
+
+  price:()=>{
+    const g={sale:["취득가액(매매가액)을 입력하세요","실거래 신고한 금액. 분양은 분양대금(옵션·프리미엄 포함, 부가세 제외)"],
+      gift:["시가인정액을 입력하세요","최근 매매사례가액·감정가액 등. 모르시면 유사 아파트 실거래가를, 없으면 시가표준액(공시가격)을 입력해 보세요"],
+      inherit:["시가표준액(공시가격)을 입력하세요","상속의 과세표준은 시가표준액입니다. 부동산공시가격알리미에서 확인할 수 있습니다"],
+      build:["총 공사비용을 입력하세요","설계·감리·시공비 등 사실상 취득에 든 비용. 시가표준액보다 낮으면 시가표준액으로 과세될 수 있습니다"]}[S.cause];
+    return `<div class="q-title">${g[0]}</div><div class="q-desc">${g[1]}</div>
+      <div class="field"><div class="money-row">
+        <input id="price-in" inputmode="numeric" placeholder="예: 350,000,000" value="${S.price?won(S.price):""}">
+        <span class="unit">원</span></div>
+      <div class="money-echo" id="price-echo"></div></div>`+nav(true);
+  },
+
+  exempt:()=>`<div class="q-title">감면 대상에 해당하시나요?</div>
+    <div class="q-desc">아래 요건을 대략 충족하면 선택하세요. 실제 감면은 신청서 접수와 요건 심사 후 확정됩니다.</div>`+
+    opts([
+      {act:"exempt:none",t:"해당 없음 / 잘 모름",d:""},
+      {act:"exempt:first",t:"생애최초 주택 구입",d:"본인과 배우자 모두 주택 소유 이력 없음 · 취득가액 12억 이하 · 최대 200만원 면제"},
+      {act:"exempt:birth",t:"출산·양육 (자녀 출산)",d:"출산일 전 1년~후 5년 내 취득한 12억 이하 1주택 · 자녀와 상시 거주 · 최대 500만원 공제"}
+    ])+nav(false),
+
+  result:()=>renderResult()
+};
+
+function renderCalc(){
+  const list=stepList(), id=list[stepIdx];
+  $("#calc-root").innerHTML=crumbs()+STEPS[id]();
+  if(id==="price"){
+    const inp=$("#price-in"), echo=$("#price-echo");
+    const upd=()=>{ const n=Number(inp.value.replace(/[^0-9]/g,""))||0;
+      inp.value=n?won(n):""; echo.textContent=n?"= "+korMoney(n):""; S.price=n; };
+    inp.addEventListener("input",upd); upd(); inp.focus();
+  }
+  const adj=$("#chk-adj"); if(adj) adj.addEventListener("change",e=>{S.adj=e.target.checked;});
+}
+$("#calc-root").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const a=b.dataset.act;
+  if(a==="back"){go(-1);return}
+  if(a==="restart"){restart();return}
+  if(a==="next"){ if(stepList()[stepIdx]==="price"&&!(S.price>0)){alert("금액을 입력해 주세요.");return} go(1);return }
+  const [k,v]=a.split(":");
+  if(k==="count") S.count=Number(v);
+  else if(k==="heir") S.heir=v==="1";
+  else S[k]=v;
+  if(k==="obj"||k==="cause"){ // 앞 단계 변경 시 뒷 단계 초기화
+    ["saletype","rel","buyer","count","heir","area","exempt"].forEach(x=>delete S[x]);
+    if(k==="obj") delete S.cause;
+  }
+  if(k==="saletype"&&v==="apt") S.rel="other";
+  go(1);
+});
+function korMoney(n){
+  const eok=Math.floor(n/1e8), man=Math.floor((n%1e8)/1e4), rest=n%1e4;
+  let s=""; if(eok)s+=eok+"억 "; if(man)s+=man.toLocaleString()+"만 "; if(rest)s+=rest.toLocaleString();
+  return (s.trim()||"0")+"원";
+}
+
+/* ---------- 세액 계산 엔진 (세율표: 인수인계서 기준 — 개정 시 검증 필수) ---------- */
+function houseNormalRate(v){
+  if(v<=6e8) return 1.0;
+  if(v<=9e8) return Math.min(3,Math.max(1.01, v*2/3/1e8-3));
+  return 3.0;
+}
+function calcTax(){
+  const v=S.price, small=(S.obj==="house"&&S.area==="small");
+  let r=0,edu=0,nong=0,exAmt=0,notes=[],docsCat=null,docsIds=[],heavy=false;
+
+  if(S.cause==="build"){
+    r=2.8; edu=v*0.0016; nong=small?0:v*0.002;
+    docsCat="신축·기타";
+    notes.push("대지가 아닌 토지 위 신축은 지목변경 취득세가 별도로 부과될 수 있습니다.");
+  }
+  else if(S.cause==="inherit"){
+    if(S.obj==="house"&&S.heir){ r=0.8; edu=v*0.0016; nong=0; notes.push("1가구 1주택 상속 특례세율 — 요건 확인 후 적용되며, 85㎡ 초과여도 농특세는 비과세입니다."); }
+    else if(S.obj==="farm"){ r=2.3; edu=v*0.0006; nong=v*0.002; notes.push("자경농민의 농지 상속은 별도 감면이 있을 수 있으니 창구에 문의하세요."); }
+    else { r=2.8; edu=v*0.0016; nong=small?0:v*0.002; }
+    docsCat="상속";
+  }
+  else if(S.cause==="gift"){
+    r=3.5; edu=v*0.003; nong=small?0:v*0.002;
+    docsIds=["gift-normal"];
+    notes.push("증여의 과세표준은 시가인정액(매매사례가액·감정가액 등)이 원칙입니다. 시가표준액 1억 이하 부동산은 시가표준액 선택 가능.");
+    notes.push("대출·전세보증금 등 채무를 함께 넘기는 부담부증여는 채무액 부분이 유상취득으로 별도 계산됩니다.");
+    if(S.rel==="family") notes.push("배우자·직계존비속 간 거래에서 대가 지급이 입증되지 않아 증여로 계산했습니다.");
+    if(S.obj==="house"&&S.adj) notes.push("조정대상지역의 시가표준액 3억 이상 주택 증여는 중과세율(12%)이 적용될 수 있습니다 — 창구 확인 필수.");
+  }
+  else{ // sale
+    if(S.obj==="farm"){ r=3.0; edu=v*0.002; nong=v*0.002; docsIds=["sale-"+(S.rel==="family"?"family":S.rel==="related"?"related":"normal")]; }
+    else if(S.obj==="land"){ r=4.0; edu=v*0.004; nong=v*0.002; docsIds=["sale-"+(S.rel==="family"?"family":S.rel==="related"?"related":"normal")]; }
+    else{ // house
+      const c=S.count||1;
+      if(S.buyer==="corp"){ heavy=true; r=12; }
+      else if(S.adj){ if(c>=3) {heavy=true;r=12;} else if(c===2){heavy=true;r=8;} else r=houseNormalRate(v); }
+      else { if(c>=4){heavy=true;r=12;} else if(c===3){heavy=true;r=8;} else r=houseNormalRate(v); }
+      if(S.adj&&S.count===2) notes.push("종전 주택을 3년 내 처분하는 일시적 2주택이면 일반세율 적용 후 사후관리됩니다 — 창구 확인.");
+      if(S.buyer==="corp") notes.push("법인은 주택 수와 관계없이 12% 중과가 원칙입니다. 공시 1억 이하 주택·사원용 주택 등 예외는 창구 확인.");
+      // 감면
+      if(S.exempt&&S.exempt!=="none"){
+        if(v>12e8){ notes.push("취득가액 12억 초과로 감면 대상이 아니어서 감면 없이 계산했습니다."); S.exempt="none"; }
+        else{
+          if(heavy){ heavy=false; r=houseNormalRate(v); notes.push("감면 적용 시 다주택 중과세율은 배제됩니다. 단, 감면이 추징되면 중과세율로 추징됩니다."); }
+          const cap=S.exempt==="first"?2e6:5e6;
+          exAmt=Math.min(v*r/100,cap);
+          docsIds.push(S.exempt==="first"?"exempt-first":"exempt-birth");
+          notes.push(S.exempt==="first"
+            ?"생애최초 감면: 3개월 내 전입·실거주 등 사후관리 요건이 있으며, 위반 시 추징됩니다."
+            :"출산·양육 감면: 자녀와 3개월 내 상시거주 시작, 3년 이상 거주 등 요건 위반 시 추징됩니다.");
+        }
       }
-      sumTax+=tax; sumPen+=c.penalty; valid++;
-      var mLabel=isOld?'중가산금':'월가산';
-      var mText=c.applyM?('+ '+mLabel+' '+(c.rate*100).toFixed(2)+'%×'+c.months+'개월 '+won(c.monthly)+'원'):('+ '+mLabel+' 미적용(세액 '+won(c.th)+'원 미만)');
-      res.innerHTML=badge
-        +'<div class="brow-res"><span class="detail">최초 3% '+won(c.first)+'원 '+mText+(c.months>=60?' · 60개월 한도':'')+'</span>'
-        +'<span class="sub">'+won(c.total)+'<small>원</small></span></div>';
-    });
-    var body=document.getElementById('grand-body');
-    if(!pay||valid===0){ body.innerHTML='<div class="empty">낼 날짜와 체납 건을 입력하면 합계가 표시됩니다.</div>'; return; }
-    body.innerHTML=
-      '<div class="line"><span class="k">본세 합계 ('+valid+'건)</span><span class="v">'+won(sumTax)+' 원</span></div>'
-      +'<div class="line"><span class="k">가산세 합계</span><span class="v">'+won(sumPen)+' 원</span></div>'
-      +'<div class="total"><span class="tk">총 납부할 금액</span><span class="tv">'+won(sumTax+sumPen)+'<span class="u">원</span></span></div>';
+      const base=v*r/100, pay=base-exAmt;
+      edu= heavy? v*0.004 : pay*0.1;
+      nong= small?0 : (heavy? v*(r===12?0.01:0.006) : pay*(2/r)*0.1 + exAmt*0.2);
+      docsIds.unshift(S.saletype==="apt"?"sale-apt":"sale-"+(S.rel==="family"?"family":S.rel==="related"?"related":"normal"));
+      if(S.rel==="related") notes.push("특수관계인 간 저가 거래(시가인정액 대비 3억 또는 5% 이상 낮음)는 과세표준이 시가인정액으로 결정될 수 있습니다.");
+      if(S.rel==="family") notes.push("배우자·직계존비속 간 매매는 계좌이체 내역과 소득금액증명으로 대가 지급이 입증되어야 유상취득으로 인정됩니다.");
+      const main=v*r/100;
+      return pack(v,r,main,exAmt,edu,nong,notes,docsIds,docsCat);
+    }
   }
+  const main=v*r/100;
+  return pack(v,r,main,exAmt,edu,nong,notes,docsIds,docsCat);
+}
+function pack(v,r,main,exAmt,edu,nong,notes,docsIds,docsCat){
+  return {v,r,main,exAmt,edu:Math.max(edu,0),nong:Math.max(nong,0),
+    total:Math.max(main-exAmt,0)+Math.max(edu,0)+Math.max(nong,0),notes,docsIds,docsCat};
+}
 
-  /* ---------- 신고납부분 ---------- */
-  var sType='none';
-  function pickType(v){sType=v;document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});calcShingo();}
-  function calcShingo(){
-    var tax=Number((document.getElementById('s-tax').value||'').replace(/[^0-9]/g,''))||0;
-    var due=dval('s-due'), pay=dval('s-pay'), box=document.getElementById('s-result');
-    if(!tax||!due||!pay){box.innerHTML='<div class="empty">본세 · 납부기한 · 납부일을 입력하세요.</div>';return;}
-    if(pay<=due){box.innerHTML='<div class="empty">납부일이 납기 이내입니다. 납부지연가산세가 없습니다.</div>';return;}
-    var rr=0,rl='';
-    if(sType==='no'){rr=.20;rl='무신고가산세 (20%)';}else if(sType==='under'){rr=.10;rl='과소신고가산세 (10%)';}
-    else if(sType==='fraud_no'){rr=.40;rl='부정무신고가산세 (40%)';}else if(sType==='fraud_under'){rr=.40;rl='부정과소신고가산세 (40%)';}
-    var rp=Math.floor(tax*rr/10)*10;
-    var CH=new Date(2022,5,7), pStart=new Date(due.getTime()+DAY), total=Math.floor((pay-due)/DAY);
-    var dOld=0,dNew=0;
-    if(pay<CH)dOld=total; else if(pStart>=CH)dNew=total; else{dOld=Math.floor((new Date(CH.getTime()-DAY)-due)/DAY);dNew=total-dOld;}
-    var interest=tax*0.00025*dOld+tax*0.00022*dNew, cap=tax*0.75, capped=interest>cap;
-    var lp=Math.floor(Math.min(interest,cap)/10)*10, tot=tax+rp+lp;
-    var h='';
-    h+='<div class="row"><div class="rk">본세'+((sType==='under'||sType==='fraud_under')?'<small>과소납부 세액</small>':'')+'</div><div class="rv">'+won(tax)+' 원</div></div>';
-    if(rr>0)h+='<div class="row"><div class="rk">'+rl+'<small>세액 × '+(rr*100)+'%</small></div><div class="rv">'+won(rp)+' 원</div></div>';
-    var rd=dOld>0?('세액 × '+total+'일 (0.025% '+dOld+'일 + 0.022% '+dNew+'일)'):('세액 × '+total+'일 × 0.022%');
-    h+='<div class="row"><div class="rk">납부지연가산세<small>'+rd+'</small></div><div class="rv">'+won(lp)+' 원</div></div>';
-    h+='<div class="total" style="margin-top:14px;"><span class="tk">총 납부할 금액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
-    if(capped)h+='<div class="warn">납부지연가산세가 본세 75% 한도로 조정되었습니다.</div>';
-    box.innerHTML=h;
-  }
+function renderResult(){
+  const t=calcTax();
+  const today=new Date(), dstr=today.getFullYear()+"."+(today.getMonth()+1)+"."+today.getDate();
+  const rows=[
+    `<div class="bill-row"><span class="k">과세표준 (신고가액)</span><span class="v">${won(t.v)} 원</span></div>`,
+    `<div class="bill-row"><span class="k"><b>취득세</b> · 세율 ${t.r.toFixed(2).replace(/\.?0+$/,"")}%</span><span class="v">${won(t.main)} 원</span></div>`,
+    t.exAmt?`<div class="bill-row minus"><span class="k"><b>감면</b> (${LABELS.exempt[S.exempt]})</span><span class="v">− ${won(t.exAmt)} 원</span></div>`:"",
+    `<div class="bill-row"><span class="k"><b>지방교육세</b></span><span class="v">${won(t.edu)} 원</span></div>`,
+    `<div class="bill-row"><span class="k"><b>농어촌특별세</b>${(S.obj==="house"&&S.area==="small")?" · 85㎡ 이하 비과세":""}</span><span class="v">${t.nong?won(t.nong)+" 원":"0 원"}</span></div>`
+  ].join("");
+  const notes=t.notes.map(n=>"· "+esc(n)).join("<br>");
+  const docsHtml=matchedDocs(t).map(d=>docCard(d,false)).join("");
+  return `
+  <div class="bill">
+    <div class="bill-head"><h3>취득세 모의계산서</h3>
+      <div class="meta">${esc(DATA.settings.cityLabel)}<br>계산일 ${dstr} · 법적 효력 없음</div></div>
+    ${rows}
+    <div class="bill-total"><span class="k">예상 납부세액 합계</span><span class="v">${won(t.total)} 원</span></div>
+    <div class="stamp">모의<br>계산</div>
+    ${notes?`<div class="bill-note">${notes}</div>`:""}
+  </div>
+  <div class="result-docs">
+    <h2 class="sec" style="margin-top:26px">신고하러 오실 때 챙기실 서류</h2>
+    <p class="sec-sub">아래 서류를 준비해 오시면 창구에서 한 번에 처리됩니다.</p>
+    ${docsHtml||`<div class="notice info">해당 유형의 서류 목록은 [신고 서류 안내] 탭에서 확인하세요.</div>`}
+  </div>
+  <div class="calc-nav">
+    <button class="btn ghost" data-act="back">← 이전</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn ghost" onclick="showTab('docs')">서류 안내 전체 보기</button>
+      <button class="btn" data-act="restart">다시 계산하기</button>
+    </div>
+  </div>`;
+}
+function matchedDocs(t){
+  let list=t.docsIds.map(id=>DATA.docs.find(d=>d.id===id)).filter(Boolean);
+  if(t.docsCat) list=list.concat(DATA.docs.filter(d=>d.cat===t.docsCat));
+  return [...new Set(list)];
+}
 
-  function resetAll(){
-    document.getElementById('rows').innerHTML=''; rid=0; addRow();
-    document.getElementById('g-pay').value='';
-    document.querySelectorAll('#mode-shingo input').forEach(function(i){i.value='';}); pickType('none');
-    recalcGozi();
+/* =====================================================================
+   2. 서류 안내 (담당자 편집 가능)
+   ===================================================================== */
+let docFilter="전체", adminMode=false, editingDoc=null;
+function docCats(){ return ["전체",...new Set(DATA.docs.map(d=>d.cat))]; }
+function docCard(d,editable){
+  if(editable&&editingDoc===d.id){
+    return `<div class="doc-card"><div class="edit-box" data-doc="${d.id}">
+      <label>제목</label><input type="text" class="e-title" value="${esc(d.title)}">
+      <label>분류</label><input type="text" class="e-cat" value="${esc(d.cat)}">
+      <label>서류 목록 (한 줄에 하나씩)</label><textarea class="e-items">${esc(d.items.join("\n"))}</textarea>
+      <label>안내 문구 (선택)</label><input type="text" class="e-note" value="${esc(d.note||"")}">
+      <div class="edit-actions">
+        <button class="btn small" data-dact="save">저장</button>
+        <button class="btn small ghost" data-dact="cancel">취소</button>
+        <button class="btn small danger" data-dact="del">이 항목 삭제</button>
+      </div></div></div>`;
   }
-  /* 초기 1건 */
-  addRow();
+  return `<div class="doc-card" data-doc="${d.id}">
+    <h4>${esc(d.title)}<span class="cat">${esc(d.cat)}</span>
+      ${editable?`<button class="btn small ghost" style="float:right" data-dact="edit">수정</button>`:""}</h4>
+    <ul class="doc-items">${d.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>
+    ${d.note?`<div class="doc-note">${esc(d.note)}</div>`:""}
+  </div>`;
+}
+function renderDocs(){
+  $("#doc-filter").innerHTML=docCats().map(c=>
+    `<button class="pill ${c===docFilter?"on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")+
+    (adminMode?` <button class="btn small" id="doc-add">＋ 서류 항목 추가</button>`:"");
+  const list=DATA.docs.filter(d=>docFilter==="전체"||d.cat===docFilter);
+  $("#docs-root").innerHTML=list.map(d=>docCard(d,adminMode)).join("")||`<div class="notice info">항목이 없습니다.</div>`;
+}
+$("#doc-filter").addEventListener("click",e=>{
+  if(e.target.id==="doc-add"){
+    const id="doc-"+Date.now();
+    DATA.docs.push({id,cat:docFilter==="전체"?"매매·분양":docFilter,title:"새 서류 항목",items:["서류 1"],note:""});
+    editingDoc=id; saveLocal(); renderDocs(); return;
+  }
+  const p=e.target.closest(".pill"); if(p){docFilter=p.dataset.cat; renderDocs();}
+});
+$("#docs-root").addEventListener("click",e=>{
+  const b=e.target.closest("[data-dact]"); if(!b) return;
+  const card=b.closest("[data-doc]"), id=card.dataset.doc, d=DATA.docs.find(x=>x.id===id);
+  const act=b.dataset.dact;
+  if(act==="edit"){editingDoc=id; renderDocs();}
+  else if(act==="cancel"){editingDoc=null; renderDocs();}
+  else if(act==="del"){ if(confirm("이 서류 항목을 삭제할까요?")){DATA.docs=DATA.docs.filter(x=>x.id!==id); editingDoc=null; saveLocal(); renderDocs();} }
+  else if(act==="save"){
+    d.title=$(".e-title",card).value.trim()||d.title;
+    d.cat=$(".e-cat",card).value.trim()||d.cat;
+    d.items=$(".e-items",card).value.split("\n").map(s=>s.trim()).filter(Boolean);
+    d.note=$(".e-note",card).value.trim();
+    editingDoc=null; saveLocal(); renderDocs();
+  }
+});
+
+/* =====================================================================
+   3. 직원 전용 (인수인계서)
+   ===================================================================== */
+let staffOk=false, curCh=null;
+try{ staffOk=sessionStorage.getItem("staff-ok")==="1"; }catch(e){}
+
+function textToHtml(t){
+  const lines=esc(t).split("\n"); let out="",ul=false;
+  for(const ln of lines){
+    if(ln.startsWith("- ")){ if(!ul){out+="<ul>";ul=true;} out+=`<li>${ln.slice(2)}</li>`; }
+    else{ if(ul){out+="</ul>";ul=false;}
+      if(!ln.trim()) continue;
+      out+= ln.startsWith("Q.")?`<p class="q">${ln}</p>`:`<p>${ln}</p>`; }
+  }
+  if(ul) out+="</ul>";
+  return out;
+}
+function renderStaff(){
+  const root=$("#staff-root");
+  if(!staffOk){
+    root.innerHTML=`<div class="gate card">
+      <h2 class="sec">직원 전용 화면</h2>
+      <p class="sec-sub">취득세 창구 인수인계서입니다. 비밀번호를 입력하세요.</p>
+      <input type="password" id="gate-pw" placeholder="비밀번호">
+      <button class="btn" id="gate-go" style="width:100%">열기</button>
+      <p class="footnote" style="text-align:left">이 잠금은 열람 편의를 위한 것으로 보안 장치가 아닙니다. 화면 안에 개인정보·민감정보를 절대 기록하지 마세요.</p>
+    </div>`;
+    $("#gate-go").addEventListener("click",tryGate);
+    $("#gate-pw").addEventListener("keydown",e=>{if(e.key==="Enter")tryGate()});
+    return;
+  }
+  if(!curCh) curCh=DATA.staff[0].id;
+  const ch=DATA.staff.find(c=>c.id===curCh)||DATA.staff[0];
+  root.innerHTML=`
+    <div class="staff-tools">
+      <h2 class="sec" style="margin:0;flex:1">취득세 창구 인수인계서</h2>
+      ${adminMode?`<span class="mode-badge">수정 모드</span>`:""}
+      <button class="btn small ${adminMode?"":"ghost"}" id="st-mode">${adminMode?"수정 모드 끄기":"수정 모드"}</button>
+      <button class="btn small ghost" id="st-dl">수정본 HTML 내려받기</button>
+      <button class="btn small ghost" id="st-pw">비밀번호 변경</button>
+      <button class="btn small danger" id="st-reset">임시저장 초기화</button>
+    </div>
+    ${adminMode?`<div class="notice warn">수정 내용은 <b>이 브라우저에만</b> 임시 저장됩니다. 모두에게 반영하려면 [수정본 HTML 내려받기]로 새 파일을 받아 서버(또는 공유 위치)의 파일을 교체하세요.</div>`:""}
+    <div class="staff-layout">
+      <div class="toc">${DATA.staff.map(c=>
+        `<button class="${c.id===curCh?"on":""}" data-ch="${c.id}">${esc(c.title)}</button>`).join("")}
+        ${adminMode?`<button data-ch="__add" style="color:#B5352C">＋ 장 추가</button>`:""}</div>
+      <div class="st-content">
+        ${adminMode?`<div style="margin-bottom:10px"><button class="btn small ghost" data-sact="ch-title">장 제목 수정</button>
+          <button class="btn small danger" data-sact="ch-del">이 장 삭제</button>
+          <button class="btn small" data-sact="sec-add">＋ 절 추가</button></div>`:""}
+        ${ch.sections.map((s,si)=>staffSection(ch,s,si)).join("")}
+      </div>
+    </div>`;
+  bindStaff(ch);
+}
+function staffSection(ch,s,si){
+  const vis=s.visual&&$("#"+s.visual)?`<div class="visual">${$("#"+s.visual).innerHTML}</div>`:"";
+  return `<details class="st-sec" ${si===0?"open":""} data-sec="${s.id}">
+    <summary><span>${esc(s.title)}</span>
+      <span style="display:flex;gap:6px;align-items:center">
+      ${adminMode?`<button class="btn small ghost" data-sact="sec-title">제목</button>
+        <button class="btn small danger" data-sact="sec-del">삭제</button>`:""}
+      <span class="arrow">▶</span></span></summary>
+    <div class="st-body">
+      ${vis}
+      ${s.blocks.map((b,bi)=>staffBlock(s,b,bi)).join("")}
+      ${adminMode?`<div style="margin-top:14px"><button class="btn small" data-sact="blk-add">＋ 내용 블록 추가</button></div>`:""}
+    </div></details>`;
+}
+function staffBlock(s,b,bi){
+  const key=s.id+"|"+bi;
+  if(adminMode&&editingBlk===key){
+    return `<div class="blk edit-box" data-blk="${bi}">
+      <label>라벨 (업무설명 / 받을서류 / 부과포인트 / 주의 / FAQ / 처리사례)</label>
+      <input type="text" class="e-label" value="${esc(b.label)}">
+      <label>내용 — 줄 앞에 "- "는 목록, "Q."는 질문으로 표시됩니다</label>
+      <textarea class="e-text">${esc(b.text)}</textarea>
+      <div class="edit-actions">
+        <button class="btn small" data-sact="blk-save">저장</button>
+        <button class="btn small ghost" data-sact="blk-cancel">취소</button>
+        <button class="btn small danger" data-sact="blk-del">블록 삭제</button>
+      </div></div>`;
+  }
+  return `<div class="blk" data-blk="${bi}">
+    <span class="blk-label l${esc(b.label)}">${esc(b.label)}</span>
+    ${adminMode?`<button class="btn small ghost" data-sact="blk-edit">수정</button>`:""}
+    <div class="blk-text">${textToHtml(b.text)}</div></div>`;
+}
+let editingBlk=null;
+function tryGate(){
+  if($("#gate-pw").value===DATA.settings.password){
+    staffOk=true; try{sessionStorage.setItem("staff-ok","1");}catch(e){}
+    renderStaff();
+  }else alert("비밀번호가 다릅니다. 세무과 담당자에게 문의하세요.");
+}
+function bindStaff(ch){
+  $("#st-mode").addEventListener("click",()=>{adminMode=!adminMode; editingBlk=null; renderStaff(); renderDocs();});
+  $("#st-dl").addEventListener("click",downloadHtml);
+  $("#st-pw").addEventListener("click",()=>{
+    const p=prompt("새 비밀번호를 입력하세요 (파일 안에 그대로 저장되므로 중요 비밀번호를 쓰지 마세요)");
+    if(p){DATA.settings.password=p.trim(); saveLocal(); alert("변경되었습니다. [수정본 HTML 내려받기]로 배포해야 모두에게 적용됩니다.");}
+  });
+  $("#st-reset").addEventListener("click",()=>{
+    if(confirm("이 브라우저의 임시 저장을 지우고 파일 원본 내용으로 되돌릴까요?")){
+      try{localStorage.removeItem(STORAGE_KEY);}catch(e){} location.reload();
+    }
+  });
+  $(".toc").addEventListener("click",e=>{
+    const b=e.target.closest("[data-ch]"); if(!b) return;
+    if(b.dataset.ch==="__add"){
+      const t=prompt("새 장 제목"); if(!t) return;
+      const id="ch-"+Date.now();
+      DATA.staff.push({id,title:t,sections:[]}); curCh=id; saveLocal(); renderStaff(); return;
+    }
+    curCh=b.dataset.ch; renderStaff();
+  });
+  $(".st-content").addEventListener("click",e=>{
+    const b=e.target.closest("[data-sact]"); if(!b) return;
+    e.preventDefault();
+    const act=b.dataset.sact;
+    const secEl=b.closest("[data-sec]"), sec=secEl?ch.sections.find(s=>s.id===secEl.dataset.sec):null;
+    const blkEl=b.closest("[data-blk]"), bi=blkEl?Number(blkEl.dataset.blk):-1;
+    if(act==="ch-title"){const t=prompt("장 제목",ch.title); if(t){ch.title=t;saveLocal();renderStaff();}}
+    else if(act==="ch-del"){ if(DATA.staff.length>1&&confirm("이 장 전체를 삭제할까요?")){DATA.staff=DATA.staff.filter(c=>c!==ch);curCh=DATA.staff[0].id;saveLocal();renderStaff();}}
+    else if(act==="sec-add"){const t=prompt("절 제목"); if(t){ch.sections.push({id:"s-"+Date.now(),title:t,visual:null,blocks:[]});saveLocal();renderStaff();}}
+    else if(act==="sec-title"&&sec){const t=prompt("절 제목",sec.title); if(t){sec.title=t;saveLocal();renderStaff();}}
+    else if(act==="sec-del"&&sec){ if(confirm("이 절을 삭제할까요?")){ch.sections=ch.sections.filter(s=>s!==sec);saveLocal();renderStaff();}}
+    else if(act==="blk-add"&&sec){sec.blocks.push({label:"업무설명",text:"내용을 입력하세요."});editingBlk=sec.id+"|"+(sec.blocks.length-1);saveLocal();renderStaff();}
+    else if(act==="blk-edit"&&sec){editingBlk=sec.id+"|"+bi;renderStaff();}
+    else if(act==="blk-cancel"){editingBlk=null;renderStaff();}
+    else if(act==="blk-del"&&sec){ if(confirm("이 블록을 삭제할까요?")){sec.blocks.splice(bi,1);editingBlk=null;saveLocal();renderStaff();}}
+    else if(act==="blk-save"&&sec){
+      const box=blkEl;
+      sec.blocks[bi].label=$(".e-label",box).value.trim()||"업무설명";
+      sec.blocks[bi].text=$(".e-text",box).value;
+      editingBlk=null; saveLocal(); renderStaff();
+    }
+  });
+}
+
+/* ---------- 수정본 파일 내려받기: 현재 데이터를 심은 새 HTML 생성 ---------- */
+function downloadHtml(){
+  const doc=document.documentElement.cloneNode(true);
+  ["#calc-root","#docs-root","#staff-root","#doc-filter"].forEach(sel=>{
+    const el=doc.querySelector(sel); if(el) el.innerHTML="";
+  });
+  const js=doc.querySelector("#app-data");
+  js.textContent="\n"+JSON.stringify(DATA,null,1)+"\n";
+  const html="<!DOCTYPE html>\n"+doc.outerHTML;
+  const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  const d=new Date(), pad=n=>String(n).padStart(2,"0");
+  a.download=`취득세_민원도우미_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.html`;
+  a.click(); URL.revokeObjectURL(a.href);
+  alert("새 파일이 저장되었습니다. 서버(또는 공유 위치)의 기존 파일과 교체하면 모든 사용자에게 반영됩니다.");
+}
+
+/* ---------- 시작 ---------- */
+renderCalc(); renderDocs();
 </script>
 </body>
 </html>
