@@ -66,6 +66,21 @@
   .faq .cat{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--teal);margin:18px 0 8px;}
   .faq .cat:first-child{margin-top:0;}
   .faq .note{font-size:11.5px;color:#9A5B00;background:#FFF7E6;border:1px solid #FCE3AE;border-radius:8px;padding:9px 11px;margin-bottom:14px;}
+  .tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--muted);color:#fff;font-size:10px;font-weight:800;cursor:help;margin-left:5px;vertical-align:middle;position:relative;}
+  .tip:hover:after,.tip:focus:after{content:attr(data-tip);position:absolute;left:0;bottom:135%;width:230px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:500;line-height:1.5;padding:9px 11px;border-radius:8px;z-index:30;white-space:normal;text-align:left;box-shadow:var(--shadow);}
+  .wetax-btn{display:block;text-align:center;text-decoration:none;background:var(--teal);color:#fff;font-weight:800;font-size:14px;padding:13px;border-radius:11px;margin-top:14px;}
+  .wetax-btn:hover{filter:brightness(1.06);}
+  .result-actions{display:flex;gap:8px;margin-top:12px;}
+  .result-actions button{flex:1;font-size:12px;padding:9px;border:1px solid var(--line-strong);background:#fff;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;color:var(--ink);}
+  .result-actions button:hover{border-color:var(--ink);}
+  .dday{background:var(--teal-soft);color:var(--teal);border-radius:8px;padding:10px 12px;font-size:12.5px;font-weight:700;margin-top:10px;line-height:1.5;}
+  .checklist{margin-top:8px;border:1px dashed var(--line-strong);border-radius:9px;padding:10px 12px;background:#FBFCFD;}
+  .checklist .ct{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:6px;}
+  .checklist ul{margin:0;padding:0;list-style:none;}
+  .checklist li{position:relative;padding:3px 0 3px 20px;font-size:12px;line-height:1.5;color:var(--muted);}
+  .checklist li b{color:var(--ink);}
+  .checklist li:before{content:"☑";position:absolute;left:0;color:var(--teal);}
+  .receipt-head{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px;}
   .total{margin-top:14px;padding:16px 18px;border:1.5px solid var(--seal);border-radius:12px;background:var(--seal-soft);
     display:flex;justify-content:space-between;align-items:center;}
   .total .tk{font-size:13px;font-weight:800;color:var(--seal);}
@@ -120,10 +135,14 @@
 
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="c-type">
-            <button data-v="new" aria-pressed="true" onclick="pick('c-type','new',cCalc)">신규(신차)</button>
-            <button data-v="trans" aria-pressed="false" onclick="pick('c-type','trans',cCalc)">이전(중고)</button>
-            <button data-v="free" aria-pressed="false" onclick="pick('c-type','free',cCalc)">무상(증여·상속)</button>
+            <button data-v="new" aria-pressed="true" onclick="pick('c-type','new',cCalc)">신차(신규등록)</button>
+            <button data-v="trans" aria-pressed="false" onclick="pick('c-type','trans',cCalc)">중고차(이전등록)</button>
+            <button data-v="free" aria-pressed="false" onclick="pick('c-type','free',cCalc)">증여·상속(무상)</button>
           </div></div>
+
+        <div class="field"><label class="lbl">취득일 <span class="tip" tabindex="0" data-tip="잔금 지급일 또는 등록일. 이 날부터 60일 이내에 신고·납부해야 가산세가 없습니다.">?</span></label>
+          <input type="date" id="c-acqdate" oninput="cCalc()">
+        </div>
 
         <div class="field"><label class="lbl">차종</label>
           <div class="seg" id="c-chong">
@@ -146,7 +165,7 @@
 
         <!-- 신규: 공급가액 -->
         <div class="field" id="c-new-box">
-          <label class="lbl">차량 가격 (과세표준)</label>
+          <label class="lbl">차량 가격 (과세표준) <span class="tip" tabindex="0" data-tip="세금계산서·제작증(수입은 수입신고필증)의 '공급가액'(부가가치세 제외)을 넣으세요. 계약서 금액이 부가세 포함이면 아래 '부가세 포함가'를 선택하면 자동으로 나눠줍니다.">?</span></label>
           <div class="money-wrap"><input type="text" id="c-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
           <div class="seg" id="c-vat" style="margin-top:8px">
             <button data-v="ex" aria-pressed="true" onclick="pick('c-vat','ex',cCalc)">부가세 별도(공급가액)</button>
@@ -162,7 +181,7 @@
           <div class="hint">실제 매매금액을 입력하세요. 비우거나 시가표준액보다 낮으면 <b>시가표준액</b>이 과세표준이 됩니다.</div>
         </div>
         <div class="field hidden" id="c-siga-box">
-          <label class="lbl">시가표준액</label>
+          <label class="lbl">시가표준액 <span class="tip" tabindex="0" data-tip="차량의 과세 기준가격. 아래 '차명으로 찾기'로 조회하거나 위택스에서 확인할 수 있습니다. 신고가액(실거래가)이 이보다 높으면 신고가액이 과세표준이 됩니다.">?</span></label>
           <div class="money-wrap"><input type="text" id="c-siga" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
           <button class="btn sm" style="margin-top:8px" onclick="openSearch()">🔍 차명으로 시가표준액 찾기</button>
           <div id="c-siga-note" class="hint"></div>
@@ -211,6 +230,7 @@
             <option value="fcev">수소전기자동차 (§66④)</option>
           </select>
           <div id="c-gamyeon-req" class="hint"></div>
+          <div id="c-gamyeon-check"></div>
           <div id="c-elig-box" class="hidden" style="margin-top:8px;">
             <div class="seg" id="c-elig">
               <button data-v="1" aria-pressed="false" onclick="pick('c-elig','1',cCalc)">대상 차량 요건 충족 → 전액면제</button>
@@ -295,8 +315,7 @@
           <div class="money-wrap"><input type="text" id="s-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);calcShingo()"><span class="won">원</span></div></div>
         <div class="field"><label class="lbl">신고 유형</label>
           <div class="seg" id="s-type">
-            <button data-v="none" aria-pressed="true" onclick="pickType('none')">정상신고</button>
-            <button data-v="no" aria-pressed="false" onclick="pickType('no')">무신고 20%</button>
+            <button data-v="no" aria-pressed="true" onclick="pickType('no')">무신고 20%</button>
             <button data-v="under" aria-pressed="false" onclick="pickType('under')">과소신고 10%</button>
             <button data-v="fraud_no" aria-pressed="false" onclick="pickType('fraud_no')">부정무신고 40%</button>
             <button data-v="fraud_under" aria-pressed="false" onclick="pickType('fraud_under')">부정과소 40%</button>
@@ -339,6 +358,8 @@
 
       <div class="cat">■ 매매 · 상속 등 변동</div>
       <details><summary>부모님이 돌아가셨는데 차·집 지방세는 어떻게 하나요?</summary><div class="a">상속으로 부동산·자동차를 취득하면 <b>취득세 신고·납부</b> 의무가 생깁니다(상속개시일이 속한 달의 말일부터 일정 기한 내). 재산세·자동차세 등 기존 지방세는 상속인이 승계합니다. 사안마다 기한·세율이 다르니 세무과 상담을 권합니다.</div></details>
+
+      <a class="wetax-btn" href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스에서 정확한 세액 조회·신고하기 →</a>
     </div>
   </div>
 
@@ -402,7 +423,7 @@ function cCalc(){
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
   var g=gamyeon(acq); // {reduce, pay, label, note}
   var tot=g.pay;
-  var h='';
+  var h='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
   if(share<100){
     h+='<div class="row"><div class="rk">전체 과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(baseFull)+' 원</div></div>';
     h+='<div class="row"><div class="rk">지분 과세표준<small>취득 지분 '+share+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
@@ -438,7 +459,31 @@ function cCalc(){
     }
   }
   h+=docsHtml();
+  // 신고기한 D-day
+  var ad=document.getElementById('c-acqdate').value;
+  if(ad){
+    var due=new Date(ad+'T00:00:00'); due.setDate(due.getDate()+60);
+    var today=new Date(); today.setHours(0,0,0,0);
+    var dleft=Math.round((due-today)/86400000);
+    var dstr=(due.getMonth()+1)+'월 '+due.getDate()+'일';
+    var msg = dleft>=0 ? '📅 신고·납부 기한: <b>'+dstr+'</b>까지 (D-'+dleft+'). 이 안에 신고하면 가산세가 없습니다.'
+                       : '⚠ 신고기한('+dstr+')이 <b>'+(-dleft)+'일 지났습니다.</b> 무신고 20% + 납부지연가산세가 발생할 수 있습니다("신고납부분" 탭에서 계산).';
+    h+='<div class="dday">'+msg+'</div>';
+  }
+  h+='<a class="wetax-btn" href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스에서 신고·조회하러 가기 →</a>';
+  h+='<div class="result-actions"><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
   box.innerHTML=h;
+  window._RESULTTEXT = box.innerText;
+}
+function copyResult(){
+  var t=(window._RESULTTEXT||'').replace(/\n{3,}/g,'\n\n');
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){alert('결과를 복사했습니다.');},function(){alert('복사에 실패했습니다.');});
+  else alert('이 브라우저에서는 복사가 지원되지 않습니다.');
+}
+function shareResult(){
+  var t=(window._RESULTTEXT||'').replace(/\n{3,}/g,'\n\n');
+  if(navigator.share) navigator.share({title:'지방세 산정 결과(참고용)',text:t}).catch(function(){});
+  else copyResult();
 }
 
 /* 감면 요건 안내문 */
@@ -457,7 +502,18 @@ function onGamyeon(){
   document.getElementById('c-gamyeon-req').textContent=GAMYEON_REQ[v]||'';
   document.getElementById('c-elig-box').classList.toggle('hidden', !(v==='disabled'||v==='veteran'));
   document.getElementById('c-seat-box').classList.toggle('hidden', !(v==='multi3'||v==='multi2'));
+  var chk=GAMYEON_CHECK[v], el=document.getElementById('c-gamyeon-check');
+  el.innerHTML = chk ? '<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
 }
+var GAMYEON_CHECK={
+  disabled:['<b>본인 또는 세대 공동명의</b>인가요? (공동명의는 주민등록상 <b>같은 세대</b>의 가족 1인)','대상 차량인가요? (2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜)','<b>1대</b>만 감면됩니다','등록 후 1년 내 부득이한 사유 없이 처분·이전하면 <b>추징</b>됩니다'],
+  veteran:['본인 또는 세대 공동명의인가요?','대상 차량 범위는 장애인용과 동일','1대만 감면, 등록 후 처분 시 추징 주의'],
+  multi3:['자녀가 모두 <b>만 18세 미만</b>인가요?','자녀 <b>3명 이상</b> 양육 중인가요?','공동명의라면 <b>같은 세대의 가족</b>과의 공동명의인가요? (제3자면 감면 불가)','양육 목적 <b>1대</b>만 감면'],
+  multi2:['자녀가 모두 <b>만 18세 미만</b>인가요?','자녀 <b>2명</b> 양육 중인가요?','공동명의라면 같은 세대의 가족과의 공동명의인가요?'],
+  light:['배기량 1,000cc 미만 등 <b>경형자동차</b> 요건을 충족하나요?'],
+  ev:['<b>전기자동차</b>가 맞나요? (자동차등록증·제작증 확인)'],
+  fcev:['<b>수소전기자동차</b>가 맞나요?']
+};
 function toggleSelfcheck(){
   var el=document.getElementById('c-selfcheck');
   el.classList.toggle('hidden');
@@ -751,7 +807,7 @@ function recalcGozi(){
 }
 
 /* ---------- 신고납부분 (기존) ---------- */
-var sType='none';
+var sType='no';
 function pickType(v){sType=v;document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});calcShingo();}
 function calcShingo(){
   var tax=numv('s-tax'),due=dval('s-due'),pay=dval('s-pay'),box=document.getElementById('s-result');
