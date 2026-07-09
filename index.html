@@ -55,6 +55,17 @@
   .docs li:before{content:"☐";position:absolute;left:2px;top:4px;color:var(--teal);font-size:13px;}
   .docs li b{color:var(--ink);}
   .docs .grp{margin-top:8px;font-size:11.5px;font-weight:700;color:var(--muted);}
+  .faq details{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff;overflow:hidden;}
+  .faq summary{cursor:pointer;padding:13px 15px;font-size:13.5px;font-weight:700;list-style:none;position:relative;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary:after{content:"＋";position:absolute;right:15px;color:var(--teal);font-weight:800;}
+  .faq details[open] summary:after{content:"−";}
+  .faq details[open] summary{border-bottom:1px solid var(--line);}
+  .faq .a{padding:13px 15px;font-size:12.5px;color:var(--muted);line-height:1.65;}
+  .faq .a b{color:var(--ink);}
+  .faq .cat{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--teal);margin:18px 0 8px;}
+  .faq .cat:first-child{margin-top:0;}
+  .faq .note{font-size:11.5px;color:#9A5B00;background:#FFF7E6;border:1px solid #FCE3AE;border-radius:8px;padding:9px 11px;margin-bottom:14px;}
   .total{margin-top:14px;padding:16px 18px;border:1.5px solid var(--seal);border-radius:12px;background:var(--seal-soft);
     display:flex;justify-content:space-between;align-items:center;}
   .total .tk{font-size:13px;font-weight:800;color:var(--seal);}
@@ -98,6 +109,7 @@
     <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">자동차 취득세</button>
     <button class="tab" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">고지분 체납 가산세</button>
     <button class="tab" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고납부분 가산세</button>
+    <button class="tab" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">지방세 안내</button>
   </div>
 
   <!-- ============ 자동차 취득세 ============ -->
@@ -296,6 +308,40 @@
     </div>
   </div>
 
+  <!-- ============ 지방세 안내 (FAQ) ============ -->
+  <div id="m-faq" class="hidden">
+    <div class="card faq">
+      <div class="note">아래는 일반적인 지방세 안내입니다(참고용). 납기·감면·분납 요건 등 세부 사항과 확정 금액은 <b>위택스(wetax.go.kr)</b> 또는 <b>동해시청 세무과</b>에서 확인하세요.</div>
+
+      <div class="cat">■ 납기 · 안 내면 생기는 일</div>
+      <details><summary>재산세는 언제 내나요?</summary><div class="a">재산세는 <b>6월 1일(과세기준일)</b> 소유자에게 부과됩니다. 주택은 세액을 절반씩 나눠 <b>7월(16~31일)과 9월(16~30일)</b> 두 번, 다만 주택 세액이 20만원 이하면 7월에 한 번에 부과됩니다. 건축물·선박·항공기는 7월, 토지는 9월입니다. 재산세에 도시지역분·지역자원시설세·지방교육세가 함께 붙을 수 있습니다.</div></details>
+      <details><summary>자동차세(정기분)는 언제 내나요?</summary><div class="a">보유에 대한 자동차세는 <b>6월(1기)과 12월(2기)</b> 두 번 부과됩니다. 연초에 1년치를 미리 내는 <b>연납</b>을 신청하면 일정액을 공제받는데, 공제율은 해마다 조정되니 위택스에서 확인하세요.</div></details>
+      <details><summary>납기를 놓치면 어떻게 되나요?</summary><div class="a">납기가 지나면 <b>가산금(가산세)</b>이 붙습니다. 2024년 이후 성립분은 최초 3% + 매달 0.66%(최대 60개월)입니다. 계속 안 내면 <b>재산 압류(부동산·예금·급여 등)</b>, 공매, 자동차세 체납 시 <b>번호판 영치</b>, 관허사업 제한 등 체납처분으로 이어집니다. 정확한 가산세는 이 사이트의 "고지분 체납 가산세" 탭에서 계산할 수 있습니다.</div></details>
+
+      <div class="cat">■ 나눠 내기 · 깎아주기</div>
+      <details><summary>한 번에 못 내는데 나눠 낼 수 있나요?</summary><div class="a">재산세는 세액이 <b>250만원을 초과</b>하면 납기가 지난 날부터 <b>2개월 이내</b> 분할납부가 가능합니다. 그 밖에 재해·실직 등으로 납부가 어려우면 <b>징수유예·분할고지</b> 제도가 있으니 세무과에 상담하세요. 요건과 절차는 동해시청 세무과 확인이 필요합니다.</div></details>
+      <details><summary>감면 대상은 없나요?</summary><div class="a">지방세특례제한법에 따라 장애인·국가유공자·다자녀·서민주택·전기차 등 다양한 감면이 있습니다. 대상·한도·기간이 항목마다 다르고 신청이 필요하니, 해당될 것 같으면 세무과에 문의하세요. 자동차 취득세 감면은 이 사이트 "자동차 취득세" 탭에서 자가진단해볼 수 있습니다.</div></details>
+
+      <div class="cat">■ 재산세 자주 묻는 것</div>
+      <details><summary>작년보다 재산세가 왜 올랐나요?</summary><div class="a">재산세는 <b>공시가격 × 공정시장가액비율</b>로 과세표준을 정해 세율을 매깁니다. 공시가격이 오르거나 비율이 조정되면 세액이 달라집니다. 세부담이 급증하지 않도록 상한(세부담상한제)이 적용되기도 합니다.</div></details>
+      <details><summary>5월에 집을 팔았는데 왜 재산세가 나오나요?</summary><div class="a">재산세는 <b>6월 1일 기준 소유자</b>에게 1년치가 부과됩니다. 6월 1일 이전에 잔금·등기를 마쳐 소유권이 넘어갔다면 <b>산 사람</b>이, 6월 1일에 아직 소유자였다면 판 사람이 냅니다. 하루 차이로 납세의무자가 갈리니 매매 계약 시 확인이 필요합니다.</div></details>
+
+      <div class="cat">■ 자동차세 자주 묻는 것</div>
+      <details><summary>차를 팔았는데/폐차했는데 자동차세가 나와요.</summary><div class="a">자동차세는 <b>소유한 기간만큼 일할계산</b>됩니다. 매도·폐차·이전등록이 되면 그 시점까지만 부과되는데, 등록 처리 시점이나 정기분 부과 시기와 겹쳐 나올 수 있습니다. 실제 소유기간과 다르면 세무과에 확인·정정 요청하세요.</div></details>
+      <details><summary>이사하면 자동차세·주민세는 어디에 내나요?</summary><div class="a">자동차세는 <b>자동차등록원부상 주소지</b>, 주민세(개인분)는 <b>과세기준일(7월 1일) 주소지</b> 기준으로 과세됩니다. 이사하면 다음 부과분부터 새 주소지 지자체로 넘어갑니다.</div></details>
+
+      <div class="cat">■ 주민세</div>
+      <details><summary>주민세가 갑자기 나왔는데 뭔가요?</summary><div class="a">개인분 주민세는 <b>7월 1일 기준</b> 세대주 등에게 매년 8월경 부과되는 소액 정액세입니다. 사업자에게는 사업소 연면적 기준의 <b>사업소분</b>, 종업원 급여 기준의 <b>종업원분</b>이 별도로 있습니다.</div></details>
+
+      <div class="cat">■ 납부 방법 · 증명서</div>
+      <details><summary>어디서 어떻게 낼 수 있나요?</summary><div class="a"><b>위택스(wetax.go.kr)</b>·인터넷지로·가상계좌·ARS·신용카드·은행 CD/ATM 등으로 낼 수 있습니다. 타인 명의 대납은 고지서의 <b>전자납부번호</b>가 필요합니다. 카드납부는 수수료가 붙지 않는 경우가 많지만 채널에 따라 다를 수 있습니다.</div></details>
+      <details><summary>완납증명서(납세증명서)는 어떻게 떼나요?</summary><div class="a">위택스에서 온라인 발급하거나 시청·주민센터에서 발급받을 수 있습니다. 대출·계약·입찰 등에 쓰는 <b>지방세 납세증명서</b>는 발급일 현재 체납이 없음을 증명합니다.</div></details>
+
+      <div class="cat">■ 매매 · 상속 등 변동</div>
+      <details><summary>부모님이 돌아가셨는데 차·집 지방세는 어떻게 하나요?</summary><div class="a">상속으로 부동산·자동차를 취득하면 <b>취득세 신고·납부</b> 의무가 생깁니다(상속개시일이 속한 달의 말일부터 일정 기한 내). 재산세·자동차세 등 기존 지방세는 상속인이 승계합니다. 사안마다 기한·세율이 다르니 세무과 상담을 권합니다.</div></details>
+    </div>
+  </div>
+
   <div class="actions">
     <button class="btn" onclick="location.reload()">초기화</button>
     <button class="btn primary" onclick="window.print()">인쇄 / PDF</button>
@@ -320,7 +366,7 @@ function numv(id){return Number((document.getElementById(id).value||'').replace(
 function won(n){return Math.floor(n).toLocaleString('ko-KR');}
 function pick(group,v,cb){document.querySelectorAll('#'+group+' button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});if(cb)cb();}
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
-function sw(m){['chwi','gozi','shingo'].forEach(function(x){document.getElementById('m-'+x).classList.toggle('hidden',x!==m);document.getElementById('t-'+x).setAttribute('aria-selected',x===m);});}
+function sw(m){['chwi','gozi','shingo','faq'].forEach(function(x){document.getElementById('m-'+x).classList.toggle('hidden',x!==m);document.getElementById('t-'+x).setAttribute('aria-selected',x===m);});}
 
 /* ---------- 자동차 취득세 ---------- */
 function taxRate(chong,use,light){
@@ -352,7 +398,8 @@ function cCalc(){
   var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
   base=Math.floor(baseFull*share/100);
   var rate=taxRate(chong,use,light);
-  var acq=Math.floor(base*rate/10)*10;
+  var exempt50 = base>0 && base<=500000; // 취득세 면세점(취득가액 50만원 이하)
+  var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
   var g=gamyeon(acq); // {reduce, pay, label, note}
   var tot=g.pay;
   var h='';
@@ -362,13 +409,14 @@ function cCalc(){
   } else {
     h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   }
-  h+='<div class="row"><div class="rk">취득세<small>세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':'')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':''))+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   h+='<div class="row sub"><div class="rk">지방교육세 · 농어촌특별세<small>자동차 취득분은 비과세(0원)</small></div><div class="rv">0 원</div></div>';
   if(g.reduce>0||g.label){
     h+='<div class="row"><div class="rk" style="color:var(--teal)">감면 ('+g.label+')<small>'+(g.note||'')+'</small></div><div class="rv" style="color:var(--teal)">− '+won(g.reduce)+' 원</div></div>';
   }
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+='<div class="info">취득일부터 <b>60일 이내</b> 신고·납부. 기한 초과 시 무신고 20% + 납부지연가산세는 "신고납부분" 탭에서 계산됩니다.</div>';
+  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 <b>면세점(비과세)</b>이라 취득세는 0원입니다. 다만 차량 등록을 위한 <b>등록면허세(등록분)</b>가 별도로 부과됩니다(등록면허세 계산은 추후 별도 탭 예정).</div>';
   if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스로 확정하세요.</div>';
   var b = share<100 ? null : gongchae(base);
   if(share<100 && document.getElementById('c-region').value!=='none'){
