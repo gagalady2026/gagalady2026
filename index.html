@@ -134,9 +134,13 @@
 
         <!-- 신규: 공급가액 -->
         <div class="field" id="c-new-box">
-          <label class="lbl">공급가액 (과세표준)</label>
+          <label class="lbl">차량 가격 (과세표준)</label>
           <div class="money-wrap"><input type="text" id="c-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
-          <div class="hint">자동차제작증(수입은 수입신고필증)상 <b>공급가액(부가가치세 제외)</b>을 입력하세요.</div>
+          <div class="seg" id="c-vat" style="margin-top:8px">
+            <button data-v="ex" aria-pressed="true" onclick="pick('c-vat','ex',cCalc)">부가세 별도(공급가액)</button>
+            <button data-v="in" aria-pressed="false" onclick="pick('c-vat','in',cCalc)">부가세 포함가</button>
+          </div>
+          <div class="hint">과세표준은 <b>부가가치세를 뺀 공급가액</b>입니다. 계약서·견적서 금액이 부가세 포함가라면 <b>“부가세 포함가”</b>를 선택하세요(자동으로 1.1로 나눠 계산). 제작증(수입은 수입신고필증) 기준.</div>
         </div>
 
         <!-- 이전/무상: 시가표준액 (+이전은 신고가액) -->
@@ -150,6 +154,12 @@
           <div class="money-wrap"><input type="text" id="c-siga" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
           <button class="btn sm" style="margin-top:8px" onclick="openSearch()">🔍 차명으로 시가표준액 찾기</button>
           <div id="c-siga-note" class="hint"></div>
+        </div>
+
+        <div class="field">
+          <label class="lbl">취득 지분율 (%)</label>
+          <div class="money-wrap"><input type="number" id="c-share" min="0" max="100" step="0.01" value="100" style="text-align:right;font-weight:600" oninput="cCalc()"><span class="won">%</span></div>
+          <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 입력하세요(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.</div>
         </div>
 
         <!-- 차명 검색 영역 -->
@@ -167,6 +177,17 @@
 
         <div class="field" style="border-top:1px solid var(--line);padding-top:14px;">
           <label class="lbl">감면 (지방세특례제한법)</label>
+          <button class="btn sm" type="button" onclick="toggleSelfcheck()" style="margin-bottom:8px">🙋 감면 대상인지 모르겠다면?</button>
+          <div id="c-selfcheck" class="hidden" style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#FBFCFD;">
+            <div style="font-size:12px;font-weight:700;margin-bottom:8px;">아래를 골라보세요</div>
+            <label class="lbl">18세 미만 자녀 수</label>
+            <div class="seg" id="sc-child"><button data-v="0" aria-pressed="true" onclick="pick('sc-child','0',selfcheck)">0~1명</button><button data-v="2" aria-pressed="false" onclick="pick('sc-child','2',selfcheck)">2명</button><button data-v="3" aria-pressed="false" onclick="pick('sc-child','3',selfcheck)">3명 이상</button></div>
+            <label class="lbl" style="margin-top:8px">본인·가족이 장애인 / 국가유공자</label>
+            <div class="seg" id="sc-disabled"><button data-v="0" aria-pressed="true" onclick="pick('sc-disabled','0',selfcheck)">아니오</button><button data-v="disabled" aria-pressed="false" onclick="pick('sc-disabled','disabled',selfcheck)">장애인</button><button data-v="veteran" aria-pressed="false" onclick="pick('sc-disabled','veteran',selfcheck)">국가유공자</button></div>
+            <label class="lbl" style="margin-top:8px">차량 종류</label>
+            <div class="seg" id="sc-car"><button data-v="0" aria-pressed="true" onclick="pick('sc-car','0',selfcheck)">일반</button><button data-v="light" aria-pressed="false" onclick="pick('sc-car','light',selfcheck)">경차</button><button data-v="ev" aria-pressed="false" onclick="pick('sc-car','ev',selfcheck)">전기차</button><button data-v="fcev" aria-pressed="false" onclick="pick('sc-car','fcev',selfcheck)">수소차</button></div>
+            <div id="sc-result" style="margin-top:10px;font-size:12.5px;"></div>
+          </div>
           <select id="c-gamyeon" onchange="onGamyeon();cCalc()">
             <option value="none">감면 없음</option>
             <option value="disabled">장애인용 (§17)</option>
@@ -203,7 +224,7 @@
               <option value="충남">충청남도 (잠정)</option>
               <option value="전북">전북특별자치도 (잠정)</option>
               <option value="전남">전라남도 (잠정)</option>
-              <option value="경북">경상북도 (잠정)</option>
+              <option value="경북">경상북도 ✓검증</option>
               <option value="경남">경상남도 (잠정)</option>
               <option value="제주">제주특별자치도 (잠정)</option>
               <option value="세종">세종특별자치시 (잠정)</option>
@@ -214,7 +235,7 @@
               <option value="대구">대구광역시 (잠정)</option>
               <option value="인천">인천광역시 (잠정)</option>
               <option value="광주">광주광역시 (잠정)</option>
-              <option value="대전">대전광역시 (잠정)</option>
+              <option value="대전">대전광역시 ✓검증</option>
               <option value="울산">울산광역시 (잠정)</option>
             </optgroup>
           </select>
@@ -223,6 +244,7 @@
               <div id="c-cc-box"><label class="lbl">배기량 (cc)</label><input type="text" id="c-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"></div>
               <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="cCalc()"></div>
             </div>
+            <div class="hint">배기량·최대적재량은 <b>자동차등록증</b>에 적혀 있습니다.</div>
             <label class="lbl" style="margin-top:8px">연료</label>
             <div class="seg" id="c-eco">
               <button data-v="0" aria-pressed="true" onclick="pick('c-eco','0',cCalc)">일반(내연)</button>
@@ -318,7 +340,7 @@ function cCalc(){
   onTypeUI(); onRegion();
   var t=pressed('c-type'), chong=pressed('c-chong'), use=pressed('c-use'), light=pressed('c-light');
   var base=0, baseLabel='';
-  if(t==='new'){ base=numv('c-supply'); baseLabel='공급가액'; }
+  if(t==='new'){ base=numv('c-supply'); if(pressed('c-vat')==='in') base=Math.floor(base/1.1); baseLabel = pressed('c-vat')==='in'?'부가세 포함가 ÷ 1.1':'공급가액'; }
   else if(t==='trans'){
     var rep=numv('c-report'), sig=numv('c-siga');
     base=Math.max(rep,sig); baseLabel = (rep>=sig&&rep>0)?'신고가액':'시가표준액';
@@ -326,12 +348,20 @@ function cCalc(){
 
   var box=document.getElementById('c-result');
   if(!base){ box.innerHTML='<div class="empty">과세표준을 입력하세요.</div>'+docsHtml(); return; }
+  var baseFull=base;
+  var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
+  base=Math.floor(baseFull*share/100);
   var rate=taxRate(chong,use,light);
   var acq=Math.floor(base*rate/10)*10;
   var g=gamyeon(acq); // {reduce, pay, label, note}
   var tot=g.pay;
   var h='';
-  h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  if(share<100){
+    h+='<div class="row"><div class="rk">전체 과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(baseFull)+' 원</div></div>';
+    h+='<div class="row"><div class="rk">지분 과세표준<small>취득 지분 '+share+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  } else {
+    h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  }
   h+='<div class="row"><div class="rk">취득세<small>세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':'')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   h+='<div class="row sub"><div class="rk">지방교육세 · 농어촌특별세<small>자동차 취득분은 비과세(0원)</small></div><div class="rv">0 원</div></div>';
   if(g.reduce>0||g.label){
@@ -340,7 +370,10 @@ function cCalc(){
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+='<div class="info">취득일부터 <b>60일 이내</b> 신고·납부. 기한 초과 시 무신고 20% + 납부지연가산세는 "신고납부분" 탭에서 계산됩니다.</div>';
   if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스로 확정하세요.</div>';
-  var b=gongchae(base);
+  var b = share<100 ? null : gongchae(base);
+  if(share<100 && document.getElementById('c-region').value!=='none'){
+    h+='<div class="docs"><div class="sub">🧾 지분 이전(취득 지분 '+share+'%)에서는 채권 매입 계산을 제외했습니다.</div></div>';
+  }
   if(b){
     var R=b.R, warnBadge = R.verified ? '<span class="badge">✓ 조례 검증</span>' : '<span class="badge" style="background:#FFF3E0;color:#9A5B00">⚠ 잠정</span>';
     h+='<div class="docs" style="border-color:'+(R.verified?'var(--teal-soft)':'#FCE3AE')+'"><h4>🧾 '+R.label+' 채권 매입 '+warnBadge+'</h4>';
@@ -349,7 +382,12 @@ function cCalc(){
     if(!R.verified){
       h+='<div class="sub" style="color:#9A5B00">⚠ 조례 원문 미확인 잠정 요율입니다'+(R.type==='광역시'?' (광역시 도시철도채권은 요율 체계가 달라 특히 확인 필요)':'')+'. 위택스/채권 창구 값과 대조하고, 다르면 해당 조례를 올려주시면 검증값으로 반영합니다.</div>';
     }
-    h+='<div class="sub">※ 공채는 취득세와 별개이며, 할인율·단수처리는 지역·일자별로 다를 수 있습니다.</div></div>';
+    if(b.amt>0) h+='<div class="sub" style="margin-top:6px">💡 이 금액은 <b>세금이 아니라 채권 매입액</b>입니다. 대부분 바로 되팔며(즉시매도), 그때 실제 부담은 은행 할인율만큼이라 매입액보다 훨씬 적습니다.</div>';
+    h+='<div class="sub">※ 공채는 취득세와 별개입니다.</div></div>';
+    if(b.amt>0){
+      h+='<div class="total" style="background:#F4F6F9;border-color:var(--line-strong)"><span class="tk" style="color:var(--ink)">오늘 창구에서 필요한 금액</span><span class="tv" style="color:var(--ink);font-size:20px">'+won(tot)+'<span class="u">＋채권 '+won(b.amt)+'원</span></span></div>';
+      h+='<div class="sub" style="text-align:right">취득세 '+won(tot)+'원(납부) + 채권매입 '+won(b.amt)+'원(즉시매도 시 실부담 감소)</div>';
+    }
   }
   h+=docsHtml();
   box.innerHTML=h;
@@ -360,8 +398,8 @@ var GAMYEON_REQ={
   none:'',
   disabled:'중증(1~3급)·시각 4급 등 장애인이 보철·생업용으로 취득하는 1대. 대상 차량: 2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜. 본인 또는 세대 공동명의. 요건 충족 시 취득세 전액면제(최소납부 배제)이며 공채 매입도 면제됩니다. 대상 장애등급은 지역 조례마다 다를 수 있으니 확인하세요. 등록 후 1년 내 부득이한 사유 없이 이전 시 추징. (2027.12.31.까지)',
   veteran:'국가유공자(상이 1~7급) 등이 취득하는 1대. 대상 차량 범위는 장애인용과 동일. 요건 충족 시 취득세 전액면제이며 공채 매입도 면제됩니다. 대상 등급 기준은 지역 조례 확인. (2027.12.31.까지)',
-  multi3:'18세 미만 자녀 3명 이상 양육자가 양육 목적으로 취득하는 1대. 6인 이하 승용은 140만원 한도, 7인승 이상·승합·화물은 200만원 이하 면제·초과 시 15% 납부. (2027.12.31.까지)',
-  multi2:'18세 미만 자녀 2명 양육자가 취득하는 1대. 취득세 50% 경감(6인 이하 승용은 70만원 한도). (2027.12.31.까지)',
+  multi3:'18세 미만 자녀 3명 이상 양육자가 양육 목적으로 취득하는 1대. 6인 이하 승용은 140만원 한도, 7인승 이상·승합·화물은 200만원 이하 면제·초과 시 15% 납부. 공동명의로 취득하는 경우 세대를 같이하는 가족(배우자·자녀 등)과의 공동명의여야 감면됩니다(가족이 아닌 제3자 공동명의는 감면 불가). 지분 이전이어도 한도(140/200만원)는 전액 적용. (2027.12.31.까지)',
+  multi2:'18세 미만 자녀 2명 양육자가 취득하는 1대. 취득세 50% 경감(6인 이하 승용은 70만원 한도). 공동명의는 세대를 같이하는 가족과의 공동명의여야 감면됩니다. (2027.12.31.까지)',
   light:'경형자동차(배기량 1,000cc 미만 등). 취득세 75만원까지 면제, 초과분만 과세. (2027.12.31.까지)',
   ev:'환경친화적 자동차법상 전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2026.12.31.까지)',
   fcev:'수소전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2027.12.31.까지)'
@@ -372,6 +410,28 @@ function onGamyeon(){
   document.getElementById('c-elig-box').classList.toggle('hidden', !(v==='disabled'||v==='veteran'));
   document.getElementById('c-seat-box').classList.toggle('hidden', !(v==='multi3'||v==='multi2'));
 }
+function toggleSelfcheck(){
+  var el=document.getElementById('c-selfcheck');
+  el.classList.toggle('hidden');
+  if(!el.classList.contains('hidden')) selfcheck();
+}
+function selfcheck(){
+  var child=pressed('sc-child'), dv=pressed('sc-disabled'), car=pressed('sc-car');
+  var rec='', label='';
+  if(dv==='disabled'){rec='disabled';label='장애인 감면';}
+  else if(dv==='veteran'){rec='veteran';label='국가유공자 감면';}
+  else if(child==='3'){rec='multi3';label='다자녀 3자녀 감면';}
+  else if(child==='2'){rec='multi2';label='다자녀 2자녀 감면';}
+  else if(car==='ev'){rec='ev';label='전기차 감면';}
+  else if(car==='fcev'){rec='fcev';label='수소차 감면';}
+  else if(car==='light'){rec='light';label='경차 감면';}
+  var el=document.getElementById('sc-result');
+  if(!rec){ el.innerHTML='<span style="color:var(--muted)">해당하는 감면이 없어 보입니다(일반 취득세).</span>'; return; }
+  el.innerHTML='<div style="color:var(--teal);font-weight:700">→ '+label+' 대상일 수 있습니다.</div>'
+    +'<button class="btn sm primary" type="button" style="margin-top:6px" onclick="applyRec(\''+rec+'\')">이 감면 적용</button>'
+    +'<div class="hint">가능성 안내일 뿐이며, 실제 감면 여부·요건은 창구에서 확인하세요.</div>';
+}
+function applyRec(v){ document.getElementById('c-gamyeon').value=v; onGamyeon(); cCalc(); }
 function gamyeon(acq){
   var v=document.getElementById('c-gamyeon').value;
   var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차'}[v]||'';
@@ -448,27 +508,32 @@ function docsHtml(){
   return h;
 }
 
-/* 지역개발채권·도시철도채권 매입 — 지역 설정
-   verified: 조례 원문 확인 / cmp: 배기량 경계(ge=이상, gt=초과) / hwaTon: 화물 톤 경계
-   eco: 전기·수소 처리(full=전액면제, won150=150만한도) / hybrid: 하이브리드 처리 */
+/* 지역개발채권·도시철도채권 매입 — 지역별 요율표
+   rates: 승용{nMid,nHi,tMid,tHi} 1600~2000/2000+, 승합 hap{n,t}, 화물 hwa(flat 또는 ton구간)
+   cmp: 배기량 경계(ge=이상 / gt=초과) · eco: 전기수소(full/won150) · hybrid: 처리방식 */
+var STD={seung:{nMid:.08,nHi:.12,tMid:.04,tHi:.06},hap:{n:.03,t:.015},hwa:{flat:false,ton:1.0,nLow:.015,nHi:.03,tLow:.0075,tHi:.015}};
+function clone(o){return JSON.parse(JSON.stringify(o));}
 var REGIONS={
-  '강원':{label:'강원특별자치도',type:'도',verified:true,cmp:'ge',hwaTon:0.6,eco:'won150',hybrid:'exempt'},
-  '경기':{label:'경기도',type:'도',verified:true,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'over1600'},
-  '충북':{label:'충청북도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '충남':{label:'충청남도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '전북':{label:'전북특별자치도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '전남':{label:'전라남도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '경북':{label:'경상북도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '경남':{label:'경상남도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '제주':{label:'제주특별자치도',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '세종':{label:'세종특별자치시',type:'도',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '서울':{label:'서울특별시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '부산':{label:'부산광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '대구':{label:'대구광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '인천':{label:'인천광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '광주':{label:'광주광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '대전':{label:'대전광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'},
-  '울산':{label:'울산광역시',type:'광역시',verified:false,cmp:'gt',hwaTon:1.0,eco:'full',hybrid:'ask'}
+  '강원':{label:'강원특별자치도',type:'도',verified:true,cmp:'ge',eco:'won150',hybrid:'won150',
+    rates:{seung:{nMid:.08,nHi:.12,tMid:.04,tHi:.06},hap:{n:.03,t:.015},hwa:{flat:false,ton:0.6,nLow:.015,nHi:.03,tLow:.0075,tHi:.015}}},
+  '경기':{label:'경기도',type:'도',verified:true,cmp:'gt',eco:'full',hybrid:'over1600',rates:clone(STD)},
+  '경북':{label:'경상북도',type:'도',verified:true,cmp:'ge',eco:'full',hybrid:'won150',
+    rates:{seung:{nMid:.04,nHi:.08,tMid:.02,tHi:.04},hap:{n:.015,t:.008},hwa:{flat:true,n:.015,t:.008}}},
+  '대전':{label:'대전광역시',type:'광역시',verified:true,cmp:'ge',eco:'full',hybrid:'won150',
+    rates:{seung:{nMid:.04,nHi:.05,tMid:.04,tHi:.05},hap:{n:.015,t:.0075},hwa:{flat:true,n:.015,t:.0075}}},
+  '충북':{label:'충청북도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '충남':{label:'충청남도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '전북':{label:'전북특별자치도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '전남':{label:'전라남도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '경남':{label:'경상남도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '제주':{label:'제주특별자치도',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '세종':{label:'세종특별자치시',type:'도',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '서울':{label:'서울특별시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '부산':{label:'부산광역시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '대구':{label:'대구광역시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '인천':{label:'인천광역시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '광주':{label:'광주광역시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)},
+  '울산':{label:'울산광역시',type:'광역시',verified:false,cmp:'gt',eco:'full',hybrid:'ask',rates:clone(STD)}
 };
 function onRegion(){
   var r=document.getElementById('c-region').value, chong=pressed('c-chong');
@@ -489,33 +554,33 @@ function gongchae(base){
   }
   var chong=pressed('c-chong'), isNew=pressed('c-type')==='new';
   var cc=numv('c-cc'), ton=Number(document.getElementById('c-ton').value)||0, fuel=pressed('c-eco');
-  var warn='';
-
-  // 하이브리드: 지역별 취급
+  var warn='', hybCap=false;
   if(fuel==='hybrid'){
-    if(R.hybrid==='exempt') fuel='1';           // 강원 등: 전기·수소와 동일(면제)
-    else if(R.hybrid==='over1600'){              // 경기: 1600cc 초과만 매입, 이하 면제
-      if(cc<=1600) return {amt:0,rate:0,note:'하이브리드 1,600cc 이하 → 면제',R:R};
-      fuel='0';                                  // 초과분은 일반 요율
-    } else { warn='하이브리드 채권 매입 여부·면제 종료일은 시·도마다 다릅니다. 일반 요율로 계산했으니 해당 시·도 조례 확인 필요.'; fuel='0'; }
+    if(R.hybrid==='over1600'){ if(cc<=1600) return {amt:0,rate:0,note:'하이브리드 1,600cc 이하 → 면제',R:R}; }
+    else if(R.hybrid==='won150'){ hybCap=true; }
+    else { warn='하이브리드 면제 여부·종료일은 시·도마다 다릅니다. 일반 요율로 계산 — 해당 조례 확인 필요.'; }
+    fuel='0'; // 배기량 기준으로 일반 요율 산정 후 위 규칙 적용
   }
-
   function cmp(v,b){ return R.cmp==='ge'? v>=b : v>b; }
-  var rate=0;
+  var RT=R.rates, rate=0;
   if(chong==='승용'){
-    if(cmp(cc,2000)) rate=isNew?0.12:0.06;
-    else if(cmp(cc,1600)) rate=isNew?0.08:0.04;
+    if(cmp(cc,2000)) rate=isNew?RT.seung.nHi:RT.seung.tHi;
+    else if(cmp(cc,1600)) rate=isNew?RT.seung.nMid:RT.seung.tMid;
   } else if(chong==='승합'){
-    if(cmp(cc,1000)) rate=isNew?0.03:0.015;
+    if(cmp(cc,1000)) rate=isNew?RT.hap.n:RT.hap.t;
   } else { // 화물·특수
-    if(cmp(cc,1000)){ var low = R.cmp==='ge'? ton<R.hwaTon : ton<=R.hwaTon; rate = low?(isNew?0.015:0.0075):(isNew?0.03:0.015); }
+    if(cmp(cc,1000)){
+      if(RT.hwa.flat) rate=isNew?RT.hwa.n:RT.hwa.t;
+      else { var low = R.cmp==='ge'? ton<RT.hwa.ton : ton<=RT.hwa.ton; rate = low?(isNew?RT.hwa.nLow:RT.hwa.tLow):(isNew?RT.hwa.nHi:RT.hwa.tHi); }
+    }
   }
   var amt=Math.floor(base*rate/5000)*5000;
   var note='';
-  if(fuel==='1'){ // 전기·수소(및 강원 하이브리드)
+  if(fuel==='1'){ // 전기·수소
     if(R.eco==='full'){ amt=0; note='전기·수소차 전액 면제'; }
-    else { if(amt<=1500000){ amt=0; note='환경친화차 150만원 이하 면제(전기차 배기량 기준은 확인 필요)'; } else { amt-=1500000; note='환경친화차 150만원 감면'; } }
+    else { if(amt<=1500000){ amt=0; note='전기·수소 150만원 이하 면제(배기량 기준 확인 필요)'; } else { amt-=1500000; note='전기·수소 150만원 감면'; } }
   }
+  if(hybCap){ if(amt<=1500000){ amt=0; note='하이브리드 150만원 이하 면제'; } else { amt-=1500000; note='하이브리드 150만원 감면'; } }
   if(warn) note=(note?note+' · ':'')+warn;
   return {amt:amt,rate:rate,note:note,R:R};
 }
