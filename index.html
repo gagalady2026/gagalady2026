@@ -440,7 +440,24 @@ function cCalc(){
   }
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+='<div class="info">취득일부터 <b>60일 이내</b> 신고·납부. 기한 초과 시 무신고 20% + 납부지연가산세는 "신고납부분" 탭에서 계산됩니다.</div>';
-  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 <b>면세점(비과세)</b>이라 취득세는 0원입니다. 다만 차량 등록을 위한 <b>등록면허세(등록분)</b>가 별도로 부과됩니다(등록면허세 계산은 추후 별도 탭 예정).</div>';
+  if(exempt50){
+    var eligFull = (document.getElementById('c-gamyeon').value==='disabled'||document.getElementById('c-gamyeon').value==='veteran') && pressed('c-elig')==='1';
+    if(eligFull){
+      h+='<div class="warn">취득가액 50만원 이하지만 <b>장애인·국가유공자 전액면제</b>가 적용되어 납부할 세액이 없으므로, 등록면허세도 부과되지 않습니다(취득세 감면으로 납부세액 없음 → 등록면허세 제외).</div>';
+    } else {
+      var lrate = (use==='영업')?0.02 : light==='1'?0.02 : (chong==='승용'?0.05:0.03);
+      var lcalc = Math.floor(base*lrate);
+      var lreg = Math.max(lcalc, 15000);          // 최저한세 15,000원
+      var minApplied = lcalc < 15000;
+      var ledu = Math.floor(lreg*0.20/10)*10;     // 지방교육세 20%
+      h+='<div class="docs" style="border-color:#FCE3AE"><h4>🧾 등록면허세(등록) — 취득세 면세점 대체</h4>';
+      h+='<div class="sub">취득가액 50만원 이하는 취득세가 비과세(면세점)이나, 차량 등록을 위해 등록면허세가 부과됩니다.</div>';
+      h+='<div class="row" style="padding-top:8px"><div class="rk">등록면허세<small>과표 × '+(lrate*100)+'%'+(minApplied?' → 최저한세 15,000원 적용':'')+'</small></div><div class="rv">'+won(lreg)+' 원</div></div>';
+      h+='<div class="row"><div class="rk">지방교육세<small>등록면허세 × 20%</small></div><div class="rv">'+won(ledu)+' 원</div></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">등록면허세 합계</span><span class="tv" style="font-size:20px">'+won(lreg+ledu)+'<span class="u">원</span></span></div>';
+      h+='<div class="sub" style="margin-top:6px">※ 취득세가 감면 등으로 0원인 경우(면세점이 아닌 경우)에는 등록면허세가 부과되지 않습니다. 최종 세액은 위택스로 확정하세요.</div></div>';
+    }
+  }
   if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스로 확정하세요.</div>';
   var b = share<100 ? null : gongchae(base);
   if(share<100 && document.getElementById('c-region').value!=='none'){
