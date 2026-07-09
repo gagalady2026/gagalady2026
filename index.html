@@ -3,17 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <title>지방세 계산기 · 동해시 세무과</title>
 <style>
   :root{
-    --paper:#F4F6F9;--surface:#FFFFFF;--ink:#161E2E;--muted:#5C6675;
-    --line:#E3E7EE;--line-strong:#CDD4DF;--teal:#115E59;--teal-soft:#E7F1F0;
-    --seal:#B4382B;--seal-soft:#FBECEA;
+    --paper:#F4F6F9;--surface:#FFFFFF;--ink:#161E2E;--muted:#4A5462;
+    --line:#E3E7EE;--line-strong:#CDD4DF;--teal:#0F5E58;--teal-soft:#E7F1F0;
+    --seal:#A63226;--seal-soft:#FBECEA;--focus:#1A5FB4;
     --shadow:0 1px 2px rgba(22,30,46,.06),0 8px 28px rgba(22,30,46,.06);--radius:14px;
   }
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
+    outline:3px solid var(--focus);outline-offset:2px;border-radius:4px;}
   *{box-sizing:border-box;}html,body{margin:0;padding:0;}
   body{background:var(--paper);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+    font-family:"Pretendard","Pretendard GOV",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
     line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;}
   .wrap{max-width:960px;margin:0 auto;padding:26px 20px 60px;}
   header.head{border-bottom:2px solid var(--ink);padding-bottom:15px;margin-bottom:18px;}
@@ -364,7 +367,7 @@
   </div>
 
   <div class="actions">
-    <button class="btn" onclick="location.reload()">초기화</button>
+    <button class="btn" onclick="resetInputs()">초기화</button>
     <button class="btn primary" onclick="window.print()">인쇄 / PDF</button>
   </div>
 
@@ -831,6 +834,26 @@ function calcShingo(){
 }
 
 /* init */
+function resetInputs(){
+  // 값 입력 비우기 (지분율은 100 유지)
+  document.querySelectorAll('#m-chwi input, #m-shingo input, #g-pay').forEach(function(i){
+    if(i.id==='c-share'){ i.value='100'; } else { i.value=''; }
+  });
+  // 세그먼트/선택 기본값 복원
+  var defs={'c-type':'new','c-chong':'승용','c-use':'비영업','c-light':'0','c-vat':'ex','c-eco':'0','c-elig':'0','c-seat':'small','sc-child':'0','sc-disabled':'0','sc-car':'0'};
+  for(var g in defs){ if(document.getElementById(g)) pick(g,defs[g]); }
+  var gm=document.getElementById('c-gamyeon'); if(gm){gm.value='none'; onGamyeon();}
+  var rg=document.getElementById('c-region'); if(rg) rg.value='none';
+  document.getElementById('c-selfcheck').classList.add('hidden');
+  document.getElementById('c-search-box').classList.add('hidden');
+  selected=null;
+  // 신고유형 기본값
+  sType='no'; document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v==='no');});
+  // 고지분 체납 건 초기화
+  document.getElementById('rows').innerHTML=''; rid=0; addRow();
+  // 재계산
+  cCalc(); recalcGozi(); calcShingo();
+}
 addRow(); cCalc();
 </script>
 </body>
