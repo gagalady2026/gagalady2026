@@ -124,14 +124,33 @@
   </header>
 
   <div class="tabs" role="tablist">
-    <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">자동차 취득세</button>
+    <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
     <button class="tab" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">고지분 체납 가산세</button>
     <button class="tab" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고납부분 가산세</button>
     <button class="tab" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">지방세 안내</button>
   </div>
 
-  <!-- ============ 자동차 취득세 ============ -->
+  <!-- ============ 취득세 (대상별 챕터) ============ -->
   <div id="m-chwi">
+    <div class="card" style="padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <label class="lbl" style="margin:0">취득 대상</label>
+        <div class="seg" id="c-target">
+          <button data-v="car" aria-pressed="true" onclick="pick('c-target','car',onTarget)">자동차</button>
+          <button data-v="machine" aria-pressed="false" onclick="pick('c-target','machine',onTarget)">기계장비</button>
+          <button data-v="moto" aria-pressed="false" onclick="pick('c-target','moto',onTarget)">이륜차</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 준비 중 안내 (기계장비·이륜차) -->
+    <div id="target-soon" class="card hidden" style="text-align:center;padding:40px 22px;">
+      <div style="font-size:15px;font-weight:800;margin-bottom:8px;" id="soon-title">준비 중</div>
+      <div class="hint" id="soon-desc" style="margin:0;">이 대상의 취득세 계산은 준비 중입니다.</div>
+    </div>
+
+    <!-- 자동차 -->
+    <div id="target-car">
     <div class="grid2">
       <div class="card">
         <h2>입력 — 자동차 취득세 (최초 신고)</h2>
@@ -296,6 +315,7 @@
         <div id="c-result"><div class="empty">차종·용도·과세표준을 입력하세요.</div></div>
       </div>
     </div>
+    </div><!-- /target-car -->
   </div>
 
   <!-- ============ 고지분 체납 ============ -->
@@ -853,6 +873,20 @@ function calcShingo(){
   box.innerHTML=h;
 }
 
+/* 취득세 대상별 챕터 */
+function onTarget(){
+  var t=pressed('c-target');
+  var car = t==='car';
+  document.getElementById('target-car').classList.toggle('hidden', !car);
+  document.getElementById('target-soon').classList.toggle('hidden', car);
+  if(!car){
+    var info={machine:['기계장비 취득세 — 준비 중','굴착기·지게차 등 건설기계의 취득세·시가표준액 계산을 준비하고 있습니다.'],
+              moto:['이륜자동차 취득세 — 준비 중','이륜자동차의 취득세·등록면허세 계산을 준비하고 있습니다.']}[t];
+    document.getElementById('soon-title').textContent=info[0];
+    document.getElementById('soon-desc').textContent=info[1];
+  }
+}
+
 /* init */
 function resetInputs(){
   // 값 입력 비우기 (지분율은 100 유지)
@@ -860,8 +894,9 @@ function resetInputs(){
     if(i.id==='c-share'){ i.value='100'; } else { i.value=''; }
   });
   // 세그먼트/선택 기본값 복원
-  var defs={'c-type':'new','c-chong':'승용','c-use':'비영업','c-light':'0','c-vat':'ex','c-eco':'0','c-elig':'0','c-seat':'small','sc-child':'0','sc-disabled':'0','sc-car':'0'};
+  var defs={'c-target':'car','c-type':'new','c-chong':'승용','c-use':'비영업','c-light':'0','c-vat':'ex','c-eco':'0','c-elig':'0','c-seat':'small','sc-child':'0','sc-disabled':'0','sc-car':'0'};
   for(var g in defs){ if(document.getElementById(g)) pick(g,defs[g]); }
+  onTarget();
   var gm=document.getElementById('c-gamyeon'); if(gm){gm.value='none'; onGamyeon();}
   var rg=document.getElementById('c-region'); if(rg) rg.value='none';
   document.getElementById('c-selfcheck').classList.add('hidden');
