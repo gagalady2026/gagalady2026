@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<title>지방세 계산기 · 동해시 세무과</title>
+<title>지방세 계산기 (동준)</title>
 <style>
   :root{
     --paper:#F4F6F9;--surface:#FFFFFF;--ink:#161E2E;--muted:#4A5462;
@@ -138,9 +138,9 @@
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="kicker">동해시 세무과 · 지방세 실무 계산</span>
+    <span class="kicker">지방세 실무 계산 · 동준</span>
     <h1>지방세 계산기</h1>
-    <p>가산세 · 자동차 취득세(2026 시가표준액) — 실무 참고용 개산 도구</p>
+    <p>가산세 · 취득세(2026 시가표준액) — 실무 참고용 개산 도구</p>
     <button class="btn sm" onclick="openPalette()" style="position:absolute;top:0;right:0;">🔍 통합검색 <span style="color:var(--muted);font-weight:600">Ctrl+K</span></button>
   </header>
 
@@ -244,7 +244,7 @@
         <div class="field">
           <label class="lbl">취득 지분율 (%)</label>
           <div class="money-wrap"><input type="number" id="c-share" min="0" max="100" step="0.01" value="100" style="text-align:right;font-weight:600" oninput="cCalc()"><span class="won">%</span></div>
-          <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 입력하세요(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.</div>
+          <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 입력하세요(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.<br>※ 개인택시·지입 화물처럼 <b>공동명의자 간 용도(영업/비영업)가 다르면</b> 지분별로 세율(7% vs 4%)을 나눠 개별 산정해야 합니다.</div>
         </div>
 
         <!-- 차명 검색 영역 -->
@@ -282,6 +282,10 @@
             <option value="light">경형자동차·경차 (§67)</option>
             <option value="ev">전기자동차 (§66④)</option>
             <option value="fcev">수소전기자동차 (§66④)</option>
+            <option value="exchange">교환자동차 — 제작결함 교환 (§66①)</option>
+            <option value="disaster">천재지변 대체취득 (§92①)</option>
+            <option value="sangsok">상속 — 세율특례 (§15)</option>
+            <option value="divorce">이혼 재산분할 (§15①)</option>
           </select>
           <div id="c-gamyeon-req" class="hint"></div>
           <div id="c-gamyeon-check"></div>
@@ -296,6 +300,16 @@
               <button data-v="small" aria-pressed="true" onclick="pick('c-seat','small',cCalc)">6인 이하 승용</button>
               <button data-v="big" aria-pressed="false" onclick="pick('c-seat','big',cCalc)">7인승 이상·승합·화물</button>
             </div>
+          </div>
+          <div id="c-prevtax-box" class="hidden" style="margin-top:8px;">
+            <label class="lbl">종전 자동차 취득세 납부액</label>
+            <div class="money-wrap"><input type="text" id="c-prevtax" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
+            <div class="hint">교환 취득 세액이 이 금액을 초과하면 <b>초과분만 과세</b>됩니다(종전 가액이 더 커도 환급 없음).</div>
+          </div>
+          <div id="c-prevval-box" class="hidden" style="margin-top:8px;">
+            <label class="lbl">종전(멸실·파손) 자동차 가액</label>
+            <div class="money-wrap"><input type="text" id="c-prevval" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
+            <div class="hint">멸실·파손일부터 <b>2년 이내</b> 대체취득분에 한해 종전 가액 범위까지 면제, <b>초과분만 과세</b>됩니다.</div>
           </div>
         </div>
 
@@ -338,6 +352,12 @@
               <button data-v="1" aria-pressed="false" onclick="pick('c-eco','1',cCalc)">전기·수소</button>
             </div>
             <div class="hint">매입액 = 취득세 과세표준 × 지역별 요율(5,000원 미만 단수 버림). 즉시매도 시 실부담금은 은행·일자별 할인율에 따라 달라집니다.</div>
+            <label class="lbl" style="margin-top:8px">채권 면제 사유 <span style="color:var(--muted);font-weight:500">· 해당 시</span></label>
+            <select id="c-bondexempt" onchange="cCalc()">
+              <option value="none">해당 없음</option>
+              <option value="dealer">중고자동차 매매업자 판매목적 이전등록</option>
+              <option value="merge">법인 합병에 따른 이전등록</option>
+            </select>
           </div>
         </div>
       </div>
@@ -369,6 +389,11 @@
           <input type="text" id="mc-q" placeholder="예: 지게차, 굴삭기, 덤프트럭" oninput="mSearch()" autocomplete="off" style="text-align:left;font-weight:500;">
           <div id="mc-status" class="hint"></div>
           <div id="mc-results" style="max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:8px;"></div>
+          <div id="mc-year-box" class="hidden" style="margin-top:10px;">
+            <label class="lbl">제작연도 (연식)</label>
+            <select id="mc-year" onchange="mApplySiga()"></select>
+            <div class="hint">경과연수별 잔가율(기종 내용연수 기준)을 적용해 시가표준액을 계산합니다.</div>
+          </div>
         </div>
       </div>
       <div class="card"><h2>산정 결과</h2><div id="mc-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
@@ -447,7 +472,7 @@
   <!-- ============ 지방세 안내 (FAQ) ============ -->
   <div id="m-faq" class="hidden">
     <div class="card faq">
-      <div class="note">아래는 일반적인 지방세 안내입니다(참고용). 납기·감면·분납 요건 등 세부 사항과 확정 금액은 <b>위택스(wetax.go.kr)</b> 또는 <b>동해시청 세무과</b>에서 확인하세요.</div>
+      <div class="note">아래는 일반적인 지방세 안내입니다(참고용). 납기·감면·분납 요건 등 세부 사항과 확정 금액은 <b>위택스(wetax.go.kr)</b> 또는 <b>관할 시·군·구청</b>에서 확인하세요.</div>
 
       <div class="cat">■ 납기 · 안 내면 생기는 일</div>
       <details><summary>재산세는 언제 내나요?</summary><div class="a">재산세는 <b>6월 1일(과세기준일)</b> 소유자에게 부과됩니다. 주택은 세액을 절반씩 나눠 <b>7월(16~31일)과 9월(16~30일)</b> 두 번, 다만 주택 세액이 20만원 이하면 7월에 한 번에 부과됩니다. 건축물·선박·항공기는 7월, 토지는 9월입니다. 재산세에 도시지역분·지역자원시설세·지방교육세가 함께 붙을 수 있습니다.</div></details>
@@ -455,7 +480,7 @@
       <details><summary>납기를 놓치면 어떻게 되나요?</summary><div class="a">납기가 지나면 <b>가산금(가산세)</b>이 붙습니다. 2024년 이후 성립분은 최초 3% + 매달 0.66%(최대 60개월)입니다. 계속 안 내면 <b>재산 압류(부동산·예금·급여 등)</b>, 공매, 자동차세 체납 시 <b>번호판 영치</b>, 관허사업 제한 등 체납처분으로 이어집니다. 정확한 가산세는 이 사이트의 "고지분 체납 가산세" 탭에서 계산할 수 있습니다.</div></details>
 
       <div class="cat">■ 나눠 내기 · 깎아주기</div>
-      <details><summary>한 번에 못 내는데 나눠 낼 수 있나요?</summary><div class="a">재산세는 세액이 <b>250만원을 초과</b>하면 납기가 지난 날부터 <b>2개월 이내</b> 분할납부가 가능합니다. 그 밖에 재해·실직 등으로 납부가 어려우면 <b>징수유예·분할고지</b> 제도가 있으니 세무과에 상담하세요. 요건과 절차는 동해시청 세무과 확인이 필요합니다.</div></details>
+      <details><summary>한 번에 못 내는데 나눠 낼 수 있나요?</summary><div class="a">재산세는 세액이 <b>250만원을 초과</b>하면 납기가 지난 날부터 <b>2개월 이내</b> 분할납부가 가능합니다. 그 밖에 재해·실직 등으로 납부가 어려우면 <b>징수유예·분할고지</b> 제도가 있으니 관할 시·군·구청에 상담하세요. 요건과 절차는 관할 지자체 확인이 필요합니다.</div></details>
       <details><summary>감면 대상은 없나요?</summary><div class="a">지방세특례제한법에 따라 장애인·국가유공자·다자녀·서민주택·전기차 등 다양한 감면이 있습니다. 대상·한도·기간이 항목마다 다르고 신청이 필요하니, 해당될 것 같으면 세무과에 문의하세요. 자동차 취득세 감면은 이 사이트 "자동차 취득세" 탭에서 자가진단해볼 수 있습니다.</div></details>
 
       <div class="cat">■ 재산세 자주 묻는 것</div>
@@ -488,7 +513,7 @@
   <div class="basis">
     <h3>산정 근거</h3>
     <ul style="margin:0;padding-left:18px;">
-      <li><b>자동차 취득세</b> — 과세표준(신규: 공급가액 / 이전: 신고가액과 시가표준액 중 큰 값 / 무상: 시가표준액) × 세율. 비영업 승용 7%·경차 4%, 승합·화물 비영업 5%·경차 4%, 영업 4%(지방세법 §12). 자동차 취득분은 <b>지방교육세·농어촌특별세가 붙지 않아 0원</b>이며, 취득세만 납부합니다. 시가표준액 = 기준가격 × 경과연수별 잔가율(2026년 표).</li>
+      <li id="basis-chwi"><b>자동차 취득세</b> — 과세표준(신규: 공급가액 / 이전: 신고가액과 시가표준액 중 큰 값 / 무상: 시가표준액) × 세율. 비영업 승용 7%·경차 4%, 승합·화물 비영업 5%·경차 4%, 영업 4%(지방세법 §12). 자동차 취득분은 <b>지방교육세·농어촌특별세가 붙지 않아 0원</b>이며, 취득세만 납부합니다. 시가표준액 = 기준가격 × 경과연수별 잔가율(2026년 표).</li>
       <li><b>가산세</b> — 신고기한(취득일부터 60일) 경과 시 무신고 20% + 납부지연가산세(1일 0.022%). "신고납부분" 탭에서 산출.</li>
     </ul>
     <div class="disc">※ 실무 참고용 개산입니다. 감면(지특법 §17·§29·§22의2·§66·§67)은 요건·한도·최소납부세제·추징 조건이 있어, 요건 충족 여부는 선택값에 따라 계산됩니다. 최종 세액·감면액은 위택스 "지방세 미리계산"으로 확정하세요. 시가표준액표는 매년 1월 갱신됩니다.</div>
@@ -536,9 +561,12 @@ function cCalc(){
   var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
   base=Math.floor(baseFull*share/100);
   var rate=taxRate(chong,use,light);
+  var gselNow=document.getElementById('c-gamyeon').value;
+  if(gselNow==='sangsok') rate=Math.max(rate-0.02,0); // 상속 세율특례: 표준세율 - 중과기준세율(2%)
   var exempt50 = base>0 && base<=500000; // 취득세 면세점(취득가액 50만원 이하)
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
-  var g=gamyeon(acq); // {reduce, pay, label, note}
+  if(gselNow==='divorce') acq=0; // 이혼 재산분할 비과세
+  var g=gamyeon(acq, base, rate); // {reduce, pay, label, note}
   var tot=g.pay;
   var h='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
   if(share<100){
@@ -554,10 +582,11 @@ function cCalc(){
   }
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+='<div class="info">취득일부터 <b>60일 이내</b> 신고·납부. 기한 초과 시 무신고 20% + 납부지연가산세는 "신고납부분" 탭에서 계산됩니다.</div>';
+  if(tot>0) h+='<button type="button" class="btn sm" style="margin-top:8px;border-color:var(--seal);color:var(--seal)" onclick="tossToShingo('+tot+')">⏱ 신고기한 경과 시 가산세 계산하기 →</button>';
   if(exempt50){
     var gsel=document.getElementById('c-gamyeon').value;
     var acqPre=Math.floor(base*rate/10)*10;   // 면세점 적용 전 취득세
-    var gPre=gamyeon(acqPre);                  // 그에 감면 적용
+    var gPre=gamyeon(acqPre, base, rate);      // 그에 감면 적용
     var zeroByGamyeon = gsel!=='none' && gPre.pay===0;  // 감면으로 취득세가 0이 되는가
     if(zeroByGamyeon){
       h+='<div class="warn">취득가액 50만원 이하지만 <b>감면 대상('+(gPre.label||'감면')+')이라 취득세가 0원</b>이므로, 등록면허세도 부과되지 않습니다. <b>따로 납부할 세액이 없습니다.</b></div>';
@@ -632,13 +661,19 @@ var GAMYEON_REQ={
   multi2:'18세 미만 자녀 2명 양육자가 취득하는 1대. 취득세 50% 경감(6인 이하 승용은 70만원 한도). 공동명의는 세대를 같이하는 가족과의 공동명의여야 감면됩니다. (2027.12.31.까지)',
   light:'경형자동차(배기량 1,000cc 미만 등). 취득세 75만원까지 면제, 초과분만 과세. (2027.12.31.까지)',
   ev:'환경친화적 자동차법상 전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2026.12.31.까지)',
-  fcev:'수소전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2027.12.31.까지)'
+  fcev:'수소전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2027.12.31.까지)',
+  exchange:'제작결함으로 소비자분쟁해결기준·자동차안전하자심의위원회 중재에 따라 반납한 차와 같은 종류로 교환받는 자동차. 취득세 100% 면제(최소납부 배제·추징 없음). 단 교환 취득 세액이 종전 자동차 취득 시 납부한 세액을 초과하면 그 초과분은 과세(금전 환급받아 취득한 차는 제외). 2024.1.1. 이후 다른 감면과 중복 가능.',
+  disaster:'천재지변, 그 밖의 불가항력으로 멸실·파손된 자동차를 멸실·파손일부터 2년 이내에 대체취득하는 경우 취득세 면제(최소납부 배제·추징 없음). 종전 자동차 가액을 초과하는 부분은 과세. (지특법 §92①)',
+  sangsok:'상속으로 인한 자동차 취득은 형식적 취득으로 보아 세율특례를 적용합니다. 취득세 = 표준세율 − 중과기준세율(2%)로 산출(예: 비영업 승용 7%→5%, 승합·화물 5%→3%, 경차 4%→2%). (지방세법 §15①)',
+  divorce:'「민법」에 따른 이혼 재산분할(협의·재판상)로 취득하는 자동차는 취득세 비과세. 등기·등록 원인이 "재산분할"이어야 하며 혼인관계증명서 등으로 이혼사실 확인이 필요합니다. (지방세법 §15①)'
 };
 function onGamyeon(){
   var v=document.getElementById('c-gamyeon').value;
   document.getElementById('c-gamyeon-req').textContent=GAMYEON_REQ[v]||'';
   document.getElementById('c-elig-box').classList.toggle('hidden', !(v==='disabled'||v==='veteran'));
   document.getElementById('c-seat-box').classList.toggle('hidden', !(v==='multi3'||v==='multi2'));
+  document.getElementById('c-prevtax-box').classList.toggle('hidden', v!=='exchange');
+  document.getElementById('c-prevval-box').classList.toggle('hidden', v!=='disaster');
   var chk=GAMYEON_CHECK[v], el=document.getElementById('c-gamyeon-check');
   var html = chk ? '<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
   var warn=GAMYEON_WARN[v];
@@ -652,7 +687,11 @@ var GAMYEON_WARN={
   multi2:['가족이 아닌 제3자와 공동명의면 감면 불가.','양육 목적 1대 한정, 자녀 연령(18세 미만) 요건 확인.','감면 후 1년 내 소유권 이전 시 추징 주의.'],
   light:['경형 요건(배기량·규격)을 벗어나면 감면 대상 아닙니다.','감면 한도(75만원)를 넘는 고가 경차는 초과분이 과세됩니다.'],
   ev:['감면 <b>일몰기한(2026.12.31.)</b>에 유의하세요. 취득 시점 기준입니다.','감면 한도(140만원)를 초과하면 초과분은 과세됩니다.','환경친화적 자동차 요건(자동차등록증·인증) 확인.'],
-  fcev:['감면 일몰기한(2027.12.31.)에 유의.','한도(140만원) 초과분은 과세.']
+  fcev:['감면 일몰기한(2027.12.31.)에 유의.','한도(140만원) 초과분은 과세.'],
+  exchange:['교환 취득 세액이 <b>종전 납부세액을 초과</b>하면 초과분은 과세됩니다(종전 가액이 더 커도 환급 없음).','제작결함이 아닌 단순 변심·중고 교환은 대상이 아닙니다.','추징규정은 없으나 취득 당시 요건 충족 여부는 확인이 필요합니다.'],
+  disaster:['<b>전기합선 화재·운행 중 교통사고·정비불량 화재</b> 등 과실 사고는 불가항력이 아니어서 대상이 아닙니다.','멸실·파손일부터 <b>2년</b>이 지나면 대상이 아닙니다.','종전 자동차 가액 초과분은 과세됩니다.'],
+  sangsok:['상속 취득세 신고기한(상속개시일이 속한 달 말일부터 6개월 등)을 확인하세요.','상속 이후 실제 사용·처분 여부와 무관하게 세율특례가 적용됩니다.'],
+  divorce:['위자료·양육비 명목의 이전은 재산분할과 달라 비과세가 아닐 수 있습니다.','등기·등록 원인이 반드시 <b>"재산분할"</b>이어야 합니다.']
 };
 var GAMYEON_CHECK={
   disabled:['<b>본인 또는 세대 공동명의</b>인가요? (공동명의는 주민등록상 <b>같은 세대</b>의 가족 1인)','대상 차량인가요? (2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜)','<b>1대</b>만 감면됩니다','등록 후 1년 내 부득이한 사유 없이 처분·이전하면 <b>추징</b>됩니다'],
@@ -661,7 +700,11 @@ var GAMYEON_CHECK={
   multi2:['자녀가 모두 <b>만 18세 미만</b>인가요?','자녀 <b>2명</b> 양육 중인가요?','공동명의라면 같은 세대의 가족과의 공동명의인가요?'],
   light:['배기량 1,000cc 미만 등 <b>경형자동차</b> 요건을 충족하나요?'],
   ev:['<b>전기자동차</b>가 맞나요? (자동차등록증·제작증 확인)'],
-  fcev:['<b>수소전기자동차</b>가 맞나요?']
+  fcev:['<b>수소전기자동차</b>가 맞나요?'],
+  exchange:['제작결함으로 <b>말소·반납</b>된 종전 차량이 있나요? (말소사유가 "제작결함/반품")','반납 차량과 <b>같은 종류</b>(승용→승용)인가요?','반납 차량과 교환 차량의 <b>당사자가 동일</b>한가요?','금전으로 환급받아 산 차는 대상이 아닙니다.'],
+  disaster:['천재지변·불가항력으로 <b>멸실·파손</b>된 자동차인가요? (사고사실·피해사실 증명)','멸실·파손일부터 <b>2년 이내</b> 대체취득인가요?','종전 자동차 가액을 넘는 부분은 과세됩니다.'],
+  sangsok:['상속을 원인으로 한 취득인가요? (상속 이전등록)','세율은 표준세율에서 2%를 뺀 값으로 적용됩니다.'],
+  divorce:['등기·등록 원인이 <b>"재산분할"</b>인가요?','협의이혼(재산분할협의서+인감) 또는 재판상 이혼(판결문)으로 확인됩니다.']
 };
 function toggleSelfcheck(){
   var el=document.getElementById('c-selfcheck');
@@ -685,11 +728,24 @@ function selfcheck(){
     +'<div class="hint">가능성 안내일 뿐이며, 실제 감면 여부·요건은 창구에서 확인하세요.</div>';
 }
 function applyRec(v){ document.getElementById('c-gamyeon').value=v; onGamyeon(); cCalc(); }
-function gamyeon(acq){
+function gamyeon(acq, base, rate){
   var v=document.getElementById('c-gamyeon').value;
-  var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차'}[v]||'';
+  var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차',exchange:'교환자동차',disaster:'천재지변 대체취득',sangsok:'상속 세율특례',divorce:'이혼 재산분할'}[v]||'';
   if(v==='none') return {reduce:0,pay:acq,label:'',note:''};
   var r10=function(n){return Math.floor(n/10)*10;};
+  if(v==='sangsok') return {reduce:0,pay:acq,label:label,note:'표준세율 − 2% 적용'};
+  if(v==='divorce') return {reduce:0,pay:0,label:label,note:'재산분할 취득 → 비과세'};
+  if(v==='exchange'){
+    var prev=numv('c-prevtax');
+    var pay=Math.max(0, acq-prev);
+    return {reduce:acq-pay, pay:pay, label:label, note: pay>0?'종전 납부세액 초과분 과세':'전액 면제(최소납부 배제)'};
+  }
+  if(v==='disaster'){
+    var pv=numv('c-prevval');
+    var over=Math.max(0, (base||0)-pv);
+    var pay2=r10(over*(rate||0));
+    return {reduce:acq-pay2, pay:pay2, label:label, note: pay2>0?'종전 가액 초과분 과세':'전액 면제(최소납부 배제)'};
+  }
   if(v==='disabled'||v==='veteran'){
     if(pressed('c-elig')==='1') return {reduce:acq,pay:0,label:label,note:'요건 충족 → 전액면제'};
     return {reduce:0,pay:acq,label:label,note:'요건 미충족 → 감면 없음'};
@@ -754,7 +810,7 @@ function docsHtml(){
   var v=document.getElementById('c-gamyeon').value;
   var d=GAMYEON_DOCS[v];
   if(!d) return '';
-  var h='<div class="docs"><h4>📋 '+d.title+'</h4><div class="sub">일반 기준입니다. 세부 서류는 동해시 세무과/차량등록 기준으로 확인하세요.</div><ul>';
+  var h='<div class="docs"><h4>📋 '+d.title+'</h4><div class="sub">일반 기준입니다. 세부 서류는 관할 시·군·구청/차량등록 기준으로 확인하세요.</div><ul>';
   h+=d.items.map(function(x){return '<li>'+x+'</li>';}).join('');
   if(d.minor){ h+='</ul><div class="grp">미성년자인 경우 추가</div><ul>'+d.minor.map(function(x){return '<li>'+x+'</li>';}).join(''); }
   h+='</ul></div>';
@@ -800,6 +856,10 @@ function gongchae(base){
   var R=REGIONS[key];
   var use=pressed('c-use');
   if(use==='영업') return {amt:0,rate:0,note:'영업용(사업용)은 매입의무 없음',R:R};
+  var be=document.getElementById('c-bondexempt');
+  if(be && be.value!=='none'){
+    return {amt:0,rate:0,note:(be.value==='dealer'?'중고자동차 매매업자 판매목적 이전':'법인 합병 이전')+' → 채권 매입 면제',R:R};
+  }
   // 장애인·국가유공자 요건 충족 시 공채도 면제(최우선)
   var gv=document.getElementById('c-gamyeon').value;
   if((gv==='disabled'||gv==='veteran') && pressed('c-elig')==='1'){
@@ -986,6 +1046,15 @@ function onTarget(){
   document.getElementById('target-machine').classList.toggle('hidden', t!=='machine');
   document.getElementById('target-moto').classList.toggle('hidden', t!=='moto');
   document.getElementById('target-soon').classList.add('hidden');
+  var bc=document.getElementById('basis-chwi');
+  if(bc){
+    var txt={
+      car:'<b>자동차 취득세</b> — 과세표준(신규: 공급가액 / 이전: 신고가액과 시가표준액 중 큰 값 / 무상: 시가표준액) × 세율. 비영업 승용 <b>7%</b>·경차 4%, 승합·화물 비영업 <b>5%</b>·경차 4%, 영업 4%(지방세법 §12). 지방교육세·농특세 0원. 시가표준액 = 기준가격 × 경과연수별 잔가율(2026년).',
+      machine:'<b>기계장비 취득세</b> — 과세표준(신규: 취득가액 / 이전·무상: 시가표준액) × 세율 <b>2%</b>(지방세법 §12, 기계장비 1000분의 20). 지방교육세·농특세 0원. 시가표준액 = 기준가격 × 경과연수별 잔가율(기종 내용연수 10·13·15·17년 기준).',
+      moto:'<b>이륜자동차 취득세</b> — 과세표준(신규: 취득가액 / 이전·무상: 시가표준액) × 세율 <b>2%</b>(지방세법 §12). 지방교육세·농특세 0원. 취득가액 50만원 이하는 면세점(비과세). 시가표준액 = 기준가격 × 잔가율(내용연수 6년).'
+    }[t];
+    bc.innerHTML=txt;
+  }
   if(t==='machine') mCalc();
   if(t==='moto') mtCalc();
 }
@@ -1022,26 +1091,58 @@ function mRun(){
   }).join('');
   window._MSR=out;
 }
+/* 기계장비 잔가율 (2026 기타물건 시가표준액 산정기준, 표9) */
+var MACH_RATE={
+  10:[0.832,0.708,0.637,0.545,0.439,0.349,0.290,0.231,0.184,0.146,0.100],
+  13:[0.871,0.768,0.709,0.603,0.543,0.455,0.381,0.318,0.279,0.234,0.196,0.165,0.138,0.100],
+  15:[0.885,0.793,0.736,0.644,0.603,0.511,0.439,0.376,0.323,0.290,0.249,0.214,0.183,0.158,0.135,0.100],
+  17:[0.904,0.831,0.763,0.680,0.627,0.551,0.488,0.431,0.382,0.346,0.307,0.272,0.242,0.215,0.191,0.162,0.131,0.100]
+};
+var MACH_K2Y={'굴삭기':10,'로더':10,'지게차':10,'덤프트럭':10,'콘크리트피니셔':10,'콘크리트펌프':10,'도로보수트럭':10,'노면파쇄기':10,
+  '콘크리트살포기':13,'콘크리트믹서트럭':13,'아스팔트피니셔':13,'아스팔트살포기':13,'골재살포기':13,'천공기':13,'선별기':13,
+  '불도저':15,'기중기':15,'롤러':15,'노상안정기':15,'콘크리트뱃칭플랜트':15,'아스팔트믹싱플랜트':15,'쇄석기':15,'공기압축기':15,'자갈채취기':15,'준설선':15,'스크레이퍼':15,'항타및항발기':15,
+  '모터그레이더':17,'타워크레인':17};
+function machYears(k){ return MACH_K2Y[(k||'').replace(/\s/g,'')]||10; }
 function mSelect(i){
   mSelected=window._MSR[i];
-  document.getElementById('mc-base').value=(mSelected.p*1000).toLocaleString('ko-KR');
-  document.getElementById('mc-results').innerHTML='<div class="sr-item" style="cursor:default"><span class="sr-price">'+(mSelected.p*1000).toLocaleString()+'원</span><div class="nm">✓ '+mSelected.n+'</div><div class="mt">'+mSelected.m+' · 기준가격 반영</div></div>';
+  document.getElementById('mc-results').innerHTML='<div class="sr-item" style="cursor:default"><span class="sr-price">'+(mSelected.p*1000).toLocaleString()+'원</span><div class="nm">✓ '+mSelected.n+'<span class="badge">'+mSelected.k+'</span></div><div class="mt">'+mSelected.m+' · 기준가격</div></div>';
+  if(pressed('mc-type')==='new'){
+    document.getElementById('mc-base').value=(mSelected.p*1000).toLocaleString('ko-KR');
+    document.getElementById('mc-year-box').classList.add('hidden');
+    mCalc();
+  } else {
+    var ysel=document.getElementById('mc-year'), now=2026, opt='';
+    for(var y=now;y>=now-20;y--) opt+='<option value="'+y+'">'+y+'년식'+(y===now?' (신차)':'')+'</option>';
+    ysel.innerHTML=opt;
+    document.getElementById('mc-year-box').classList.remove('hidden');
+    mApplySiga();
+  }
+}
+function mApplySiga(){
+  if(!mSelected) return;
+  var yrs=machYears(mSelected.k), rates=MACH_RATE[yrs];
+  var elapsed=2026-Number(document.getElementById('mc-year').value); if(elapsed<0)elapsed=0;
+  var rate=rates[Math.min(elapsed, rates.length-1)];
+  var siga=Math.floor(mSelected.p*1000*rate/10)*10;
+  document.getElementById('mc-base').value=siga.toLocaleString('ko-KR');
+  document.getElementById('mc-status').innerHTML='기준가격 '+(mSelected.p*1000).toLocaleString()+'원 × 잔가율 '+rate+' (내용연수 '+yrs+'년·경과 '+elapsed+'년) = <b>'+siga.toLocaleString()+'원</b>';
   mCalc();
 }
 function mCalc(){
   var t=pressed('mc-type');
-  document.getElementById('mc-base-label').innerHTML=(t==='new'?'취득가액 (과세표준)':'시가표준액 (과세표준)')+' <span class="tip" tabindex="0" data-tip="신규는 사실상 취득가격, 이전·무상은 시가표준액을 넣으세요. 기종 검색으로 기준가격을 참고할 수 있습니다.">?</span>';
+  document.getElementById('mc-base-label').innerHTML=(t==='new'?'취득가액 (과세표준)':'시가표준액 (과세표준)')+' <span class="tip" tabindex="0" data-tip="신규는 사실상 취득가격, 이전·무상은 시가표준액(기준가격×잔가율)을 넣으세요.">?</span>';
   var base=Number((document.getElementById('mc-base').value||'').replace(/[^0-9]/g,''))||0;
   var box=document.getElementById('mc-result');
   if(!base){ box.innerHTML='<div class="empty">취득가액(과세표준)을 입력하세요.</div>'; return; }
-  var rate=0.02; // 기계장비 취득세율 1000분의 20
-  var acq=Math.floor(base*rate/10)*10;
+  var exempt50=base<=500000, rate=0.02;
+  var acq=exempt50?0:Math.floor(base*rate/10)*10;
   var h='<div class="receipt-head">기계장비 취득세 (참고용)</div>';
   h+='<div class="row"><div class="rk">과세표준<small>'+(t==='new'?'취득가액':'시가표준액')+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">취득세<small>세율 2% (기계장비)</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 2% (기계장비)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>세율 2%(중과기준세율)로 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(acq)+'<span class="u">원</span></span></div>';
-  h+='<div class="warn">중고(이전·무상) 시가표준액은 기준가격 × 경과연수별 잔가율로 산정됩니다. 기계장비 잔가율표가 아직 없어 <b>기준가격을 그대로 참고값으로만</b> 제공합니다. 잔가율표를 주시면 자동 계산을 추가합니다. 최종 세액은 위택스로 확정하세요.</div>';
+  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 등록면허세가 별도 부과될 수 있으니 위택스로 확정하세요.</div>';
+  else h+='<div class="warn">중고(이전·무상) 시가표준액은 기준가격 × 경과연수별 잔가율(기종 내용연수 기준)로 계산됩니다. 최종 세액은 위택스로 확정하세요.</div>';
   box.innerHTML=h;
 }
 
@@ -1126,6 +1227,13 @@ var PAL_CMDS=[
   {t:'감면 · 수소차',s:'수소전기자동차 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('fcev');}}
 ];
 function setGamyeon(v){ var el=document.getElementById('c-gamyeon'); if(el){el.value=v; onGamyeon(); cCalc();} }
+function tossToShingo(amount){
+  sw('shingo');
+  var el=document.getElementById('s-tax'); el.value=Number(amount).toLocaleString('ko-KR');
+  sType='no'; document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v==='no');});
+  calcShingo();
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
 var palSel=0, palResults=[];
 function openPalette(){
   document.getElementById('palette').classList.add('open');
@@ -1217,6 +1325,7 @@ function resetInputs(){
   onTarget();
   var gm=document.getElementById('c-gamyeon'); if(gm){gm.value='none'; onGamyeon();}
   var rg=document.getElementById('c-region'); if(rg) rg.value='none';
+  var bx=document.getElementById('c-bondexempt'); if(bx) bx.value='none';
   document.getElementById('c-selfcheck').classList.add('hidden');
   document.getElementById('c-search-box').classList.add('hidden');
   selected=null;
