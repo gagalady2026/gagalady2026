@@ -19,7 +19,7 @@
     font-family:"Pretendard","Pretendard GOV",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
     line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;}
   .wrap{max-width:960px;margin:0 auto;padding:26px 20px 60px;}
-  header.head{border-bottom:2px solid var(--ink);padding-bottom:15px;margin-bottom:18px;}
+  header.head{border-bottom:2px solid var(--ink);padding-bottom:15px;margin-bottom:18px;position:relative;}
   .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--teal);margin-bottom:6px;}
   header.head h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:0;}
   header.head p{margin:5px 0 0;color:var(--muted);font-size:12.5px;}
@@ -83,7 +83,27 @@
   .checklist li{position:relative;padding:3px 0 3px 20px;font-size:12px;line-height:1.5;color:var(--muted);}
   .checklist li b{color:var(--ink);}
   .checklist li:before{content:"☑";position:absolute;left:0;color:var(--teal);}
+  .gwarn{margin-top:8px;border:1px solid #FCE3AE;border-radius:9px;padding:10px 12px;background:#FFF7E6;}
+  .gwarn .ct{font-size:11.5px;font-weight:800;color:#9A5B00;margin-bottom:6px;}
+  .gwarn ul{margin:0;padding:0;list-style:none;}
+  .gwarn li{position:relative;padding:3px 0 3px 18px;font-size:12px;line-height:1.55;color:#7A4B00;}
+  .gwarn li b{color:#5C3A00;}
+  .gwarn li:before{content:"•";position:absolute;left:4px;color:#C08A2E;font-weight:800;}
   .receipt-head{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px;}
+  /* 통합검색(Ctrl+K) */
+  #palette{position:fixed;inset:0;background:rgba(22,30,46,.45);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:70px 16px;}
+  #palette.open{display:flex;}
+  .pal-box{background:#fff;width:100%;max-width:560px;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;display:flex;flex-direction:column;max-height:80vh;}
+  .pal-top{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);}
+  .pal-top input{flex:1;border:0;font-size:16px;font-family:inherit;outline:none;color:var(--ink);}
+  .pal-top .kbd{font-size:11px;color:var(--muted);border:1px solid var(--line-strong);border-radius:6px;padding:2px 6px;}
+  .pal-list{overflow:auto;padding:6px;}
+  .pal-sec{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--muted);padding:8px 10px 4px;}
+  .pal-item{padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between;gap:10px;align-items:center;}
+  .pal-item:hover,.pal-item.sel{background:var(--teal-soft);}
+  .pal-item .pi-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .pal-item .pi-tag{font-size:10.5px;font-weight:700;color:var(--teal);white-space:nowrap;}
+  .pal-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px;}
   .total{margin-top:14px;padding:16px 18px;border:1.5px solid var(--seal);border-radius:12px;background:var(--seal-soft);
     display:flex;justify-content:space-between;align-items:center;}
   .total .tk{font-size:13px;font-weight:800;color:var(--seal);}
@@ -121,7 +141,19 @@
     <span class="kicker">동해시 세무과 · 지방세 실무 계산</span>
     <h1>지방세 계산기</h1>
     <p>가산세 · 자동차 취득세(2026 시가표준액) — 실무 참고용 개산 도구</p>
+    <button class="btn sm" onclick="openPalette()" style="position:absolute;top:0;right:0;">🔍 통합검색 <span style="color:var(--muted);font-weight:600">Ctrl+K</span></button>
   </header>
+
+  <div id="palette" onclick="if(event.target.id==='palette')closePalette()">
+    <div class="pal-box">
+      <div class="pal-top">
+        <span>🔍</span>
+        <input id="pal-input" placeholder="기능·차명·기종·FAQ 검색 (예: 이륜, 그랜저, 다자녀, 체납)" oninput="palRender()" autocomplete="off">
+        <span class="kbd">Esc</span>
+      </div>
+      <div class="pal-list" id="pal-list"></div>
+    </div>
+  </div>
 
   <div class="tabs" role="tablist">
     <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
@@ -316,6 +348,68 @@
       </div>
     </div>
     </div><!-- /target-car -->
+
+    <!-- 기계장비 -->
+    <div id="target-machine" class="hidden">
+    <div class="grid2">
+      <div class="card">
+        <h2>입력 — 기계장비 취득세</h2>
+        <div class="field"><label class="lbl">취득 유형</label>
+          <div class="seg" id="mc-type">
+            <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
+            <button data-v="trans" aria-pressed="false" onclick="pick('mc-type','trans',mCalc)">이전·무상</button>
+          </div></div>
+        <div class="field">
+          <label class="lbl" id="mc-base-label">취득가액 (과세표준) <span class="tip" tabindex="0" data-tip="신규는 사실상 취득가격(계약·세금계산서), 이전·무상은 시가표준액을 넣으세요. 아래 기종 검색으로 기준가격을 참고할 수 있습니다.">?</span></label>
+          <div class="money-wrap"><input type="text" id="mc-base" inputmode="numeric" placeholder="0" oninput="fmt(this);mCalc()"><span class="won">원</span></div>
+          <button class="btn sm" style="margin-top:8px" onclick="mOpenSearch()">🔍 기종으로 기준가격 찾기</button>
+        </div>
+        <div class="field hidden" id="mc-search-box" style="border-top:1px solid var(--line);padding-top:14px;">
+          <label class="lbl">기종 검색 (2026 기계장비 시가표준액표)</label>
+          <input type="text" id="mc-q" placeholder="예: 지게차, 굴삭기, 덤프트럭" oninput="mSearch()" autocomplete="off" style="text-align:left;font-weight:500;">
+          <div id="mc-status" class="hint"></div>
+          <div id="mc-results" style="max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="card"><h2>산정 결과</h2><div id="mc-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+    </div>
+    </div><!-- /target-machine -->
+
+    <!-- 이륜차 -->
+    <div id="target-moto" class="hidden">
+    <div class="grid2">
+      <div class="card">
+        <h2>입력 — 이륜자동차 취득세</h2>
+        <div class="field"><label class="lbl">취득 유형</label>
+          <div class="seg" id="mt-type">
+            <button data-v="new" aria-pressed="true" onclick="pick('mt-type','new',mtCalc)">신규(신차)</button>
+            <button data-v="trans" aria-pressed="false" onclick="pick('mt-type','trans',mtCalc)">중고(이전)</button>
+            <button data-v="free" aria-pressed="false" onclick="pick('mt-type','free',mtCalc)">증여·상속</button>
+          </div></div>
+        <div class="field" id="mt-new-box">
+          <label class="lbl">취득가액 (과세표준) <span class="tip" tabindex="0" data-tip="신차는 사실상 취득가격(계약·세금계산서상 공급가액)을 넣으세요.">?</span></label>
+          <div class="money-wrap"><input type="text" id="mt-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);mtCalc()"><span class="won">원</span></div>
+        </div>
+        <div class="field hidden" id="mt-siga-box">
+          <label class="lbl">시가표준액 (과세표준)</label>
+          <div class="money-wrap"><input type="text" id="mt-siga" inputmode="numeric" placeholder="0" oninput="fmt(this);mtCalc()"><span class="won">원</span></div>
+          <button class="btn sm" style="margin-top:8px" onclick="mtOpenSearch()">🔍 차명으로 시가표준액 찾기</button>
+          <div id="mt-siga-note" class="hint"></div>
+        </div>
+        <div class="field hidden" id="mt-search-box" style="border-top:1px solid var(--line);padding-top:14px;">
+          <label class="lbl">차명 검색 (2026 이륜 시가표준액표)</label>
+          <input type="text" id="mt-q" placeholder="예: PCX, 벤리, 시티플라이" oninput="mtSearch()" autocomplete="off" style="text-align:left;font-weight:500;">
+          <div id="mt-status" class="hint"></div>
+          <div id="mt-results" style="max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:8px;"></div>
+          <div id="mt-year-box" class="hidden" style="margin-top:10px;">
+            <label class="lbl">제작연도 (연식)</label>
+            <select id="mt-year" onchange="mtApplySiga()"></select>
+          </div>
+        </div>
+      </div>
+      <div class="card"><h2>산정 결과</h2><div id="mt-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+    </div>
+    </div><!-- /target-moto -->
   </div>
 
   <!-- ============ 고지분 체납 ============ -->
@@ -546,8 +640,20 @@ function onGamyeon(){
   document.getElementById('c-elig-box').classList.toggle('hidden', !(v==='disabled'||v==='veteran'));
   document.getElementById('c-seat-box').classList.toggle('hidden', !(v==='multi3'||v==='multi2'));
   var chk=GAMYEON_CHECK[v], el=document.getElementById('c-gamyeon-check');
-  el.innerHTML = chk ? '<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
+  var html = chk ? '<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
+  var warn=GAMYEON_WARN[v];
+  if(warn) html += '<div class="gwarn"><div class="ct">⚠ 주의사항</div><ul>'+warn.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+  el.innerHTML=html;
 }
+var GAMYEON_WARN={
+  disabled:['<b>1세대 1대</b>만 감면됩니다. 세대원이 이미 감면받은 차가 있으면 중복 불가.','장애인 본인이 <b>직접 사용</b>해야 하며, 공동명의자는 주민등록상 <b>같은 세대의 가족</b>이어야 합니다.','감면 후 <b>1년 이내</b>에 사망·혼인·해외이주 등 정당한 사유 없이 소유권을 이전하거나 세대를 분가하면 <b>감면세액이 추징</b>됩니다.','장애 정도(등급) 기준은 지자체 조례마다 다를 수 있으니 확인하세요.'],
+  veteran:['1세대 1대 한정, 공동명의는 같은 세대 가족만.','감면 후 1년 내 정당한 사유 없는 소유권 이전·세대분가 시 추징.','대상 등급(상이등급) 기준을 확인하세요.'],
+  multi3:['공동명의 시 <b>가족이 아닌 제3자</b>와 공동명의면 감면 불가.','이미 다자녀 감면으로 등록한 차가 있으면 <b>추가 감면 불가</b>(양육 목적 1대 한정).','자녀가 <b>18세 이상</b>이 되어 요건을 벗어난 뒤 취득하면 대상 아님.','감면 후 1년 내 정당한 사유 없이 소유권 이전 시 추징될 수 있습니다.'],
+  multi2:['가족이 아닌 제3자와 공동명의면 감면 불가.','양육 목적 1대 한정, 자녀 연령(18세 미만) 요건 확인.','감면 후 1년 내 소유권 이전 시 추징 주의.'],
+  light:['경형 요건(배기량·규격)을 벗어나면 감면 대상 아닙니다.','감면 한도(75만원)를 넘는 고가 경차는 초과분이 과세됩니다.'],
+  ev:['감면 <b>일몰기한(2026.12.31.)</b>에 유의하세요. 취득 시점 기준입니다.','감면 한도(140만원)를 초과하면 초과분은 과세됩니다.','환경친화적 자동차 요건(자동차등록증·인증) 확인.'],
+  fcev:['감면 일몰기한(2027.12.31.)에 유의.','한도(140만원) 초과분은 과세.']
+};
 var GAMYEON_CHECK={
   disabled:['<b>본인 또는 세대 공동명의</b>인가요? (공동명의는 주민등록상 <b>같은 세대</b>의 가족 1인)','대상 차량인가요? (2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜)','<b>1대</b>만 감면됩니다','등록 후 1년 내 부득이한 사유 없이 처분·이전하면 <b>추징</b>됩니다'],
   veteran:['본인 또는 세대 공동명의인가요?','대상 차량 범위는 장애인용과 동일','1대만 감면, 등록 후 처분 시 추징 주의'],
@@ -876,16 +982,228 @@ function calcShingo(){
 /* 취득세 대상별 챕터 */
 function onTarget(){
   var t=pressed('c-target');
-  var car = t==='car';
-  document.getElementById('target-car').classList.toggle('hidden', !car);
-  document.getElementById('target-soon').classList.toggle('hidden', car);
-  if(!car){
-    var info={machine:['기계장비 취득세 — 준비 중','굴착기·지게차 등 건설기계의 취득세·시가표준액 계산을 준비하고 있습니다.'],
-              moto:['이륜자동차 취득세 — 준비 중','이륜자동차의 취득세·등록면허세 계산을 준비하고 있습니다.']}[t];
-    document.getElementById('soon-title').textContent=info[0];
-    document.getElementById('soon-desc').textContent=info[1];
+  document.getElementById('target-car').classList.toggle('hidden', t!=='car');
+  document.getElementById('target-machine').classList.toggle('hidden', t!=='machine');
+  document.getElementById('target-moto').classList.toggle('hidden', t!=='moto');
+  document.getElementById('target-soon').classList.add('hidden');
+  if(t==='machine') mCalc();
+  if(t==='moto') mtCalc();
+}
+
+/* ===== 기계장비 취득세 ===== */
+var MACH=null, machLoading=false, mSelected=null, mTimer=null;
+function mOpenSearch(){
+  var el=document.getElementById('mc-search-box'); el.classList.toggle('hidden');
+  if(!el.classList.contains('hidden')) mLoad();
+}
+function mLoad(){
+  if(MACH||machLoading) return; machLoading=true;
+  document.getElementById('mc-status').textContent='기계장비 데이터 불러오는 중…';
+  fetch('./machine_base.json').then(function(r){return r.json();}).then(function(d){
+    MACH=d; machLoading=false; document.getElementById('mc-status').textContent='총 '+d.length.toLocaleString()+'건 · 기종명을 입력하세요.';
+  }).catch(function(){machLoading=false;document.getElementById('mc-status').textContent='machine_base.json 파일을 확인하세요.';});
+}
+function mSearch(){ clearTimeout(mTimer); mTimer=setTimeout(mRun,220); }
+function mRun(){
+  if(!MACH){ mLoad(); return; }
+  var q=document.getElementById('mc-q').value.replace(/\s/g,'').toLowerCase();
+  var res=document.getElementById('mc-results');
+  if(q.length<1){ res.innerHTML=''; return; }
+  var out=[],n=0;
+  for(var i=0;i<MACH.length&&n<40;i++){
+    var v=MACH[i];
+    if((v.n+v.m+v.k).replace(/\s/g,'').toLowerCase().indexOf(q)>=0){ out.push(v); n++; }
+  }
+  document.getElementById('mc-status').textContent = out.length?(n>=40?'상위 40건 표시':'검색 결과 '+out.length+'건'):'결과 없음';
+  res.innerHTML=out.map(function(v,i){
+    return '<div class="sr-item" onclick="mSelect('+i+')"><span class="sr-price">'+(v.p*1000).toLocaleString()+'원</span>'
+      +'<div class="nm">'+v.n+'<span class="badge">'+v.k+'</span><span class="badge">'+v.o+'</span></div>'
+      +'<div class="mt">'+v.m+'</div></div>';
+  }).join('');
+  window._MSR=out;
+}
+function mSelect(i){
+  mSelected=window._MSR[i];
+  document.getElementById('mc-base').value=(mSelected.p*1000).toLocaleString('ko-KR');
+  document.getElementById('mc-results').innerHTML='<div class="sr-item" style="cursor:default"><span class="sr-price">'+(mSelected.p*1000).toLocaleString()+'원</span><div class="nm">✓ '+mSelected.n+'</div><div class="mt">'+mSelected.m+' · 기준가격 반영</div></div>';
+  mCalc();
+}
+function mCalc(){
+  var t=pressed('mc-type');
+  document.getElementById('mc-base-label').innerHTML=(t==='new'?'취득가액 (과세표준)':'시가표준액 (과세표준)')+' <span class="tip" tabindex="0" data-tip="신규는 사실상 취득가격, 이전·무상은 시가표준액을 넣으세요. 기종 검색으로 기준가격을 참고할 수 있습니다.">?</span>';
+  var base=Number((document.getElementById('mc-base').value||'').replace(/[^0-9]/g,''))||0;
+  var box=document.getElementById('mc-result');
+  if(!base){ box.innerHTML='<div class="empty">취득가액(과세표준)을 입력하세요.</div>'; return; }
+  var rate=0.02; // 기계장비 취득세율 1000분의 20
+  var acq=Math.floor(base*rate/10)*10;
+  var h='<div class="receipt-head">기계장비 취득세 (참고용)</div>';
+  h+='<div class="row"><div class="rk">과세표준<small>'+(t==='new'?'취득가액':'시가표준액')+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>세율 2% (기계장비)</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>세율 2%(중과기준세율)로 해당 없음</small></div><div class="rv">0 원</div></div>';
+  h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(acq)+'<span class="u">원</span></span></div>';
+  h+='<div class="warn">중고(이전·무상) 시가표준액은 기준가격 × 경과연수별 잔가율로 산정됩니다. 기계장비 잔가율표가 아직 없어 <b>기준가격을 그대로 참고값으로만</b> 제공합니다. 잔가율표를 주시면 자동 계산을 추가합니다. 최종 세액은 위택스로 확정하세요.</div>';
+  box.innerHTML=h;
+}
+
+/* ===== 이륜자동차 취득세 ===== */
+var MOTO=null, motoLoading=false, mtSelected=null, mtTimer=null;
+function mtOpenSearch(){ var el=document.getElementById('mt-search-box'); el.classList.toggle('hidden'); if(!el.classList.contains('hidden')) mtLoad(); }
+function mtLoad(){
+  if(MOTO||motoLoading) return; motoLoading=true;
+  document.getElementById('mt-status').textContent='이륜 데이터 불러오는 중…';
+  fetch('./moto_base.json').then(function(r){return r.json();}).then(function(d){
+    MOTO=d; motoLoading=false; document.getElementById('mt-status').textContent='총 '+d.length.toLocaleString()+'건 · 차명을 입력하세요.';
+  }).catch(function(){motoLoading=false;document.getElementById('mt-status').textContent='moto_base.json 파일을 확인하세요.';});
+}
+function mtSearch(){ clearTimeout(mtTimer); mtTimer=setTimeout(mtRun,220); }
+function mtRun(){
+  if(!MOTO){ mtLoad(); return; }
+  var q=document.getElementById('mt-q').value.replace(/\s/g,'').toLowerCase();
+  var res=document.getElementById('mt-results');
+  if(q.length<1){ res.innerHTML=''; return; }
+  var out=[],n=0;
+  for(var i=0;i<MOTO.length&&n<40;i++){ var v=MOTO[i]; if((v.n+v.f+v.m).replace(/\s/g,'').toLowerCase().indexOf(q)>=0){ out.push(v); n++; } }
+  document.getElementById('mt-status').textContent = out.length?(n>=40?'상위 40건 표시':'검색 결과 '+out.length+'건'):'결과 없음';
+  res.innerHTML=out.map(function(v,i){
+    return '<div class="sr-item" onclick="mtSelect('+i+')"><span class="sr-price">'+(v.p*1000).toLocaleString()+'원</span>'
+      +'<div class="nm">'+v.n+'<span class="badge">'+v.o+'</span>'+(v.e?'<span class="badge">'+v.e+'</span>':'')+'</div><div class="mt">'+v.m+' · '+(v.f||'-')+'</div></div>';
+  }).join('');
+  window._MTSR=out;
+}
+function mtSelect(i){
+  mtSelected=window._MTSR[i];
+  document.getElementById('mt-results').innerHTML='<div class="sr-item" style="cursor:default"><span class="sr-price">'+(mtSelected.p*1000).toLocaleString()+'원</span><div class="nm">✓ '+mtSelected.n+'</div><div class="mt">'+mtSelected.m+' · 기준가격</div></div>';
+  var ysel=document.getElementById('mt-year'), now=2026, opt='';
+  for(var y=now;y>=now-15;y--) opt+='<option value="'+y+'">'+y+'년식'+(y===now?' (신차)':'')+'</option>';
+  ysel.innerHTML=opt;
+  document.getElementById('mt-year-box').classList.remove('hidden');
+  mtApplySiga();
+}
+function mtApplySiga(){
+  if(!mtSelected) return;
+  var rates=RATE.etc['이륜자동차'].rates;
+  var elapsed=2026-Number(document.getElementById('mt-year').value); if(elapsed<0)elapsed=0;
+  var rate=rates[Math.min(elapsed, rates.length-1)];
+  var siga=Math.floor(mtSelected.p*1000*rate/10)*10;
+  document.getElementById('mt-siga').value=siga.toLocaleString('ko-KR');
+  document.getElementById('mt-siga-note').innerHTML='기준가격 '+(mtSelected.p*1000).toLocaleString()+'원 × 잔가율 '+rate+' (경과 '+elapsed+'년) = <b>'+siga.toLocaleString()+'원</b>';
+  mtCalc();
+}
+function mtCalc(){
+  var t=pressed('mt-type');
+  document.getElementById('mt-new-box').classList.toggle('hidden', t!=='new');
+  document.getElementById('mt-siga-box').classList.toggle('hidden', t==='new');
+  if(t==='new') document.getElementById('mt-search-box').classList.add('hidden');
+  var base = t==='new' ? (Number((document.getElementById('mt-supply').value||'').replace(/[^0-9]/g,''))||0)
+                       : (Number((document.getElementById('mt-siga').value||'').replace(/[^0-9]/g,''))||0);
+  var box=document.getElementById('mt-result');
+  if(!base){ box.innerHTML='<div class="empty">취득가액(과세표준)을 입력하세요.</div>'; return; }
+  var exempt50 = base<=500000, rate=0.02;
+  var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
+  var h='<div class="receipt-head">이륜자동차 취득세 (참고용)</div>';
+  h+='<div class="row"><div class="rk">과세표준<small>'+(t==='new'?'취득가액':'시가표준액')+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 2% (이륜자동차)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>세율 2%로 해당 없음</small></div><div class="rv">0 원</div></div>';
+  h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(acq)+'<span class="u">원</span></span></div>';
+  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 이 경우 등록면허세가 있을 수 있으니(이륜 기준 별도 확인) 위택스로 확정하세요.</div>';
+  box.innerHTML=h;
+}
+
+/* ===== 통합검색 (Ctrl+K) ===== */
+var PAL_CMDS=[
+  {t:'취득세 · 자동차',s:'승용·승합·화물 취득세',tag:'기능',go:function(){sw('chwi');pick('c-target','car',onTarget);}},
+  {t:'취득세 · 기계장비',s:'건설기계 취득세',tag:'기능',go:function(){sw('chwi');pick('c-target','machine',onTarget);}},
+  {t:'취득세 · 이륜차',s:'이륜자동차 취득세',tag:'기능',go:function(){sw('chwi');pick('c-target','moto',onTarget);}},
+  {t:'고지분 체납 가산세',s:'재산세·자동차세 등 체납 가산세',tag:'기능',go:function(){sw('gozi');}},
+  {t:'신고납부분 가산세',s:'취득세 등 무신고·납부지연',tag:'기능',go:function(){sw('shingo');}},
+  {t:'지방세 안내(FAQ)',s:'납기·감면·납부방법 등',tag:'기능',go:function(){sw('faq');}},
+  {t:'감면 · 장애인',s:'자동차 취득세 장애인 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('disabled');}},
+  {t:'감면 · 국가유공자',s:'자동차 취득세 국가유공자 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('veteran');}},
+  {t:'감면 · 다자녀(3자녀)',s:'다자녀 3자녀 이상 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('multi3');}},
+  {t:'감면 · 다자녀(2자녀)',s:'다자녀 2자녀 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('multi2');}},
+  {t:'감면 · 경차',s:'경형자동차 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('light');}},
+  {t:'감면 · 전기차',s:'전기자동차 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('ev');}},
+  {t:'감면 · 수소차',s:'수소전기자동차 감면',tag:'감면',go:function(){sw('chwi');pick('c-target','car',onTarget);setGamyeon('fcev');}}
+];
+function setGamyeon(v){ var el=document.getElementById('c-gamyeon'); if(el){el.value=v; onGamyeon(); cCalc();} }
+var palSel=0, palResults=[];
+function openPalette(){
+  document.getElementById('palette').classList.add('open');
+  var inp=document.getElementById('pal-input'); inp.value=''; inp.focus();
+  palRender();
+  // 통합검색용 데이터 미리 로드
+  mLoad(); if(typeof mtLoad==='function') mtLoad(); if(typeof loadVeh==='function') loadVeh();
+}
+function closePalette(){ document.getElementById('palette').classList.remove('open'); }
+function palRender(){
+  var q=(document.getElementById('pal-input').value||'').replace(/\s/g,'').toLowerCase();
+  var list=document.getElementById('pal-list');
+  palResults=[]; palSel=0;
+  var html='';
+  // 1) 기능·감면
+  var cmds=PAL_CMDS.filter(function(c){ return !q || (c.t+c.s+c.tag).replace(/\s/g,'').toLowerCase().indexOf(q)>=0; });
+  if(cmds.length){
+    html+='<div class="pal-sec">기능 · 감면</div>';
+    cmds.forEach(function(c){ var i=palResults.length; palResults.push({go:c.go});
+      html+='<div class="pal-item" data-i="'+i+'" onclick="palGo('+i+')"><div><div>'+c.t+'</div><div class="pi-sub">'+c.s+'</div></div><div class="pi-tag">'+c.tag+'</div></div>'; });
+  }
+  // 2) 차명·기종 (2글자 이상일 때)
+  if(q.length>=2){
+    var veh=searchData(VEH,q,'car',10), mac=searchData(MACH,q,'machine',8), mto=searchData(MOTO,q,'moto',8);
+    function block(title,arr,target){
+      if(!arr.length) return;
+      html+='<div class="pal-sec">'+title+'</div>';
+      arr.forEach(function(v){ var i=palResults.length;
+        palResults.push({go:(function(vv,tg){return function(){palGoVehicle(vv,tg);};})(v,target)});
+        html+='<div class="pal-item" data-i="'+i+'" onclick="palGo('+i+')"><div><div>'+v.n+'</div><div class="pi-sub">'+(v.m||'')+(v.k?' · '+v.k:'')+(v.f?' · '+v.f:'')+'</div></div><div class="pi-tag">'+(v.p*1000).toLocaleString()+'원</div></div>'; });
+    }
+    block('자동차', veh,'car'); block('기계장비', mac,'machine'); block('이륜', mto,'moto');
+    if(!VEH||!MACH||!MOTO) html+='<div class="pal-empty">차명·기종 데이터 불러오는 중… 잠시 후 다시 입력해 보세요.</div>';
+  }
+  list.innerHTML = html || '<div class="pal-empty">검색 결과가 없습니다.</div>';
+  updateSel();
+}
+function searchData(arr,q,type,limit){
+  if(!arr) return [];
+  var out=[],n=0;
+  for(var i=0;i<arr.length&&n<limit;i++){ var v=arr[i];
+    var hay=((v.n||'')+(v.m||'')+(v.f||'')+(v.k||'')).replace(/\s/g,'').toLowerCase();
+    if(hay.indexOf(q)>=0){ out.push(v); n++; } }
+  return out;
+}
+function palGo(i){ if(palResults[i]){ palResults[i].go(); closePalette(); } }
+function palGoVehicle(v,target){
+  sw('chwi'); pick('c-target',target,onTarget);
+  if(target==='car'){
+    // 차종 세팅 후 검색창 열고 채우기
+    if(v.t) pick('c-chong', v.t, function(){}); 
+    pick('c-type','trans',cCalc);
+    var sb=document.getElementById('c-search-box'); sb.classList.remove('hidden'); loadVeh();
+    document.getElementById('c-q').value=v.n; setTimeout(doSearch,50);
+  } else if(target==='machine'){
+    document.getElementById('mc-base').value=(v.p*1000).toLocaleString('ko-KR'); mCalc();
+    var sb=document.getElementById('mc-search-box'); sb.classList.remove('hidden'); mLoad();
+    document.getElementById('mc-q').value=v.n; setTimeout(mSearch,50);
+  } else {
+    pick('mt-type','trans',mtCalc);
+    var sb=document.getElementById('mt-search-box'); sb.classList.remove('hidden'); mtLoad();
+    document.getElementById('mt-q').value=v.n; setTimeout(mtSearch,50);
   }
 }
+function updateSel(){
+  var items=document.querySelectorAll('#pal-list .pal-item');
+  items.forEach(function(el,i){ el.classList.toggle('sel', i===palSel); });
+  var cur=items[palSel]; if(cur) cur.scrollIntoView({block:'nearest'});
+}
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openPalette(); return; }
+  if(e.key==='/' && document.activeElement && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); openPalette(); return; }
+  if(!document.getElementById('palette').classList.contains('open')) return;
+  if(e.key==='Escape'){ closePalette(); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); palSel=Math.min(palSel+1,palResults.length-1); updateSel(); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); palSel=Math.max(palSel-1,0); updateSel(); }
+  else if(e.key==='Enter'){ e.preventDefault(); palGo(palSel); }
+});
 
 /* init */
 function resetInputs(){
