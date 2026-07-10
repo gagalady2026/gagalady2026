@@ -284,8 +284,6 @@
             <option value="fcev">수소전기자동차 (§66④)</option>
             <option value="exchange">교환자동차 — 제작결함 교환 (§66①)</option>
             <option value="disaster">천재지변 대체취득 (§92①)</option>
-            <option value="sangsok">상속 — 세율특례 (§15)</option>
-            <option value="divorce">이혼 재산분할 (§15①)</option>
           </select>
           <div id="c-gamyeon-req" class="hint"></div>
           <div id="c-gamyeon-check"></div>
@@ -561,11 +559,8 @@ function cCalc(){
   var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
   base=Math.floor(baseFull*share/100);
   var rate=taxRate(chong,use,light);
-  var gselNow=document.getElementById('c-gamyeon').value;
-  if(gselNow==='sangsok') rate=Math.max(rate-0.02,0); // 상속 세율특례: 표준세율 - 중과기준세율(2%)
   var exempt50 = base>0 && base<=500000; // 취득세 면세점(취득가액 50만원 이하)
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
-  if(gselNow==='divorce') acq=0; // 이혼 재산분할 비과세
   var g=gamyeon(acq, base, rate); // {reduce, pay, label, note}
   var tot=g.pay;
   var h='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
@@ -663,9 +658,7 @@ var GAMYEON_REQ={
   ev:'환경친화적 자동차법상 전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2026.12.31.까지)',
   fcev:'수소전기자동차. 취득세 140만원 이하 면제, 초과 시 140만원 공제. (2027.12.31.까지)',
   exchange:'제작결함으로 소비자분쟁해결기준·자동차안전하자심의위원회 중재에 따라 반납한 차와 같은 종류로 교환받는 자동차. 취득세 100% 면제(최소납부 배제·추징 없음). 단 교환 취득 세액이 종전 자동차 취득 시 납부한 세액을 초과하면 그 초과분은 과세(금전 환급받아 취득한 차는 제외). 2024.1.1. 이후 다른 감면과 중복 가능.',
-  disaster:'천재지변, 그 밖의 불가항력으로 멸실·파손된 자동차를 멸실·파손일부터 2년 이내에 대체취득하는 경우 취득세 면제(최소납부 배제·추징 없음). 종전 자동차 가액을 초과하는 부분은 과세. (지특법 §92①)',
-  sangsok:'상속으로 인한 자동차 취득은 형식적 취득으로 보아 세율특례를 적용합니다. 취득세 = 표준세율 − 중과기준세율(2%)로 산출(예: 비영업 승용 7%→5%, 승합·화물 5%→3%, 경차 4%→2%). (지방세법 §15①)',
-  divorce:'「민법」에 따른 이혼 재산분할(협의·재판상)로 취득하는 자동차는 취득세 비과세. 등기·등록 원인이 "재산분할"이어야 하며 혼인관계증명서 등으로 이혼사실 확인이 필요합니다. (지방세법 §15①)'
+  disaster:'천재지변, 그 밖의 불가항력으로 멸실·파손된 자동차를 멸실·파손일부터 2년 이내에 대체취득하는 경우 취득세 면제(최소납부 배제·추징 없음). 종전 자동차 가액을 초과하는 부분은 과세. (지특법 §92①)'
 };
 function onGamyeon(){
   var v=document.getElementById('c-gamyeon').value;
@@ -689,9 +682,7 @@ var GAMYEON_WARN={
   ev:['감면 <b>일몰기한(2026.12.31.)</b>에 유의하세요. 취득 시점 기준입니다.','감면 한도(140만원)를 초과하면 초과분은 과세됩니다.','환경친화적 자동차 요건(자동차등록증·인증) 확인.'],
   fcev:['감면 일몰기한(2027.12.31.)에 유의.','한도(140만원) 초과분은 과세.'],
   exchange:['교환 취득 세액이 <b>종전 납부세액을 초과</b>하면 초과분은 과세됩니다(종전 가액이 더 커도 환급 없음).','제작결함이 아닌 단순 변심·중고 교환은 대상이 아닙니다.','추징규정은 없으나 취득 당시 요건 충족 여부는 확인이 필요합니다.'],
-  disaster:['<b>전기합선 화재·운행 중 교통사고·정비불량 화재</b> 등 과실 사고는 불가항력이 아니어서 대상이 아닙니다.','멸실·파손일부터 <b>2년</b>이 지나면 대상이 아닙니다.','종전 자동차 가액 초과분은 과세됩니다.'],
-  sangsok:['상속 취득세 신고기한(상속개시일이 속한 달 말일부터 6개월 등)을 확인하세요.','상속 이후 실제 사용·처분 여부와 무관하게 세율특례가 적용됩니다.'],
-  divorce:['위자료·양육비 명목의 이전은 재산분할과 달라 비과세가 아닐 수 있습니다.','등기·등록 원인이 반드시 <b>"재산분할"</b>이어야 합니다.']
+  disaster:['<b>전기합선 화재·운행 중 교통사고·정비불량 화재</b> 등 과실 사고는 불가항력이 아니어서 대상이 아닙니다.','멸실·파손일부터 <b>2년</b>이 지나면 대상이 아닙니다.','종전 자동차 가액 초과분은 과세됩니다.']
 };
 var GAMYEON_CHECK={
   disabled:['<b>본인 또는 세대 공동명의</b>인가요? (공동명의는 주민등록상 <b>같은 세대</b>의 가족 1인)','대상 차량인가요? (2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜)','<b>1대</b>만 감면됩니다','등록 후 1년 내 부득이한 사유 없이 처분·이전하면 <b>추징</b>됩니다'],
@@ -702,9 +693,7 @@ var GAMYEON_CHECK={
   ev:['<b>전기자동차</b>가 맞나요? (자동차등록증·제작증 확인)'],
   fcev:['<b>수소전기자동차</b>가 맞나요?'],
   exchange:['제작결함으로 <b>말소·반납</b>된 종전 차량이 있나요? (말소사유가 "제작결함/반품")','반납 차량과 <b>같은 종류</b>(승용→승용)인가요?','반납 차량과 교환 차량의 <b>당사자가 동일</b>한가요?','금전으로 환급받아 산 차는 대상이 아닙니다.'],
-  disaster:['천재지변·불가항력으로 <b>멸실·파손</b>된 자동차인가요? (사고사실·피해사실 증명)','멸실·파손일부터 <b>2년 이내</b> 대체취득인가요?','종전 자동차 가액을 넘는 부분은 과세됩니다.'],
-  sangsok:['상속을 원인으로 한 취득인가요? (상속 이전등록)','세율은 표준세율에서 2%를 뺀 값으로 적용됩니다.'],
-  divorce:['등기·등록 원인이 <b>"재산분할"</b>인가요?','협의이혼(재산분할협의서+인감) 또는 재판상 이혼(판결문)으로 확인됩니다.']
+  disaster:['천재지변·불가항력으로 <b>멸실·파손</b>된 자동차인가요? (사고사실·피해사실 증명)','멸실·파손일부터 <b>2년 이내</b> 대체취득인가요?','종전 자동차 가액을 넘는 부분은 과세됩니다.']
 };
 function toggleSelfcheck(){
   var el=document.getElementById('c-selfcheck');
@@ -730,11 +719,9 @@ function selfcheck(){
 function applyRec(v){ document.getElementById('c-gamyeon').value=v; onGamyeon(); cCalc(); }
 function gamyeon(acq, base, rate){
   var v=document.getElementById('c-gamyeon').value;
-  var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차',exchange:'교환자동차',disaster:'천재지변 대체취득',sangsok:'상속 세율특례',divorce:'이혼 재산분할'}[v]||'';
+  var label={disabled:'장애인용',veteran:'국가유공자',multi3:'다자녀 3자녀',multi2:'다자녀 2자녀',light:'경차',ev:'전기차',fcev:'수소차',exchange:'교환자동차',disaster:'천재지변 대체취득'}[v]||'';
   if(v==='none') return {reduce:0,pay:acq,label:'',note:''};
   var r10=function(n){return Math.floor(n/10)*10;};
-  if(v==='sangsok') return {reduce:0,pay:acq,label:label,note:'표준세율 − 2% 적용'};
-  if(v==='divorce') return {reduce:0,pay:0,label:label,note:'재산분할 취득 → 비과세'};
   if(v==='exchange'){
     var prev=numv('c-prevtax');
     var pay=Math.max(0, acq-prev);
