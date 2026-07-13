@@ -16,12 +16,14 @@
     --paper:var(--color-bg-main);--surface:#2E2E2B;--ink:var(--color-text-main);--muted:var(--color-text-muted);
     --sub:#D2CDC3;--line:var(--color-border);--line-strong:#635F58;
     --teal:var(--color-accent);--teal-soft:var(--color-accent-light);
-    --seal:#CE9270;--seal-soft:#3A322C;--focus:#8A9A82;--shadow:none;--radius:6px;
+    --seal:#CE9270;--seal-soft:#3A322C;--focus:#8A9A82;--shadow:none;--radius:4px;
   }
   a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
   *{box-sizing:border-box;}html,body{margin:0;padding:0;}
   body{background:var(--paper);color:var(--ink);font-family:"Pretendard","Pretendard GOV",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
-  .wrap{max-width:1200px;margin:0 auto;padding:24px 40px 96px;}
+  .wrap{width:min(92vw,1040px);margin:0 auto;padding:24px 0 96px;}
+  @media(min-width:1440px){.wrap{max-width:1120px;}}
+  @media(max-width:768px){.wrap{width:100%;padding:20px 22px 90px;}}
   /* 취득세 탭: 넓은 캔버스 활용 */
   #m-chwi{max-width:1200px;}
   /* 글 위주 단(가산세·FAQ·안내)은 읽기 좋은 폭으로 */
@@ -43,7 +45,7 @@
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:56px;}
   .card h2{font-family:'Newsreader','Noto Serif KR',serif;font-size:19px;font-weight:500;letter-spacing:0;color:var(--ink);text-transform:none;margin:0 0 24px;padding-bottom:14px;border-bottom:1px solid var(--line-strong);}
   label.lbl{display:block;font-size:12.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.02em;}
-  input[type=text],input[type=date],input[type=number],select{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--color-bg-input);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;transition:border-color .18s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
+  input[type=text],input[type=date],input[type=number],select{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--color-bg-input);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;transition:border-color .2s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
   select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 22px 11px 2px;color:var(--ink);font-weight:500;cursor:pointer;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
     background-position:calc(100% - 8px) center,calc(100% - 3px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
@@ -54,7 +56,7 @@
   input[type=date]{color-scheme:dark;}
   input[type=number]{-moz-appearance:textfield;}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-  input:focus,select:focus{outline:none;border-color:var(--accent);}
+  input:focus,select:focus{outline:none;border-color:var(--accent);border-width:1.5px;}
   .money-wrap{position:relative;}.money-wrap .won{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none;font-weight:400;}
   .money-wrap input{padding-right:30px;}
   .field{margin-bottom:24px;}
@@ -68,7 +70,7 @@
   .row .rk{font-size:12.5px;color:var(--muted);letter-spacing:.02em;}.row .rk small{display:block;color:var(--muted);opacity:.62;font-size:10.5px;margin-top:3px;letter-spacing:0;}
   .row .rv{font-size:15.5px;font-weight:600;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
   .row.sub .rk,.row.sub .rv{color:var(--muted);font-weight:500;}
-  .docs{margin-top:20px;border:1px solid var(--line);border-radius:6px;background:transparent;padding:16px 18px;}
+  .docs{margin-top:24px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:16px 0;}
   .docs h4{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--ink);}
   .docs .sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
   .docs ul{margin:0;padding:0;list-style:none;}
@@ -98,7 +100,7 @@
   .result-actions button:hover{color:var(--ink);border-bottom-color:var(--ink);}
   .dday{background:var(--surface);color:var(--sub);border-radius:6px;padding:12px 14px;font-size:12.5px;font-weight:500;margin-top:12px;line-height:1.55;}
   .dday b{color:var(--ink);font-weight:700;}
-  .checklist{margin-top:10px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:transparent;}
+  .checklist{margin-top:12px;border:0;border-left:1px solid var(--line-strong);border-radius:0;padding:4px 0 4px 16px;background:transparent;}
   .checklist .ct{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
   .checklist ul{margin:0;padding:0;list-style:none;}
   .checklist li{position:relative;padding:4px 0 4px 18px;font-size:12px;line-height:1.55;color:var(--sub);}
@@ -133,8 +135,8 @@
   #sticky-total .st-v{font-size:19px;font-weight:700;}
   @media (min-width:761px){ #sticky-total{display:none !important;} }
   .total{margin-top:24px;padding:22px 0;border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);border-radius:0;background:transparent;display:block;}
-  .total .tk{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
-  .total .tv{display:block;font-size:clamp(32px,9vw,46px);font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
+  .total .tk{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+  .total .tv{display:block;font-size:clamp(40px,10vw,58px);font-weight:700;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
   .warn{margin-top:14px;font-size:12px;color:var(--sub);background:transparent;border:1px solid var(--line);border-left:2px solid var(--seal);border-radius:6px;padding:11px 13px;line-height:1.6;}
@@ -144,7 +146,7 @@
   .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:0;align-items:start;
     background-image:linear-gradient(to bottom,var(--line),var(--line));background-repeat:no-repeat;background-size:1px 100%;background-position:60% 0;}
   .grid2>.card:nth-child(1){padding-right:56px;}
-  .grid2>.card:nth-child(2){position:sticky;top:24px;align-self:start;padding-left:56px;}
+  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding-left:56px;padding-top:8px;}
   @media(max-width:680px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2>.card:nth-child(2){position:static;padding-left:0;}}
   .btn{appearance:none;font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);letter-spacing:.02em;padding:4px 0;border-bottom:1px solid var(--line);border-radius:0;transition:.15s;}
   .btn:hover{color:var(--ink);border-bottom-color:var(--ink);}
