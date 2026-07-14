@@ -45,7 +45,8 @@
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:80px;}
   .card h2{font-family:'Newsreader','Nanum Myeongjo',serif;font-size:24px;font-weight:500;letter-spacing:-.01em;color:var(--ink);text-transform:none;margin:0 0 32px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
-  input[type=text],input[type=date],input[type=number],select{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 2px;transition:border-color .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
+  input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;font-family:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 2px;transition:border-color .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
+  .money-wrap{max-width:340px;}
   select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 22px 11px 2px;color:var(--ink);font-weight:500;cursor:pointer;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
     background-position:calc(100% - 8px) center,calc(100% - 3px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
@@ -126,7 +127,7 @@
   .pal-item .pi-sub{font-size:11px;color:var(--muted);margin-top:1px;}
   .pal-item .pi-tag{font-size:10.5px;font-weight:500;color:var(--muted);white-space:nowrap;}
   .pal-empty{padding:22px;text-align:center;color:var(--muted);font-size:13px;}
-  .ko-echo{font-size:11.5px;color:var(--sub);font-weight:600;margin-top:5px;text-align:right;}
+  .ko-echo{max-width:340px;font-size:11.5px;color:var(--sub);font-weight:600;margin-top:5px;text-align:right;}
   .grp-h{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-strong);padding-top:18px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin:80px 0 28px;}
   .grp-h .en{font-family:'Newsreader',serif;font-size:11px;font-weight:400;letter-spacing:.1em;color:var(--muted);}
   .grp-h:first-of-type{margin-top:4px;}
