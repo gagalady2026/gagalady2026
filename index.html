@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<title>지방세 계산기 (동준)</title>
+<title>지방세 계산기 | D.J</title>
 <style>
   :root{
     /* 동준 — 웜 다크 (시연1 확정) · 대비 강화 */
@@ -20,13 +20,13 @@
   a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
   *{box-sizing:border-box;}html,body{margin:0;padding:0;}
   body{background:var(--paper);color:var(--ink);font-family:Helvetica,Arial,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
-  .wrap{width:min(92vw,1040px);margin:0 auto;padding:24px 0 96px;}
-  @media(min-width:1440px){.wrap{max-width:1120px;}}
+  .wrap{width:min(92vw,1180px);margin:0 auto;padding:24px 0 96px;}
+  @media(min-width:1440px){.wrap{max-width:1280px;}}
   @media(max-width:768px){.wrap{width:100%;padding:20px 22px 90px;}}
   /* 취득세 탭: 넓은 캔버스 활용 */
-  #m-chwi{max-width:1200px;}
+  #m-chwi{max-width:1280px;}
   /* 글 위주 단(가산세·FAQ·안내)은 읽기 좋은 폭으로 */
-  #m-gozi,#m-shingo,#m-faq,.basis{max-width:820px;}
+  #m-gozi,#m-shingo,#m-faq,.basis{max-width:880px;}
   header.head{border-bottom:1px solid var(--line);padding:56px 0 48px;margin-bottom:64px;position:relative;}
   .kicker{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;color:var(--muted);margin-bottom:20px;text-transform:uppercase;}
   header.head h1{font-size:clamp(30px,4vw,38px);font-weight:400;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
@@ -44,9 +44,9 @@
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:80px;}
   .card h2{font-size:19px;font-weight:500;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
-  input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;font-family:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 2px;transition:border-color .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
+  input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;height:44px;font-family:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:0 2px;transition:border-color .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
   .money-wrap{max-width:340px;}
-  select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:11px 22px 11px 2px;color:var(--ink);font-weight:500;cursor:pointer;
+  select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;height:44px;padding:0 22px 0 2px;color:var(--ink);font-weight:500;cursor:pointer;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
     background-position:calc(100% - 8px) center,calc(100% - 3px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
   select:focus{outline:none;border-bottom:1.5px solid var(--ink);}
@@ -61,7 +61,7 @@
   .money-wrap input{padding-right:22px;}
   .field{margin-bottom:24px;}
   .seg{display:flex;flex-wrap:wrap;gap:2px;}
-  .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;padding:8px 14px;transition:.15s;letter-spacing:0;position:relative;}
+  .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;height:44px;padding:0 14px;transition:.15s;letter-spacing:0;position:relative;}
   .seg button:hover{color:var(--sub);}
   .seg button[aria-pressed="true"]{color:var(--ink);background:var(--teal-soft);font-weight:500;box-shadow:inset 0 -2px 0 var(--teal);}
   .hint{font-size:12px;color:var(--muted);opacity:.78;margin-top:8px;line-height:1.6;letter-spacing:0;}
@@ -131,7 +131,7 @@
   .grp-h .en{font-size:10.5px;font-weight:500;letter-spacing:.12em;color:var(--muted);}
   .grp-h:first-of-type{margin-top:4px;}
   #sticky-total{position:fixed;left:0;right:0;bottom:0;background:var(--teal);color:#23241F;padding:14px 20px;display:none;z-index:60;cursor:pointer;}
-  #sticky-total .st-in{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  #sticky-total .st-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
   #sticky-total .st-l{font-size:12px;font-weight:500;opacity:.8;}
   #sticky-total .st-v{font-size:19px;font-weight:700;}
   @media (min-width:761px){ #sticky-total{display:none !important;} }
@@ -205,7 +205,7 @@
   <!-- ============ 랜딩 ============ -->
   <div id="landing">
     <div class="lp-hero">
-      <div class="lp-kicker">동준 · 지방세 실무</div>
+      <div class="lp-kicker">D.J · 지방세 실무</div>
       <h1 class="lp-title">LOCAL TAX<br>CALCULATOR</h1>
       <p class="lp-sub">Designed for Local Tax Administration<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
     </div>
@@ -256,7 +256,7 @@
 
   <div id="app" class="hidden">
   <header class="head">
-    <button class="kicker" onclick="goHome()" style="border:0;background:none;padding:0;cursor:pointer;font-family:inherit;text-align:left;">← LOCAL TAX · 동준</button>
+    <button class="kicker" onclick="goHome()" style="border:0;background:none;padding:0;cursor:pointer;font-family:inherit;text-align:left;">← D.J · LOCAL TAX</button>
     <h1>지방세 계산기</h1>
     <p class="hero-sub">자동차·기계장비·이륜차 취득세와 체납 가산세를<br>실무 기준으로 빠르고 정확하게 계산합니다.</p>
     <button class="btn sm" onclick="openPalette()" style="position:absolute;top:26px;right:0;">Search <span style="color:var(--muted);font-weight:500">⌘K</span></button>
@@ -313,6 +313,7 @@
     <div class="grid2">
       <div class="card">
         <h2>자동차 취득세</h2>
+        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">취득일과 차량 정보를 기준으로 예상 취득세를 계산합니다. 감면·면세점·공채·가산세를 함께 반영합니다.</p>
 
         
         <div class="field"><label class="lbl">취득 유형</label>
@@ -506,6 +507,7 @@
     <div class="grid2">
       <div class="card">
         <h2>기계장비 취득세</h2>
+        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">건설기계 기종과 취득가액을 기준으로 취득세·지방교육세·농어촌특별세를 계산합니다.</p>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mc-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
@@ -571,6 +573,7 @@
     <div class="grid2">
       <div class="card">
         <h2>이륜자동차 취득세</h2>
+        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">이륜자동차의 취득가액 또는 시가표준액을 기준으로 예상 취득세를 계산합니다.</p>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mt-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mt-type','new',mtCalc)">신규(신차)</button>
@@ -869,7 +872,7 @@
   </div>
 
   <footer class="site-footer">
-    <div class="fl"><button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:700;margin:0">← 지방세 계산기 · 동준</button></div>
+    <div class="fl"><button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:700;margin:0">← 지방세 계산기 · D.J</button></div>
     <div class="fr">2026 시가표준액 기준 · 실무 참고용 개산 도구<br>확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스(wetax.go.kr)</a>에서 확인하세요.</div>
   </footer>
   </div><!-- /#app -->
@@ -1910,6 +1913,31 @@ function updateSticky(label, amount){
   bar.style.display='';
 }
 
+/* 날짜 입력: 연도 4자리 제한 (브라우저 기본은 6자리까지 허용됨) */
+function clampDateInputs(){
+  document.querySelectorAll('input[type=date]').forEach(function(el){
+    el.setAttribute('min','1950-01-01');
+    el.setAttribute('max','2099-12-31');
+    if(el._clamped) return; el._clamped=true;
+    var fix=function(){
+      var v=el.value; if(!v) return;
+      var p=v.split('-'); if(p.length!==3) return;
+      var y=p[0];
+      if(y.length>4 || Number(y)>2099){ el.value='2099-'+p[1]+'-'+p[2]; }
+      else if(Number(y)<1950 && y.length>=4){ el.value='1950-'+p[1]+'-'+p[2]; }
+      else return;
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+    };
+    el.addEventListener('change',fix);
+    el.addEventListener('blur',fix);
+    el.addEventListener('input',function(){
+      var v=el.value; if(!v) return;
+      var p=v.split('-');
+      if(p.length===3 && p[0].length>4){ fix(); }
+    });
+  });
+}
+
 /* init */
 function resetInputs(){
   // 값 입력 비우기 (지분율은 100 유지)
@@ -2120,7 +2148,7 @@ function autoCalc(){
   box.innerHTML=h; window._RESULTTEXT=box.innerText; animateTotals(box);
 }
 
-addRow(); cCalc(); renderRecent(); autoCalc();
+addRow(); cCalc(); renderRecent(); autoCalc(); clampDateInputs();
 </script>
 <div id="sticky-total" onclick="var r=document.querySelector('#m-chwi .card h2'); var boxes={car:'c-result',machine:'mc-result',moto:'mt-result'}; var el=document.getElementById(boxes[pressed('c-target')]); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});">
   <div class="st-in"><span class="st-l" id="st-label">신고·납부할 세액</span><span class="st-v" id="st-value">0원</span></div>
