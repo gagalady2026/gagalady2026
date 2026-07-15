@@ -725,31 +725,27 @@
           <div class="hint">전액면제 대상: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b> 중 1대. 중증장애인·유공자 상이 1~7급, 본인·세대 공동명의. 등록 1년 내 이전·세대분리 시 추징.</div>
         </div>
 
-        <div class="grp-h"><span>산정 방식</span><span class="en">Method</span></div>
-        <div class="field"><label class="lbl">계산 유형</label>
+        <div class="grp-h"><span>어떤 상황인가요?</span><span class="en">Situation</span></div>
+        <div class="field"><label class="lbl">상황 선택</label>
           <div class="seg" id="au-mode">
-            <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">연간 전체</button>
-            <button data-v="daily" aria-pressed="false" onclick="pick('au-mode','daily',onAutoMode)">소유기간 일할</button>
+            <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">계속 보유 중 (1년치)</button>
+            <button data-v="buy" aria-pressed="false" onclick="pick('au-mode','buy',onAutoMode)">차를 샀다</button>
+            <button data-v="sell" aria-pressed="false" onclick="pick('au-mode','sell',onAutoMode)">차를 팔았다</button>
+            <button data-v="new" aria-pressed="false" onclick="pick('au-mode','new',onAutoMode)">신규 등록했다</button>
+            <button data-v="scrap" aria-pressed="false" onclick="pick('au-mode','scrap',onAutoMode)">폐차·말소했다</button>
           </div>
+          <div class="hint" id="au-mode-hint">1년 내내 보유하면 연세액 전부를 냅니다. 사고팔거나 폐차하면 <b>소유한 날수만큼만</b> 나눠 냅니다.</div>
         </div>
         <div id="au-daily-box" class="hidden">
-          <div class="field"><label class="lbl">일할 사유</label>
-            <div class="seg" id="au-event">
-              <button data-v="new" aria-pressed="true" onclick="pick('au-event','new',autoCalc)">신규취득</button>
-              <button data-v="sell" aria-pressed="false" onclick="pick('au-event','sell',autoCalc)">매도(양도인)</button>
-              <button data-v="buy" aria-pressed="false" onclick="pick('au-event','buy',autoCalc)">매수(양수인)</button>
-              <button data-v="scrap" aria-pressed="false" onclick="pick('au-event','scrap',autoCalc)">폐차·말소</button>
-            </div>
-          </div>
-          <div class="field"><label class="lbl" id="au-event-datelabel">사유 발생일</label>
+          <div class="field"><label class="lbl" id="au-event-datelabel">이전등록일</label>
             <input type="date" id="au-eventdate" oninput="autoCalc()">
-            <div class="hint" id="au-event-hint">보유일수 × 연세액 ÷ 365로 계산합니다. 양도일 당일은 양수인 부담, 일할세액 2,000원 미만은 부징수.</div>
+            <div class="hint" id="au-event-hint">연세액 × 보유일수 ÷ 365. 이전등록일 당일은 <b>산 사람(매수인)</b>이 부담하고, 일할세액 2,000원 미만은 부과하지 않습니다.</div>
           </div>
         </div>
 
         <div id="au-age-wrap">
           <div class="grp-h"><span>차령 경감</span><span class="en">Age relief</span></div>
-          <div class="field" id="au-year-box"><label class="lbl">최초 등록일</label>
+          <div class="field" id="au-year-box"><label class="lbl">자동차 최초 등록일 <span class="tip" tabindex="0" data-tip="자동차등록증의 &quot;최초등록일&quot;. 차령(연식) 경감 계산에만 씁니다. 사고판 날짜와는 다릅니다.">?</span></label>
             <input type="date" id="au-regdate" oninput="autoCalc()">
             <div class="hint">비영업 승용만 <b>등록 3년째부터 매년 5%씩 최대 50%</b> 경감(전기·수소·영업·기타차종 제외). 차령 기산일: 상반기 등록 1/1, 하반기 등록 7/1.</div>
           </div>
@@ -1938,15 +1934,23 @@ function resetInputs(){
   cCalc(); recalcGozi(); calcShingo();
 }
 function onAutoMode(){
-  var daily = pressed('au-mode')==='daily';
+  var m=pressed('au-mode'), daily=(m!=='full');
   document.getElementById('au-daily-box').classList.toggle('hidden', !daily);
   document.getElementById('au-prepay-wrap').style.display = daily?'none':'';
+  var hints={
+    full:'1년 내내 보유하면 연세액 전부를 냅니다. 6월·12월에 절반씩 부과되며, 미리 내면(연납) 공제받습니다.',
+    buy:'<b>산 사람(매수인)</b>이 낼 세금입니다. 이전등록일부터 12월 31일까지 보유한 날수만큼 부과됩니다.',
+    sell:'<b>판 사람(매도인)</b>이 낼 세금입니다. 1월 1일부터 이전등록일 전날까지 보유한 날수만큼 부과됩니다.',
+    new:'신규 등록일부터 12월 31일까지 보유한 날수만큼 부과됩니다.',
+    scrap:'1월 1일부터 폐차·말소일까지 보유한 날수만큼 부과됩니다. 연납했다면 남은 기간은 환급됩니다.'
+  };
+  var hint=document.getElementById('au-mode-hint'); if(hint) hint.innerHTML=hints[m]||'';
   autoCalc();
 }
 function autoDailyDays(){
-  var ev=pressed('au-event'), rd=document.getElementById('au-eventdate').value;
+  var ev=pressed('au-mode'), rd=document.getElementById('au-eventdate').value;
   var lab=document.getElementById('au-event-datelabel'), hint=document.getElementById('au-event-hint');
-  var labels={new:'신규 등록일',sell:'양도일(매도일)',buy:'양도일(매수일)',scrap:'말소·폐차일'};
+  var labels={new:'신규 등록일',sell:'이전등록일 (판 날짜)',buy:'이전등록일 (산 날짜)',scrap:'폐차·말소일'};
   if(lab) lab.textContent=labels[ev]||'사유 발생일';
   if(!rd) return null;
   var ed=new Date(rd+'T00:00:00'), Y=ed.getFullYear();
@@ -2062,17 +2066,18 @@ function autoCalc(){
   if(eduApplies) h+='<div class="row"><div class="rk">지방교육세<small>자동차세 × 30%</small></div><div class="rv">'+won(edu)+' 원</div></div>';
   else h+='<div class="row sub"><div class="rk">지방교육세<small>비영업 승용만 부과 → 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+='<div class="total"><span class="tk">연세액</span><span class="tv">'+won(annual)+'<span class="u">원</span></span></div>';
-  if(pressed('au-mode')==='daily'){
+  if(pressed('au-mode')!=='full'){
     var dd=autoDailyDays();
     if(!dd){ h+='<div class="info">일할 사유 발생일을 입력하세요.</div>'; }
     else {
       var prorated=Math.floor(annual*dd.days/dd.total/10)*10, buseng=(prorated<2000);
       if(buseng) prorated=0;
-      var evNm={new:'신규취득',sell:'매도(양도인)',buy:'매수(양수인)',scrap:'폐차·말소'}[pressed('au-event')];
-      h+='<div class="docs" style="margin-top:20px"><h4>소유기간 일할계산</h4>';
+      var evNm={new:'신규취득',sell:'매도(판 사람)',buy:'매수(산 사람)',scrap:'폐차·말소'}[pressed('au-mode')];
+      var payerNm={new:'신규 등록자가 납부할 자동차세',sell:'판 사람(매도인)이 납부할 자동차세',buy:'산 사람(매수인)이 납부할 자동차세',scrap:'폐차 전까지 납부할 자동차세'}[pressed('au-mode')]||'소유기간 일할계산';
+      h+='<div class="docs" style="margin-top:20px"><h4>'+payerNm+'</h4>';
       h+='<div class="row" style="padding-top:6px"><div class="rk">연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
       h+='<div class="row"><div class="rk">보유일수<small>'+evNm+' · '+dd.Y+'년 '+dd.total+'일 기준</small></div><div class="rv">'+dd.days+'일</div></div>';
-      h+='<div class="total" style="margin-top:10px"><span class="tk">일할 납부세액</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">'+({buy:'매수인 납부액',sell:'매도인 납부액',new:'신규 등록분 납부액',scrap:'폐차 전 납부액'}[pressed('au-mode')]||'일할 납부세액')+'</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
       if(buseng) h+='<div class="sub">일할세액 2,000원 미만 → 소액부징수(0원).</div>';
       h+='<div class="sub">양도일 당일은 양수인 부담. 차령 3년↑ 비영업 승용은 기분별 정밀계산과 소액 차이가 날 수 있어 위택스로 확정하세요.</div></div>';
     }
