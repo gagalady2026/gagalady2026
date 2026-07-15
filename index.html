@@ -709,22 +709,6 @@
           </div>
         </div>
 
-        <div class="grp-h"><span>감면</span><span class="en">Exemption</span></div>
-        <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
-          <select id="au-gamyeon" onchange="onAutoGamyeon()">
-            <option value="none">감면 없음</option>
-            <option value="disabled">장애인용 (§17) — 전액면제</option>
-            <option value="veteran">국가유공자 등 (§29) — 전액면제</option>
-          </select>
-          <div id="au-gamyeon-elig" class="hidden" style="margin-top:8px;">
-            <div class="seg" id="au-elig">
-              <button data-v="1" aria-pressed="false" onclick="pick('au-elig','1',autoCalc)">요건 충족 → 전액면제</button>
-              <button data-v="0" aria-pressed="true" onclick="pick('au-elig','0',autoCalc)">요건 미충족</button>
-            </div>
-            <div class="hint" id="au-gamyeon-req" style="margin-top:8px;"></div>
-          </div>
-        </div>
-
         <div class="grp-h"><span>감면</span><span class="en">Relief</span></div>
         <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
           <select id="au-relief" onchange="autoCalc()">
@@ -732,6 +716,12 @@
             <option value="disabled">장애인 (§17)</option>
             <option value="veteran">국가유공자 (§29)</option>
           </select>
+          <div id="au-relief-elig" class="hidden" style="margin-top:10px;">
+            <div class="seg" id="au-elig">
+              <button data-v="1" aria-pressed="false" onclick="pick('au-elig','1',autoCalc)">요건 충족 (본인·세대 명의, 1대)</button>
+              <button data-v="0" aria-pressed="true" onclick="pick('au-elig','0',autoCalc)">요건 미충족·미확인</button>
+            </div>
+          </div>
           <div class="hint">전액면제 대상: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b> 중 1대. 중증장애인·유공자 상이 1~7급, 본인·세대 공동명의. 등록 1년 내 이전·세대분리 시 추징.</div>
         </div>
 
@@ -2096,7 +2086,9 @@ function autoCalc(){
   }
   // 감면 (장애인 §17 / 국가유공자 §29) — 전액면제
   var relief=document.getElementById('au-relief').value;
+  document.getElementById('au-relief-elig').classList.toggle('hidden', relief==='none');
   if(relief!=='none'){
+    var eligOK = pressed('au-elig')==='1';
     var eligible=false, reason='';
     if(kind==='passenger'){
       if(pressed('au-fuel')!=='ev'){ var ccv=numv('au-cc'); eligible = ccv>0 && ccv<=2000; reason = eligible?'2,000cc 이하 승용(또는 7~10인승)':'2,000cc 초과 — 7~10인승이면 면제 가능'; }
@@ -2106,7 +2098,9 @@ function autoCalc(){
     } else if(kind==='van'){ eligible=false; reason='승합은 15인승 이하만 대상(버스는 통상 초과)'; }
     else { eligible=false; reason='특수차는 감면 대상 아님'; }
     var rNm = relief==='disabled' ? '장애인(§17)' : '국가유공자(§29)';
-    if(eligible){
+    if(eligible && !eligOK){
+      h+='<div class="warn">'+rNm+' 감면 대상 차량입니다(<b>'+reason+'</b>). <b>요건 충족</b>을 선택하면 면제 세액이 계산됩니다.</div>';
+    } else if(eligible){
       h+='<div class="docs" style="margin-top:20px;border-color:var(--teal)"><h4>'+rNm+' 감면 적용</h4>';
       h+='<div class="row" style="padding-top:6px"><div class="rk">감면 전 연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
       h+='<div class="row"><div class="rk">감면<small>'+reason+' · 전액면제</small></div><div class="rv">−'+won(annual)+' 원</div></div>';
