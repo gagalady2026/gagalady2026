@@ -199,6 +199,7 @@
 
   <div class="tabs" role="tablist">
     <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
+    <button class="tab" id="t-auto" role="tab" aria-selected="false" onclick="sw('auto')">자동차세</button>
     <button class="tab" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">고지분 체납 가산세</button>
     <button class="tab" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고납부분 가산세</button>
     <button class="tab" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">지방세 안내</button>
@@ -397,7 +398,7 @@
           <div id="c-bond-inputs" class="hidden">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div id="c-cc-box"><label class="lbl">배기량 (cc)</label><input type="text" id="c-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"></div>
-              <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="cCalc()"></div>
+              <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" min="0" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="if(this.value<0)this.value=0;cCalc()"></div>
             </div>
             <div class="hint">배기량·최대적재량은 <b>자동차등록증</b>에 적혀 있습니다.</div>
             <label class="lbl" style="margin-top:8px">연료</label>
@@ -556,6 +557,165 @@
     </div><!-- /target-moto -->
   </div>
 
+  <!-- ============ 자동차세 (소유분 정기분) ============ -->
+  <div id="m-auto" class="hidden">
+    <div class="grid2">
+      <div class="card">
+        <h2>자동차세 계산</h2>
+        <p class="hint" style="margin-top:-18px;margin-bottom:26px;opacity:.78">소유에 대한 자동차세(정기분) 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</p>
+
+        <div class="field"><label class="lbl">용도</label>
+          <div class="seg" id="au-use">
+            <button data-v="priv" aria-pressed="true" onclick="pick('au-use','priv',autoCalc)">비영업용</button>
+            <button data-v="biz" aria-pressed="false" onclick="pick('au-use','biz',autoCalc)">영업용</button>
+          </div>
+        </div>
+
+        <div class="field"><label class="lbl">차종</label>
+          <div class="seg" id="au-kind">
+            <button data-v="passenger" aria-pressed="true" onclick="pick('au-kind','passenger',onAutoKind)">승용</button>
+            <button data-v="van" aria-pressed="false" onclick="pick('au-kind','van',onAutoKind)">승합</button>
+            <button data-v="truck" aria-pressed="false" onclick="pick('au-kind','truck',onAutoKind)">화물</button>
+            <button data-v="special" aria-pressed="false" onclick="pick('au-kind','special',onAutoKind)">특수</button>
+          </div>
+        </div>
+
+        <!-- 승용 전용 -->
+        <div id="au-passenger">
+          <div class="field"><label class="lbl">연료</label>
+            <div class="seg" id="au-fuel">
+              <button data-v="ice" aria-pressed="true" onclick="pick('au-fuel','ice',autoCalc)">내연·하이브리드</button>
+              <button data-v="ev" aria-pressed="false" onclick="pick('au-fuel','ev',autoCalc)">전기·수소</button>
+            </div>
+          </div>
+          <div class="field" id="au-cc-box"><label class="lbl">배기량 (cc)</label>
+            <div class="money-wrap"><input type="text" id="au-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);autoCalc()"><span class="won">cc</span></div>
+            <div class="hint">1,000 / 1,600cc 경계에서 cc당 세액이 올라갑니다. 전기·수소는 정액(비영업 13만).</div>
+          </div>
+        </div>
+
+        <!-- 승합 전용 -->
+        <div id="au-van" class="hidden">
+          <div class="field"><label class="lbl">승합 종류</label>
+            <select id="au-van-type" onchange="autoCalc()">
+              <option value="soilban">소형일반버스 (승차정원 40인 이하)</option>
+              <option value="daeilban">대형일반버스 (40인 초과)</option>
+              <option value="sojeonse">소형전세버스</option>
+              <option value="daejeonse">대형전세버스</option>
+              <option value="gosok">고속버스</option>
+            </select>
+            <div class="hint">전세·고속버스는 영업용 기준입니다.</div>
+          </div>
+        </div>
+
+        <!-- 화물 전용 -->
+        <div id="au-truck" class="hidden">
+          <div class="field"><label class="lbl">적재정량 (kg)</label>
+            <div class="money-wrap"><input type="text" id="au-ton" inputmode="numeric" placeholder="0" oninput="fmt(this);autoCalc()"><span class="won">kg</span></div>
+            <div class="hint">자동차등록증상 적재정량. 1만kg 초과분은 매 1만kg마다 가산됩니다.</div>
+          </div>
+        </div>
+
+        <!-- 특수 전용 -->
+        <div id="au-special" class="hidden">
+          <div class="field"><label class="lbl">특수차 규모</label>
+            <select id="au-special-type" onchange="autoCalc()">
+              <option value="so">소형특수자동차</option>
+              <option value="dae">대형특수자동차</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grp-h"><span>감면</span><span class="en">Exemption</span></div>
+        <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
+          <select id="au-gamyeon" onchange="onAutoGamyeon()">
+            <option value="none">감면 없음</option>
+            <option value="disabled">장애인용 (§17) — 전액면제</option>
+            <option value="veteran">국가유공자 등 (§29) — 전액면제</option>
+          </select>
+          <div id="au-gamyeon-elig" class="hidden" style="margin-top:8px;">
+            <div class="seg" id="au-elig">
+              <button data-v="1" aria-pressed="false" onclick="pick('au-elig','1',autoCalc)">요건 충족 → 전액면제</button>
+              <button data-v="0" aria-pressed="true" onclick="pick('au-elig','0',autoCalc)">요건 미충족</button>
+            </div>
+            <div class="hint" id="au-gamyeon-req" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <div class="grp-h"><span>감면</span><span class="en">Relief</span></div>
+        <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
+          <select id="au-relief" onchange="autoCalc()">
+            <option value="none">감면 없음</option>
+            <option value="disabled">장애인 (§17)</option>
+            <option value="veteran">국가유공자 (§29)</option>
+          </select>
+          <div class="hint">전액면제 대상: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b> 중 1대. 중증장애인·유공자 상이 1~7급, 본인·세대 공동명의. 등록 1년 내 이전·세대분리 시 추징.</div>
+        </div>
+
+        <div class="grp-h"><span>산정 방식</span><span class="en">Method</span></div>
+        <div class="field"><label class="lbl">계산 유형</label>
+          <div class="seg" id="au-mode">
+            <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">연간 전체</button>
+            <button data-v="daily" aria-pressed="false" onclick="pick('au-mode','daily',onAutoMode)">소유기간 일할</button>
+          </div>
+        </div>
+        <div id="au-daily-box" class="hidden">
+          <div class="field"><label class="lbl">일할 사유</label>
+            <div class="seg" id="au-event">
+              <button data-v="new" aria-pressed="true" onclick="pick('au-event','new',autoCalc)">신규취득</button>
+              <button data-v="sell" aria-pressed="false" onclick="pick('au-event','sell',autoCalc)">매도(양도인)</button>
+              <button data-v="buy" aria-pressed="false" onclick="pick('au-event','buy',autoCalc)">매수(양수인)</button>
+              <button data-v="scrap" aria-pressed="false" onclick="pick('au-event','scrap',autoCalc)">폐차·말소</button>
+            </div>
+          </div>
+          <div class="field"><label class="lbl" id="au-event-datelabel">사유 발생일</label>
+            <input type="date" id="au-eventdate" oninput="autoCalc()">
+            <div class="hint" id="au-event-hint">보유일수 × 연세액 ÷ 365로 계산합니다. 양도일 당일은 양수인 부담, 일할세액 2,000원 미만은 부징수.</div>
+          </div>
+        </div>
+
+        <div id="au-age-wrap">
+          <div class="grp-h"><span>차령 경감</span><span class="en">Age relief</span></div>
+          <div class="field" id="au-year-box"><label class="lbl">최초 등록일</label>
+            <input type="date" id="au-regdate" oninput="autoCalc()">
+            <div class="hint">비영업 승용만 <b>등록 3년째부터 매년 5%씩 최대 50%</b> 경감(전기·수소·영업·기타차종 제외). 차령 기산일: 상반기 등록 1/1, 하반기 등록 7/1.</div>
+          </div>
+        </div>
+
+        <div id="au-prepay-wrap">
+        <div class="grp-h"><span>연납</span><span class="en">Prepay</span></div>
+        <div class="field"><label class="lbl">연납 신청 시기</label>
+          <select id="au-prepay" onchange="autoCalc()">
+            <option value="0">연납 안 함 (6·12월 정기분)</option>
+            <option value="1">1월 연납 (−4.58%)</option>
+            <option value="3">3월 연납 (−3.76%)</option>
+            <option value="6">6월 연납 (−2.51%)</option>
+            <option value="9">9월 연납 (−1.25%)</option>
+          </select>
+          <div class="hint">연세액(본세+교육세)을 미리 내면 공제. 공제율은 2026년 기준이며 매년 바뀝니다.</div>
+        </div>
+        </div>
+      </div>
+
+      <div class="card"><h2>산정 결과</h2>
+        <div id="au-result"><div class="empty">배기량을 입력하세요.</div></div>
+      </div>
+    </div>
+
+    <div class="basis">
+      <h3>산정 근거</h3>
+      <ul>
+        <li><b>승용차</b> — 배기량 × cc당 세액. 비영업 1,000cc↓ 80 / 1,600cc↓ 140 / 초과 200원. 영업 1,600cc↓ 18 / 2,500cc↓ 19 / 초과 24원.</li>
+        <li><b>승합차(연세액)</b> — 소형일반 영업 25,000·비영업 65,000 / 대형일반 영업 42,000·비영업 115,000 / 소형전세 50,000 / 대형전세 70,000 / 고속 100,000(영업).</li>
+        <li><b>화물차(적재정량)</b> — 비영업 1톤 28,500 / 2톤 34,500 / 3톤 48,000 / 4톤 63,000 / 5톤 79,500 / 8톤 130,500 / 10톤 157,500. 1만kg 초과 시 매 1만kg마다 영업 1만·비영업 3만 가산.</li>
+        <li><b>특수차</b> — 소형 영업 13,500·비영업 58,500 / 대형 영업 36,000·비영업 157,500. <b>전기·수소 승용</b> 비영업 10만·영업 2만(정액).</li>
+        <li><b>지방교육세</b> = 자동차세 × 30%, <b>비영업 승용차에만</b> 부과(지방세법 §151). 승합·화물·특수·영업용은 없음.</li>
+        <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%. <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
+      </ul>
+      <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회하세요.</div>
+    </div>
+  </div>
+
   <!-- ============ 고지분 체납 ============ -->
   <div id="m-gozi" class="hidden">
     <div class="card"><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
@@ -690,7 +850,7 @@ function numv(id){return Number((document.getElementById(id).value||'').replace(
 function won(n){return Math.floor(n).toLocaleString('ko-KR');}
 function pick(group,v,cb){document.querySelectorAll('#'+group+' button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});if(cb)cb();}
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
-function sw(m){['chwi','gozi','shingo','faq'].forEach(function(x){document.getElementById('m-'+x).classList.toggle('hidden',x!==m);document.getElementById('t-'+x).setAttribute('aria-selected',x===m);}); if(m!=='chwi') updateSticky('',null); }
+function sw(m){['chwi','auto','gozi','shingo','faq'].forEach(function(x){document.getElementById('m-'+x).classList.toggle('hidden',x!==m);document.getElementById('t-'+x).setAttribute('aria-selected',x===m);}); if(m!=='chwi') updateSticky('',null); }
 
 /* ---------- 자동차 취득세 ---------- */
 function taxRate(chong,use,light){
@@ -1038,7 +1198,7 @@ function gongchae(base){
     return {amt:0,rate:0,note:(gv==='disabled'?'장애인':'국가유공자')+' 요건 충족 → 공채 매입 면제(보철용 1대)',R:R};
   }
   var chong=pressed('c-chong'), isNew=pressed('c-type')==='new';
-  var cc=numv('c-cc'), ton=Number(document.getElementById('c-ton').value)||0, fuel=pressed('c-eco');
+  var cc=numv('c-cc'), ton=Math.max(0,Number(document.getElementById('c-ton').value)||0), fuel=pressed('c-eco');
   var warn='', hybCap=false;
   if(fuel==='hybrid'){
     if(R.hybrid==='over1600'){ if(cc<=1600) return {amt:0,rate:0,note:'하이브리드 1,600cc 이하 → 면제',R:R}; }
@@ -1671,7 +1831,166 @@ function resetInputs(){
   // 재계산
   cCalc(); recalcGozi(); calcShingo();
 }
-addRow(); cCalc(); renderRecent();
+function onAutoMode(){
+  var daily = pressed('au-mode')==='daily';
+  document.getElementById('au-daily-box').classList.toggle('hidden', !daily);
+  document.getElementById('au-prepay-wrap').style.display = daily?'none':'';
+  autoCalc();
+}
+function autoDailyDays(){
+  var ev=pressed('au-event'), rd=document.getElementById('au-eventdate').value;
+  var lab=document.getElementById('au-event-datelabel'), hint=document.getElementById('au-event-hint');
+  var labels={new:'신규 등록일',sell:'양도일(매도일)',buy:'양도일(매수일)',scrap:'말소·폐차일'};
+  if(lab) lab.textContent=labels[ev]||'사유 발생일';
+  if(!rd) return null;
+  var ed=new Date(rd+'T00:00:00'), Y=ed.getFullYear();
+  var y0=new Date(Y,0,1), y1=new Date(Y,11,31);
+  var total=Math.round((y1-y0)/86400000)+1;
+  var start,end;
+  if(ev==='new'||ev==='buy'){ start=ed; end=y1; }
+  else if(ev==='sell'){ start=y0; end=new Date(ed.getTime()-86400000); }
+  else { start=y0; end=ed; } // scrap
+  var days=Math.round((end-start)/86400000)+1; if(days<0)days=0; if(days>total)days=total;
+  return {days:days,total:total,Y:Y};
+}
+
+/* ===== 자동차세 (소유분 정기분) ===== */
+var AUTO_PREPAY={ '0':0, '1':0.0458, '3':0.0376, '6':0.0251, '9':0.0125 };
+var AUTO_VAN={ // 승합 [영업, 비영업]
+  soilban:[25000,65000], daeilban:[42000,115000], sojeonse:[50000,null], daejeonse:[70000,null], gosok:[100000,null]
+};
+var AUTO_VAN_NM={soilban:'소형일반버스',daeilban:'대형일반버스',sojeonse:'소형전세버스',daejeonse:'대형전세버스',gosok:'고속버스'};
+var AUTO_TRUCK=[ // [상한kg, 영업, 비영업]
+  [1000,6600,28500],[2000,9600,34500],[3000,13500,48000],[4000,18000,63000],
+  [5000,22500,79500],[8000,36000,130500],[10000,45000,157500]
+];
+var AUTO_SPECIAL={ so:[13500,58500], dae:[36000,157500] };
+var AUTO_SPECIAL_NM={so:'소형특수',dae:'대형특수'};
+
+function onAutoKind(){
+  var k=pressed('au-kind');
+  ['passenger','van','truck','special'].forEach(function(x){
+    document.getElementById('au-'+x).classList.toggle('hidden', x!==k);
+  });
+  // 차령경감은 승용만 노출
+  document.getElementById('au-age-wrap').style.display = (k==='passenger')?'':'none';
+  autoCalc();
+}
+
+function autoCalc(){
+  var box=document.getElementById('au-result'); if(!box) return;
+  var use=pressed('au-use'), kind=pressed('au-kind'), biz=(use==='biz');
+  var base=0, info='', eduApplies=false, ageEligible=false, note='';
+
+  if(kind==='passenger'){
+    var fuel=pressed('au-fuel'), isEV=(fuel==='ev');
+    document.getElementById('au-cc-box').classList.toggle('hidden', isEV);
+    eduApplies = !biz;                 // 지방교육세: 비영업 승용만
+    if(isEV){
+      base = biz? 20000 : 100000; info='전기·수소 정액';
+    } else {
+      var cc=numv('au-cc');
+      if(!cc){ box.innerHTML='<div class="empty">배기량을 입력하세요.</div>'; updateSticky('',null); return; }
+      var rate = biz ? (cc<=1600?18:cc<=2500?19:24) : (cc<=1000?80:cc<=1600?140:200);
+      base = cc*rate; info=cc.toLocaleString('ko-KR')+'cc × '+rate+'원';
+      ageEligible = !biz;              // 차령경감: 비영업 승용 내연만
+    }
+  } else if(kind==='van'){
+    var vt=document.getElementById('au-van-type').value, row=AUTO_VAN[vt], v=biz?row[0]:row[1];
+    if(v==null){ box.innerHTML='<div class="empty">'+AUTO_VAN_NM[vt]+'는 영업용 기준입니다. 용도를 영업용으로 선택하세요.</div>'; updateSticky('',null); return; }
+    base=v; info=AUTO_VAN_NM[vt]+' 정액';
+  } else if(kind==='truck'){
+    var kg=numv('au-ton');
+    if(!kg){ box.innerHTML='<div class="empty">적재정량(kg)을 입력하세요.</div>'; updateSticky('',null); return; }
+    var br=null; for(var i=0;i<AUTO_TRUCK.length;i++){ if(kg<=AUTO_TRUCK[i][0]){ br=AUTO_TRUCK[i]; break; } }
+    if(br){ base = biz?br[1]:br[2]; info=(br[0]/1000)+'톤 이하 정액'; }
+    else { // 1만kg 초과
+      var top=AUTO_TRUCK[AUTO_TRUCK.length-1]; base = biz?top[1]:top[2];
+      var over=Math.ceil((kg-10000)/1000/10)*10; // 편의상 정확: 매 1만kg
+      var extraUnits=Math.ceil((kg-10000)/10000);
+      base += extraUnits*(biz?10000:30000);
+      info='10톤 초과('+extraUnits+'만kg 가산)';
+    }
+  } else if(kind==='special'){
+    var st=document.getElementById('au-special-type').value, r=AUTO_SPECIAL[st];
+    base = biz?r[0]:r[1]; info=AUTO_SPECIAL_NM[st]+' 정액';
+  }
+
+  // 차령 경감 (비영업 승용 내연만)
+  var reduceRate=0, ageYears=0, giSan='';
+  if(ageEligible){
+    var rd=document.getElementById('au-regdate').value;
+    if(rd){
+      var d=new Date(rd+'T00:00:00'), ry=d.getFullYear(), rm=d.getMonth()+1;
+      giSan = (rm<=6)?'1월 1일':'7월 1일';
+      ageYears = 2026 - ry + 1; if(ageYears>12) ageYears=12;
+      if(ageYears>=3){ reduceRate = Math.min(0.5, 0.05*(ageYears-2)); }
+    }
+  }
+  var reduced = Math.floor(base*(1-reduceRate)/10)*10;
+  var edu = eduApplies ? Math.floor(reduced*0.30/10)*10 : 0;
+  var annual = reduced + edu;
+
+  var pv=document.getElementById('au-prepay').value, prate=AUTO_PREPAY[pv]||0;
+  var discount = prate? Math.floor(annual*prate/10)*10 : 0;
+  var payable = annual - discount;
+
+  var h='<div class="receipt-head">자동차세 산정 (연세액)</div>';
+  h+='<div class="row"><div class="rk">자동차세 본세<small>'+info+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  if(reduceRate>0) h+='<div class="row sub"><div class="rk">차령 경감<small>차령 '+ageYears+'년 · '+Math.round(reduceRate*100)+'% (기산일 '+giSan+')</small></div><div class="rv">−'+won(base-reduced)+' 원</div></div>';
+  if(eduApplies) h+='<div class="row"><div class="rk">지방교육세<small>자동차세 × 30%</small></div><div class="rv">'+won(edu)+' 원</div></div>';
+  else h+='<div class="row sub"><div class="rk">지방교육세<small>비영업 승용만 부과 → 해당 없음</small></div><div class="rv">0 원</div></div>';
+  h+='<div class="total"><span class="tk">연세액</span><span class="tv">'+won(annual)+'<span class="u">원</span></span></div>';
+  if(pressed('au-mode')==='daily'){
+    var dd=autoDailyDays();
+    if(!dd){ h+='<div class="info">일할 사유 발생일을 입력하세요.</div>'; }
+    else {
+      var prorated=Math.floor(annual*dd.days/dd.total/10)*10, buseng=(prorated<2000);
+      if(buseng) prorated=0;
+      var evNm={new:'신규취득',sell:'매도(양도인)',buy:'매수(양수인)',scrap:'폐차·말소'}[pressed('au-event')];
+      h+='<div class="docs" style="margin-top:20px"><h4>소유기간 일할계산</h4>';
+      h+='<div class="row" style="padding-top:6px"><div class="rk">연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
+      h+='<div class="row"><div class="rk">보유일수<small>'+evNm+' · '+dd.Y+'년 '+dd.total+'일 기준</small></div><div class="rv">'+dd.days+'일</div></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">일할 납부세액</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
+      if(buseng) h+='<div class="sub">일할세액 2,000원 미만 → 소액부징수(0원).</div>';
+      h+='<div class="sub">양도일 당일은 양수인 부담. 차령 3년↑ 비영업 승용은 기분별 정밀계산과 소액 차이가 날 수 있어 위택스로 확정하세요.</div></div>';
+    }
+  } else if(prate>0){
+    h+='<div class="docs" style="margin-top:20px"><h4>연납 적용</h4>';
+    h+='<div class="row" style="padding-top:6px"><div class="rk">연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
+    h+='<div class="row"><div class="rk">연납 공제<small>'+pv+'월 · '+(prate*100).toFixed(2)+'%</small></div><div class="rv">−'+won(discount)+' 원</div></div>';
+    h+='<div class="total" style="margin-top:10px"><span class="tk">연납 납부액</span><span class="tv" style="color:var(--teal)">'+won(payable)+'<span class="u">원</span></span></div></div>';
+  } else {
+    h+='<div class="info">정기분은 6월(1기)·12월(2기)에 <b>절반씩</b> 부과됩니다. 각 기분 약 '+won(Math.floor(annual/2/10)*10)+'원.</div>';
+  }
+  // 감면 (장애인 §17 / 국가유공자 §29) — 전액면제
+  var relief=document.getElementById('au-relief').value;
+  if(relief!=='none'){
+    var eligible=false, reason='';
+    if(kind==='passenger'){
+      if(pressed('au-fuel')!=='ev'){ var ccv=numv('au-cc'); eligible = ccv>0 && ccv<=2000; reason = eligible?'2,000cc 이하 승용(또는 7~10인승)':'2,000cc 초과 — 7~10인승이면 면제 가능'; }
+      else { eligible=true; reason='전기·수소 승용'; }
+    } else if(kind==='truck'){
+      var kgv=numv('au-ton'); eligible = kgv>0 && kgv<=1000; reason = eligible?'1톤 이하 화물':'적재 1톤 초과 — 대상 아님';
+    } else if(kind==='van'){ eligible=false; reason='승합은 15인승 이하만 대상(버스는 통상 초과)'; }
+    else { eligible=false; reason='특수차는 감면 대상 아님'; }
+    var rNm = relief==='disabled' ? '장애인(§17)' : '국가유공자(§29)';
+    if(eligible){
+      h+='<div class="docs" style="margin-top:20px;border-color:var(--teal)"><h4>'+rNm+' 감면 적용</h4>';
+      h+='<div class="row" style="padding-top:6px"><div class="rk">감면 전 연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
+      h+='<div class="row"><div class="rk">감면<small>'+reason+' · 전액면제</small></div><div class="rv">−'+won(annual)+' 원</div></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">면제 후 납부세액</span><span class="tv" style="color:var(--teal)">0<span class="u">원</span></span></div>';
+      h+='<div class="sub">1대에 한하며 자동차등록증상 정원·배기량·적재량으로 최종 확인됩니다. 등록 1년 내 이전·세대분리 시 추징.</div></div>';
+    } else {
+      h+='<div class="warn">'+rNm+' 감면은 <b>'+reason+'</b>이라 이 차량은 전액면제 대상이 아닐 수 있습니다. 요건(정원·배기량·적재량)을 확인하세요.</div>';
+    }
+  }
+  h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
+  h+='<a class="wetax-btn" href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스에서 차량번호로 조회 →</a>';
+  box.innerHTML=h; window._RESULTTEXT=box.innerText; animateTotals(box);
+}
+
+addRow(); cCalc(); renderRecent(); autoCalc();
 </script>
 <div id="sticky-total" onclick="var r=document.querySelector('#m-chwi .card h2'); var boxes={car:'c-result',machine:'mc-result',moto:'mt-result'}; var el=document.getElementById(boxes[pressed('c-target')]); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});">
   <div class="st-in"><span class="st-l" id="st-label">신고·납부할 세액</span><span class="st-v" id="st-value">0원</span></div>
