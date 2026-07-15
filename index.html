@@ -164,6 +164,26 @@
     #target-car .field>label.lbl,#target-machine .field>label.lbl,#target-moto .field>label.lbl{grid-column:1;margin-bottom:0;padding-top:11px;}
     #target-car .field>*:not(label.lbl),#target-machine .field>*:not(label.lbl),#target-moto .field>*:not(label.lbl){grid-column:2;min-width:0;}
   }
+  /* ===== 랜딩 ===== */
+  #landing{padding:0 0 60px;}
+  .lp-hero{min-height:52vh;display:flex;flex-direction:column;justify-content:flex-end;padding:80px 0 56px;}
+  .lp-kicker{font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
+  .lp-title{font-size:clamp(46px,9vw,92px);font-weight:800;letter-spacing:-.045em;line-height:.94;margin:0;color:var(--ink);}
+  .lp-sub{margin:28px 0 0;font-size:13px;letter-spacing:.06em;color:var(--muted);line-height:1.9;text-transform:uppercase;}
+  .lp-sub span{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px;}
+  .lp-list{border-top:1px solid var(--line-strong);margin-top:8px;}
+  .lp-item{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:4px 16px;
+    padding:26px 2px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;transition:.22s ease;position:relative;}
+  .lp-item:hover{padding-left:12px;}
+  .lp-item:hover .lp-arrow{opacity:1;transform:translateX(4px);}
+  .lp-item:hover .lp-ko{color:var(--teal);}
+  .lp-ko{grid-column:1;font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.02em;transition:.22s;}
+  .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+  .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:.5;transition:.22s;}
+  .lp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:56px;font-size:11.5px;color:var(--muted);flex-wrap:wrap;}
+  .lp-foot a{color:var(--muted);border-bottom:1px solid var(--line);text-decoration:none;}
+  .lp-foot a:hover{color:var(--ink);}
+  @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
   #search-results{max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:8px;}
   .sr-item{padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px;}
@@ -179,8 +199,59 @@
 </head>
 <body>
 <div class="wrap">
+  <!-- ============ 랜딩 ============ -->
+  <div id="landing">
+    <div class="lp-hero">
+      <div class="lp-kicker">동준 · 지방세 실무</div>
+      <h1 class="lp-title">LOCAL TAX<br>CALCULATOR</h1>
+      <p class="lp-sub">Designed for Local Tax Administration<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
+    </div>
+    <nav class="lp-list">
+      <a class="lp-item" onclick="enter('chwi','car')">
+        <span class="lp-ko">자동차 취득세</span>
+        <span class="lp-en">Automobile Acquisition Tax</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('auto')">
+        <span class="lp-ko">자동차세</span>
+        <span class="lp-en">Automobile Tax</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('chwi','machine')">
+        <span class="lp-ko">기계장비 취득세</span>
+        <span class="lp-en">Machinery Acquisition Tax</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('chwi','moto')">
+        <span class="lp-ko">이륜자동차 취득세</span>
+        <span class="lp-en">Motorcycle Acquisition Tax</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('gozi')">
+        <span class="lp-ko">고지분 체납 가산세</span>
+        <span class="lp-en">Arrears Penalty</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('shingo')">
+        <span class="lp-ko">신고납부분 가산세</span>
+        <span class="lp-en">Filing Penalty</span>
+        <span class="lp-arrow">→</span>
+      </a>
+      <a class="lp-item" onclick="enter('faq')">
+        <span class="lp-ko">지방세 안내</span>
+        <span class="lp-en">Guide &amp; FAQ</span>
+        <span class="lp-arrow">→</span>
+      </a>
+    </nav>
+    <div class="lp-foot">
+      <span>확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스</a>에서 확인하세요.</span>
+      <button class="btn sm" onclick="openPalette()">Search <span style="color:var(--muted)">⌘K</span></button>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
   <header class="head">
-    <span class="kicker">LOCAL TAX · 동준</span>
+    <button class="kicker" onclick="goHome()" style="border:0;background:none;padding:0;cursor:pointer;font-family:inherit;text-align:left;">← LOCAL TAX · 동준</button>
     <h1>지방세 계산기</h1>
     <p class="hero-sub">자동차·기계장비·이륜차 취득세와 체납 가산세를<br>실무 기준으로 빠르고 정확하게 계산합니다.</p>
     <button class="btn sm" onclick="openPalette()" style="position:absolute;top:26px;right:0;">Search <span style="color:var(--muted);font-weight:500">⌘K</span></button>
@@ -800,9 +871,10 @@
   </div>
 
   <footer class="site-footer">
-    <div class="fl">지방세 계산기 · 동준</div>
+    <div class="fl"><button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:700;margin:0">← 지방세 계산기 · 동준</button></div>
     <div class="fr">2026 시가표준액 기준 · 실무 참고용 개산 도구<br>확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스(wetax.go.kr)</a>에서 확인하세요.</div>
   </footer>
+  </div><!-- /#app -->
 </div>
 
 <script>
@@ -1852,6 +1924,21 @@ function autoDailyDays(){
   else { start=y0; end=ed; } // scrap
   var days=Math.round((end-start)/86400000)+1; if(days<0)days=0; if(days>total)days=total;
   return {days:days,total:total,Y:Y};
+}
+
+/* ===== 랜딩 ↔ 계산기 ===== */
+function enter(tab, target){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  sw(tab);
+  if(target){ pick('c-target', target, onTarget); }
+  window.scrollTo(0,0);
+}
+function goHome(){
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  updateSticky('',null);
+  window.scrollTo(0,0);
 }
 
 /* ===== 자동차세 (소유분 정기분) ===== */
