@@ -663,6 +663,7 @@
             <button data-v="van" aria-pressed="false" onclick="pick('au-kind','van',onAutoKind)">승합</button>
             <button data-v="truck" aria-pressed="false" onclick="pick('au-kind','truck',onAutoKind)">화물</button>
             <button data-v="special" aria-pressed="false" onclick="pick('au-kind','special',onAutoKind)">특수</button>
+            <button data-v="moto" aria-pressed="false" onclick="pick('au-kind','moto',onAutoKind)">이륜</button>
           </div>
         </div>
 
@@ -699,6 +700,14 @@
           <div class="field"><label class="lbl">적재정량 (kg)</label>
             <div class="money-wrap"><input type="text" id="au-ton" inputmode="numeric" placeholder="0" oninput="fmt(this);autoCalc()"><span class="won">kg</span></div>
             <div class="hint">자동차등록증상 적재정량. 1만kg 초과분은 매 1만kg마다 가산됩니다.</div>
+          </div>
+        </div>
+
+        <!-- 이륜 전용 -->
+        <div id="au-moto" class="hidden">
+          <div class="field"><label class="lbl">배기량 (cc)</label>
+            <div class="money-wrap"><input type="text" id="au-moto-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);autoCalc()"><span class="won">cc</span></div>
+            <div class="hint">자동차세 과세대상은 <b>125cc 초과</b> 이륜자동차입니다(125cc 이하는 비과세). 비영업 125cc초과~260cc 18,000원 / 260cc초과~1,000cc 36,000원 / 1,000cc 초과 54,000원, 영업용 3,300원.</div>
           </div>
         </div>
 
@@ -744,6 +753,21 @@
             <input type="date" id="au-eventdate" oninput="autoCalc()">
             <div class="hint" id="au-event-hint">연세액 × 보유일수 ÷ 365. 이전등록일 당일은 <b>산 사람(매수인)</b>이 부담하고, 일할세액 2,000원 미만은 부과하지 않습니다.</div>
           </div>
+          <div class="field" id="au-refund-box">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);cursor:pointer;">
+              <input type="checkbox" id="au-prepaid" onchange="autoCalc()" style="width:auto;height:auto;margin:0;"> 이미 <b>연납</b>으로 1년치를 냈다 (환급액 계산)
+            </label>
+            <div id="au-prepaid-when" class="hidden" style="margin-top:10px;">
+              <label class="lbl">연납 시기</label>
+              <select id="au-prepaid-month" onchange="autoCalc()">
+                <option value="1">1월 연납 (−4.58%)</option>
+                <option value="3">3월 연납 (−3.76%)</option>
+                <option value="6">6월 연납 (−2.51%)</option>
+                <option value="9">9월 연납 (−1.25%)</option>
+              </select>
+              <div class="hint">이미 낸 연납액에서 <b>보유기간분을 뺀 나머지가 환급</b>됩니다. 말소·이전등록일 기준으로 자동 환부 결정 후 지급됩니다.</div>
+            </div>
+          </div>
         </div>
 
         <div id="au-age-wrap">
@@ -780,9 +804,10 @@
         <li><b>승용차</b> — 배기량 × cc당 세액. 비영업 1,000cc↓ 80 / 1,600cc↓ 140 / 초과 200원. 영업 1,600cc↓ 18 / 2,500cc↓ 19 / 초과 24원.</li>
         <li><b>승합차(연세액)</b> — 소형일반 영업 25,000·비영업 65,000 / 대형일반 영업 42,000·비영업 115,000 / 소형전세 50,000 / 대형전세 70,000 / 고속 100,000(영업).</li>
         <li><b>화물차(적재정량)</b> — 비영업 1톤 28,500 / 2톤 34,500 / 3톤 48,000 / 4톤 63,000 / 5톤 79,500 / 8톤 130,500 / 10톤 157,500. 1만kg 초과 시 매 1만kg마다 영업 1만·비영업 3만 가산.</li>
+        <li><b>이륜자동차</b> — 과세대상 <b>125cc 초과</b>(이하 비과세). 비영업 125~260cc 18,000 / 260~1,000cc 36,000 / 1,000cc 초과 54,000, 영업 3,300원.</li>
         <li><b>특수차</b> — 소형 영업 13,500·비영업 58,500 / 대형 영업 36,000·비영업 157,500. <b>전기·수소 승용</b> 비영업 10만·영업 2만(정액).</li>
         <li><b>지방교육세</b> = 자동차세 × 30%, <b>비영업 승용차에만</b> 부과(지방세법 §151). 승합·화물·특수·영업용은 없음.</li>
-        <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%. <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
+        <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%(차령 12년 상한). 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
       </ul>
       <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회하세요.</div>
     </div>
@@ -2018,11 +2043,19 @@ var AUTO_TRUCK=[ // [상한kg, 영업, 비영업]
   [5000,22500,79500],[8000,36000,130500],[10000,45000,157500]
 ];
 var AUTO_SPECIAL={ so:[13500,58500], dae:[36000,157500] };
+/* 이륜자동차 자동차세: 과세대상 125cc 초과 (지방세법 §127①4) */
+function autoMotoTax(cc, biz){
+  if(cc<=125) return {tax:0, label:'125cc 이하 → 자동차세 비과세'};
+  if(biz) return {tax:3300, label:'영업용 이륜 정액'};
+  if(cc<=260) return {tax:18000, label:'125cc 초과~260cc 이하'};
+  if(cc<=1000) return {tax:36000, label:'260cc 초과~1,000cc 이하'};
+  return {tax:54000, label:'1,000cc 초과 대형이륜'};
+}
 var AUTO_SPECIAL_NM={so:'소형특수',dae:'대형특수'};
 
 function onAutoKind(){
   var k=pressed('au-kind');
-  ['passenger','van','truck','special'].forEach(function(x){
+  ['passenger','van','truck','special','moto'].forEach(function(x){
     document.getElementById('au-'+x).classList.toggle('hidden', x!==k);
   });
   // 차령경감은 승용만 노출
@@ -2067,6 +2100,14 @@ function autoCalc(){
   } else if(kind==='special'){
     var st=document.getElementById('au-special-type').value, r=AUTO_SPECIAL[st];
     base = biz?r[0]:r[1]; info=AUTO_SPECIAL_NM[st]+' 정액';
+  } else if(kind==='moto'){
+    var mcc=numv('au-moto-cc');
+    if(!mcc){ box.innerHTML='<div class="empty">배기량을 입력하세요.</div>'; updateSticky('',null); return; }
+    var mt=autoMotoTax(mcc,biz); base=mt.tax; info=mt.label;
+    if(base===0){
+      box.innerHTML='<div class="receipt-head">자동차세 산정</div><div class="info">배기량 <b>'+mcc.toLocaleString('ko-KR')+'cc</b> 이륜자동차는 <b>자동차세 과세대상이 아닙니다</b>(125cc 초과분만 과세). 취득세는 별도로 과세되니 [취득세] 탭 이륜차에서 계산하세요.</div>';
+      window._RESULTTEXT=box.innerText; updateSticky('',null); return;
+    }
   }
 
   // 차령 경감 (비영업 승용 내연만)
@@ -2091,6 +2132,11 @@ function autoCalc(){
   var h='<div class="receipt-head">자동차세 산정 (연세액)</div>';
   h+='<div class="row"><div class="rk">자동차세 본세<small>'+info+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   if(reduceRate>0) h+='<div class="row sub"><div class="rk">차령 경감<small>차령 '+ageYears+'년 · '+Math.round(reduceRate*100)+'% (기산일 '+giSan+')</small></div><div class="rv">−'+won(base-reduced)+' 원</div></div>';
+  if(reduceRate>0){
+    var half=Math.floor(reduced/2/10)*10;
+    h+='<div class="row sub"><div class="rk">제1기분 (1~6월)<small>A/2 − (A/2 × 5%)(n−2), 차령 '+ageYears+'년</small></div><div class="rv">'+won(half)+' 원</div></div>';
+    h+='<div class="row sub"><div class="rk">제2기분 (7~12월)</div><div class="rv">'+won(reduced-half)+' 원</div></div>';
+  }
   if(eduApplies) h+='<div class="row"><div class="rk">지방교육세<small>자동차세 × 30%</small></div><div class="rv">'+won(edu)+' 원</div></div>';
   else h+='<div class="row sub"><div class="rk">지방교육세<small>비영업 승용만 부과 → 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+='<div class="total"><span class="tk">연세액</span><span class="tv">'+won(annual)+'<span class="u">원</span></span></div>';
@@ -2107,6 +2153,19 @@ function autoCalc(){
       h+='<div class="row"><div class="rk">보유일수<small>'+evNm+' · '+dd.Y+'년 '+dd.total+'일 기준</small></div><div class="rv">'+dd.days+'일</div></div>';
       h+='<div class="total" style="margin-top:10px"><span class="tk">'+({buy:'매수인 납부액',sell:'매도인 납부액',new:'신규 등록분 납부액',scrap:'폐차 전 납부액'}[pressed('au-mode')]||'일할 납부세액')+'</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
       if(buseng) h+='<div class="sub">일할세액 2,000원 미만 → 소액부징수(0원).</div>';
+      // 연납 환급
+      var pre=document.getElementById('au-prepaid');
+      document.getElementById('au-prepaid-when').classList.toggle('hidden', !(pre&&pre.checked));
+      if(pre && pre.checked && (pressed('au-mode')==='sell'||pressed('au-mode')==='scrap')){
+        var pm=document.getElementById('au-prepaid-month').value, pr=AUTO_PREPAY[pm]||0;
+        var paid=annual-Math.floor(annual*pr/10)*10;
+        var refund=paid-prorated; if(refund<0) refund=0;
+        h+='</div><div class="docs" style="margin-top:20px;border-color:var(--teal)"><h4>연납 환급액</h4>';
+        h+='<div class="row" style="padding-top:6px"><div class="rk">이미 낸 연납액<small>'+pm+'월 연납 · 공제 '+(pr*100).toFixed(2)+'% 적용</small></div><div class="rv">'+won(paid)+' 원</div></div>';
+        h+='<div class="row"><div class="rk">보유기간 해당분<small>'+dd.days+'일분</small></div><div class="rv">−'+won(prorated)+' 원</div></div>';
+        h+='<div class="total" style="margin-top:10px"><span class="tk">환급 예상액</span><span class="tv" style="color:var(--teal)">'+won(refund)+'<span class="u">원</span></span></div>';
+        h+='<div class="sub">말소·이전등록일 기준으로 관할 지자체가 환부결정 후 지급합니다(위택스 환급신청 가능).</div>';
+      }
       h+='<div class="sub">양도일 당일은 양수인 부담. 차령 3년↑ 비영업 승용은 기분별 정밀계산과 소액 차이가 날 수 있어 위택스로 확정하세요.</div></div>';
     }
   } else if(prate>0){
