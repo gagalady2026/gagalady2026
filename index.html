@@ -725,16 +725,25 @@
         <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
           <select id="au-relief" onchange="autoCalc()">
             <option value="none">감면 없음</option>
-            <option value="disabled">장애인 (§17)</option>
-            <option value="veteran">국가유공자 (§29)</option>
+            <option value="disabled">장애인 (§17) — 전액면제</option>
+            <option value="veteran">국가유공자 상이 1~7급 (§29④) — 전액면제</option>
+            <option value="bohun">보훈보상대상자 상이 1~7급 (§29④) — 50% 경감</option>
           </select>
-          <div id="au-relief-elig" class="hidden" style="margin-top:10px;">
-            <div class="seg" id="au-elig">
-              <button data-v="1" aria-pressed="false" onclick="pick('au-elig','1',autoCalc)">요건 충족 (본인·세대 명의, 1대)</button>
-              <button data-v="0" aria-pressed="true" onclick="pick('au-elig','0',autoCalc)">요건 미충족·미확인</button>
+          <div id="au-relief-detail" class="hidden">
+            <div id="au-seat-box" class="field hidden" style="margin-top:14px;margin-bottom:0;">
+              <label class="lbl">승차정원 (명)</label>
+              <div class="money-wrap"><input type="text" id="au-seat" inputmode="numeric" placeholder="5" oninput="fmt(this);autoCalc()"><span class="won">명</span></div>
+              <div class="hint">승용은 <b>2,000cc 이하 또는 7~10인승</b>이면 대상. 승합은 <b>15인승 이하</b>만 대상. (구조변경 시 변경 전 정원 기준)</div>
             </div>
+            <div style="margin-top:14px;">
+              <div class="seg" id="au-elig">
+                <button data-v="1" aria-pressed="false" onclick="pick('au-elig','1',autoCalc)">요건 충족 (본인·세대 명의, 1대)</button>
+                <button data-v="0" aria-pressed="true" onclick="pick('au-elig','0',autoCalc)">요건 미충족·미확인</button>
+              </div>
+            </div>
+            <div id="au-relief-req" class="checklist" style="margin-top:12px;"></div>
           </div>
-          <div class="hint">전액면제 대상: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b> 중 1대. 중증장애인·유공자 상이 1~7급, 본인·세대 공동명의. 등록 1년 내 이전·세대분리 시 추징.</div>
+          <div class="hint">대상 차량: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b>. 취득세·자동차세 중 먼저 신청하는 <b>1대</b>에 한해 면제(§17 일몰 2027.12.31).</div>
         </div>
 
         <div class="grp-h"><span>어떤 상황인가요?</span><span class="en">Situation</span></div>
@@ -807,6 +816,7 @@
         <li><b>이륜자동차</b> — 과세대상 <b>125cc 초과</b>(이하 비과세). 비영업 125~260cc 18,000 / 260~1,000cc 36,000 / 1,000cc 초과 54,000, 영업 3,300원.</li>
         <li><b>특수차</b> — 소형 영업 13,500·비영업 58,500 / 대형 영업 36,000·비영업 157,500. <b>전기·수소 승용</b> 비영업 10만·영업 2만(정액).</li>
         <li><b>지방교육세</b> = 자동차세 × 30%, <b>비영업 승용차에만</b> 부과(지방세법 §151). 승합·화물·특수·영업용은 없음.</li>
+        <li><b>감면</b> — 장애인(§17)·국가유공자 상이1~7급(§29④)은 <b>전액면제</b>, 보훈보상대상자는 <b>50% 경감</b>. 대상: 2,000cc 이하 또는 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜 중 <b>1대</b>. 등록 1년 내 이전·세대분리 시 추징(§17 일몰 2027.12.31).</li>
         <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%(차령 12년 상한). 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
       </ul>
       <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회하세요.</div>
@@ -2176,30 +2186,57 @@ function autoCalc(){
   } else {
     h+='<div class="info">정기분은 6월(1기)·12월(2기)에 <b>절반씩</b> 부과됩니다. 각 기분 약 '+won(Math.floor(annual/2/10)*10)+'원.</div>';
   }
-  // 감면 (장애인 §17 / 국가유공자 §29) — 전액면제
+  // ===== 감면 (지특법 §17 장애인 / §29④ 국가유공자·보훈보상대상자) =====
   var relief=document.getElementById('au-relief').value;
-  document.getElementById('au-relief-elig').classList.toggle('hidden', relief==='none');
+  var rdet=document.getElementById('au-relief-detail'), rseat=document.getElementById('au-seat-box');
+  rdet.classList.toggle('hidden', relief==='none');
+  rseat.classList.toggle('hidden', !(relief!=='none' && (kind==='passenger'||kind==='van')));
   if(relief!=='none'){
-    var eligOK = pressed('au-elig')==='1';
-    var eligible=false, reason='';
+    var seat=numv('au-seat'), eligible=false, reason='', why='';
     if(kind==='passenger'){
-      if(pressed('au-fuel')!=='ev'){ var ccv=numv('au-cc'); eligible = ccv>0 && ccv<=2000; reason = eligible?'2,000cc 이하 승용(또는 7~10인승)':'2,000cc 초과 — 7~10인승이면 면제 가능'; }
-      else { eligible=true; reason='전기·수소 승용'; }
+      var isEVp=(pressed('au-fuel')==='ev'), ccv=numv('au-cc');
+      if(isEVp){ eligible = !seat || seat<=10; reason='전기·수소 승용'+(seat?(' '+seat+'인승'):''); }
+      else if(ccv>0 && ccv<=2000){ eligible=true; reason='배기량 '+ccv.toLocaleString('ko-KR')+'cc (2,000cc 이하)'; }
+      else if(seat>=7 && seat<=10){ eligible=true; reason=seat+'인승 (7~10인승 승용)'; }
+      else { eligible=false; reason='2,000cc 초과이고 7~10인승도 아님'; why='배기량 2,000cc 이하 또는 승차정원 7~10인승이어야 합니다.'; }
+    } else if(kind==='van'){
+      if(seat && seat<=15){ eligible=true; reason=seat+'인승 승합 (15인승 이하)'; }
+      else if(seat>15){ eligible=false; reason=seat+'인승 (15인승 초과)'; why='승합은 승차정원 15인승 이하만 대상입니다.'; }
+      else { eligible=false; reason='승차정원 미입력'; why='승차정원을 입력하면 대상 여부가 판정됩니다.'; }
     } else if(kind==='truck'){
-      var kgv=numv('au-ton'); eligible = kgv>0 && kgv<=1000; reason = eligible?'1톤 이하 화물':'적재 1톤 초과 — 대상 아님';
-    } else if(kind==='van'){ eligible=false; reason='승합은 15인승 이하만 대상(버스는 통상 초과)'; }
-    else { eligible=false; reason='특수차는 감면 대상 아님'; }
-    var rNm = relief==='disabled' ? '장애인(§17)' : '국가유공자(§29)';
-    if(eligible && !eligOK){
-      h+='<div class="warn">'+rNm+' 감면 대상 차량입니다(<b>'+reason+'</b>). <b>요건 충족</b>을 선택하면 면제 세액이 계산됩니다.</div>';
-    } else if(eligible){
-      h+='<div class="docs" style="margin-top:20px;border-color:var(--teal)"><h4>'+rNm+' 감면 적용</h4>';
-      h+='<div class="row" style="padding-top:6px"><div class="rk">감면 전 연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
-      h+='<div class="row"><div class="rk">감면<small>'+reason+' · 전액면제</small></div><div class="rv">−'+won(annual)+' 원</div></div>';
-      h+='<div class="total" style="margin-top:10px"><span class="tk">면제 후 납부세액</span><span class="tv" style="color:var(--teal)">0<span class="u">원</span></span></div>';
-      h+='<div class="sub">1대에 한하며 자동차등록증상 정원·배기량·적재량으로 최종 확인됩니다. 등록 1년 내 이전·세대분리 시 추징.</div></div>';
+      var kgv=numv('au-ton');
+      eligible = kgv>0 && kgv<=1000;
+      reason = eligible ? '적재정량 '+kgv.toLocaleString('ko-KR')+'kg (1톤 이하)' : '적재정량 1톤 초과';
+      if(!eligible) why='화물은 적재정량 1톤(1,000kg) 이하만 대상입니다.';
+    } else if(kind==='moto'){
+      eligible=true; reason='이륜자동차';
+    } else { eligible=false; reason='특수자동차'; why='특수자동차는 감면 대상 차종이 아닙니다.'; }
+
+    var rNm={disabled:'장애인용 자동차 (§17)',veteran:'국가유공자 (§29④)',bohun:'보훈보상대상자 (§29④)'}[relief];
+    var rate50=(relief==='bohun');
+    // 요건 체크리스트
+    var reqs={
+      disabled:['장애의 정도가 <b>심한 장애인</b>(구 1~3급) 또는 시각장애 4급 중 일부','<b>보철용·생업활동용</b>으로 사용','본인 명의 또는 <b>세대별 주민등록표상 세대원</b>(배우자·직계혈족·형제자매 등)과 공동명의','취득세·자동차세 중 먼저 신청하는 <b>1대</b>에 한정'],
+      veteran:['국가유공자로서 <b>상이등급 1~7급</b> 판정 (5·18부상자 1~14급, 고엽제 경도 이상 포함)','<b>보철용·생업활동용</b>으로 사용','본인 명의 또는 세대를 함께하는 배우자·직계존비속·형제자매 등과 공동명의','<b>§17 장애인 감면을 받은 경우 중복 불가</b>'],
+      bohun:['보훈보상대상자로서 <b>상이등급 1~7급</b> 판정','전액면제가 아닌 <b>100분의 50 경감</b>','본인 명의 또는 세대를 함께하는 가족과 공동명의','§17 장애인 감면과 중복 불가']
+    }[relief];
+    var reqBox=document.getElementById('au-relief-req');
+    if(reqBox) reqBox.innerHTML='<div class="ct">감면 요건</div><ul><li>'+reqs.join('</li><li>')+'</li></ul>';
+
+    var eligOK = pressed('au-elig')==='1';
+    if(!eligible){
+      h+='<div class="warn"><b>'+rNm+'</b> 대상 차량이 아닙니다 — '+reason+'. '+(why||'')+'</div>';
+    } else if(!eligOK){
+      h+='<div class="warn"><b>'+rNm+'</b> 대상 차량입니다('+reason+'). 위에서 <b>요건 충족</b>을 선택하면 감면 세액이 계산됩니다.</div>';
     } else {
-      h+='<div class="warn">'+rNm+' 감면은 <b>'+reason+'</b>이라 이 차량은 전액면제 대상이 아닐 수 있습니다. 요건(정원·배기량·적재량)을 확인하세요.</div>';
+      var cut = rate50 ? Math.floor(annual*0.5/10)*10 : annual;
+      var after = annual-cut;
+      h+='<div class="docs" style="margin-top:20px;border-color:var(--teal)"><h4>'+rNm+' 적용</h4>';
+      h+='<div class="row" style="padding-top:6px"><div class="rk">감면 전 연세액<small>'+reason+'</small></div><div class="rv">'+won(annual)+' 원</div></div>';
+      h+='<div class="row"><div class="rk">'+(rate50?'50% 경감':'전액면제')+'</div><div class="rv">−'+won(cut)+' 원</div></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">감면 후 납부세액</span><span class="tv" style="color:var(--teal)">'+won(after)+'<span class="u">원</span></span></div>';
+      h+='<div class="sub">⚠ 등록일부터 <b>1년 이내</b>에 사망·혼인·해외이민·운전면허취소 등 부득이한 사유 없이 소유권을 이전하거나 세대를 분가하면 <b>면제세액이 추징</b>됩니다. 감면은 시·군·구청 신청이 필요합니다.</div></div>';
+      updateSticky('감면 후 자동차세', after);
     }
   }
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
