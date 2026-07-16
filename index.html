@@ -717,15 +717,15 @@
         <h2>자동차세 계산</h2>
         <p class="hint" style="margin-top:-18px;margin-bottom:26px;opacity:.78">소유에 대한 자동차세(정기분) 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</p>
 
-        <div class="grp-h"><span>무엇을 계산하시겠습니까?</span><span class="en">Purpose</span></div>
-        <div class="field"><label class="lbl">계산 목적</label>
+        <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
+        <div class="field"><label class="lbl">구분</label>
           <div class="seg" id="au-mode">
-            <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">계속 보유 중 (1년치)</button>
-            <button data-v="buy" aria-pressed="false" onclick="pick('au-mode','buy',onAutoMode)">차를 샀다</button>
-            <button data-v="sell" aria-pressed="false" onclick="pick('au-mode','sell',onAutoMode)">차를 팔았다</button>
-            <button data-v="new" aria-pressed="false" onclick="pick('au-mode','new',onAutoMode)">신규 등록했다</button>
-            <button data-v="scrap" aria-pressed="false" onclick="pick('au-mode','scrap',onAutoMode)">폐차·말소했다</button>
-            <button data-v="prepay" aria-pressed="false" onclick="pick('au-mode','prepay',onAutoMode)">연납 신청하겠다</button>
+            <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">연세액</button>
+            <button data-v="buy" aria-pressed="false" onclick="pick('au-mode','buy',onAutoMode)">매수</button>
+            <button data-v="sell" aria-pressed="false" onclick="pick('au-mode','sell',onAutoMode)">매도</button>
+            <button data-v="new" aria-pressed="false" onclick="pick('au-mode','new',onAutoMode)">신규등록</button>
+            <button data-v="scrap" aria-pressed="false" onclick="pick('au-mode','scrap',onAutoMode)">말소·폐차</button>
+            <button data-v="prepay" aria-pressed="false" onclick="pick('au-mode','prepay',onAutoMode)">연납</button>
           </div>
           <div class="hint" id="au-mode-hint">1년 내내 보유하면 연세액 전부를 냅니다. 사고팔거나 폐차하면 <b>소유한 날수만큼만</b> 나눠 냅니다.</div>
         </div>
@@ -736,7 +736,7 @@
           </div>
           <div class="field" id="au-refund-box">
             <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);cursor:pointer;">
-              <input type="checkbox" id="au-prepaid" onchange="autoCalc()" style="width:auto;height:auto;margin:0;"> 이미 <b>연납</b>으로 1년치를 냈다 (환급액 계산)
+              <input type="checkbox" id="au-prepaid" onchange="autoCalc()" style="width:auto;height:auto;margin:0;"> <b>연납</b> 기납부 (환급액 산정)
             </label>
             <div id="au-prepaid-when" class="hidden" style="margin-top:10px;">
               <label class="lbl">이미 낸 연납 시기</label>
@@ -2149,11 +2149,11 @@ function onAutoMode(){
   document.getElementById('au-prepay-wrap').style.display = (m==='prepay')?'':'none';
   document.getElementById('au-refund-box').style.display = (m==='sell'||m==='scrap')?'':'none';
   var hints={
-    full:'1년 내내 보유하는 경우입니다. 6월·12월에 절반씩 부과됩니다.',
-    prepay:'연세액을 미리 내고 공제받는 경우입니다. 신청 시기에 따라 공제율이 다릅니다.',
+    full:'1년 내내 보유하는 경우의 연세액입니다. 6월·12월에 절반씩 부과됩니다.',
+    prepay:'연세액을 미리 납부하고 공제받는 경우입니다. 신청 시기에 따라 공제율이 다릅니다.',
     new:'신규 등록일부터 12월 31일까지 <b>보유한 날수만큼</b> 부과됩니다.',
-    buy:'<b>산 사람(매수인)</b>이 낼 세금입니다. 이전등록일부터 12월 31일까지 부과됩니다.',
-    sell:'<b>판 사람(매도인)</b>이 낼 세금입니다. 이전등록일 <b>전날까지</b> 부과됩니다.',
+    buy:'차량을 <b>산 사람(매수인)</b>이 부담합니다. 이전등록일부터 12월 31일까지 부과됩니다.',
+    sell:'차량을 <b>판 사람(매도인)</b>이 부담합니다. 이전등록일 <b>전날까지</b> 부과됩니다.',
     scrap:'1월 1일부터 <b>말소일까지</b> 부과됩니다. 말소일 이후는 부과되지 않습니다.'
   };
   var hint=document.getElementById('au-mode-hint'); if(hint) hint.innerHTML=hints[m]||'';
@@ -2172,7 +2172,7 @@ function prepayAvailable(dateStr){
 function autoDailyDays(){
   var ev=pressed('au-mode'), rd=document.getElementById('au-eventdate').value;
   var lab=document.getElementById('au-event-datelabel'), hint=document.getElementById('au-event-hint');
-  var labels={new:'신규 등록일',sell:'이전등록일 (판 날짜)',buy:'이전등록일 (산 날짜)',scrap:'폐차·말소일'};
+  var labels={new:'신규 등록일',sell:'이전등록일 (매도)',buy:'이전등록일 (매수)',scrap:'말소·폐차일'};
   if(lab) lab.textContent=labels[ev]||'사유 발생일';
   if(!rd) return null;
   var ed=new Date(rd+'T00:00:00'), Y=ed.getFullYear();
@@ -2335,13 +2335,13 @@ function autoCalc(){
     else {
       var prorated=Math.floor(annual*dd.days/dd.total/10)*10, buseng=(prorated<2000);
       if(buseng) prorated=0;
-      var evNm={new:'신규취득',sell:'매도(판 사람)',buy:'매수(산 사람)',scrap:'폐차·말소'}[pressed('au-mode')];
-      var payerNm={new:'신규 등록자가 납부할 자동차세',sell:'판 사람(매도인)이 납부할 자동차세',buy:'산 사람(매수인)이 납부할 자동차세',scrap:'폐차 전까지 납부할 자동차세'}[pressed('au-mode')]||'소유기간 일할계산';
+      var evNm={new:'신규등록',sell:'매도(이전등록)',buy:'매수(이전등록)',scrap:'말소·폐차'}[pressed('au-mode')];
+      var payerNm={new:'신규등록 · 소유기간 일할',sell:'매도인 납부분 · 소유기간 일할',buy:'매수인 납부분 · 소유기간 일할',scrap:'말소·폐차 · 소유기간 일할'}[pressed('au-mode')]||'소유기간 일할';
       h+='<div class="docs" style="margin-top:20px"><h4>'+payerNm+'</h4>';
       h+='<div class="row" style="padding-top:6px"><div class="rk">연세액</div><div class="rv">'+won(annual)+' 원</div></div>';
       h+='<div class="row"><div class="rk">과세기간<small>'+evNm+'</small></div><div class="rv" style="font-size:12.5px">'+dd.period+'</div></div>';
       h+='<div class="row"><div class="rk">보유일수<small>'+dd.Y+'년 '+dd.total+'일 기준</small></div><div class="rv">'+dd.days+'일</div></div>';
-      h+='<div class="total" style="margin-top:10px"><span class="tk">'+({buy:'매수인 납부액',sell:'매도인 납부액',new:'신규 등록분 납부액',scrap:'폐차 전 납부액'}[pressed('au-mode')]||'일할 납부세액')+'</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
+      h+='<div class="total" style="margin-top:10px"><span class="tk">'+({buy:'매수인 납부세액',sell:'매도인 납부세액',new:'신규등록분 납부세액',scrap:'말소분 납부세액'}[pressed('au-mode')]||'일할 납부세액')+'</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
       if(buseng) h+='<div class="sub">일할세액 2,000원 미만 → 소액부징수(0원).</div>';
       if(pressed('au-mode')==='new'||pressed('au-mode')==='buy'){
         var av=prepayAvailable(document.getElementById('au-eventdate').value);
