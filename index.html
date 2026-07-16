@@ -1,3 +1,11 @@
+function goHome(){
+  document.getElementById('app').classList.add('hidden');
+  var lp=document.getElementById('landing');
+  lp.classList.remove('hidden');
+  updateSticky('',null);
+  window.scrollTo(0,0);
+  lp.classList.remove('anim-soft'); void lp.offsetWidth; lp.classList.add('anim-soft');
+}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,6 +14,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <title>지방세 계산기 | D.J</title>
+<meta name="description" content="자동차·기계장비·이륜자동차 취득세, 자동차세, 체납 가산세를 2026년 지방세법 기준으로 계산합니다. 감면·면세점·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
+<meta name="theme-color" content="#242422">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23242422'/%3E%3Ctext x='32' y='43' font-family='Helvetica,Arial,sans-serif' font-size='27' font-weight='700' fill='%23F1EEE7' text-anchor='middle' letter-spacing='-1'%3ED.J%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23242422'/%3E%3Ctext x='90' y='118' font-family='Helvetica,Arial,sans-serif' font-size='74' font-weight='700' fill='%23F1EEE7' text-anchor='middle' letter-spacing='-3'%3ED.J%3C/text%3E%3C/svg%3E">
+<!-- 링크 미리보기 (카톡·슬랙·메신저) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="지방세 계산기 · D.J">
+<meta property="og:title" content="지방세 계산기 · D.J">
+<meta property="og:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
+<meta property="og:url" content="https://jibangsae.netlify.app/">
+<meta property="og:image" content="https://jibangsae.netlify.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="지방세 계산기 · D.J">
+<meta name="twitter:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
+<meta name="twitter:image" content="https://jibangsae.netlify.app/og.png">
 <style>
   :root{
     /* 동준 — 웜 다크 (시연1 확정) · 대비 강화 */
@@ -59,7 +84,7 @@
   input:focus,select:focus{outline:none;border-bottom-color:var(--ink);}
   .money-wrap{position:relative;}.money-wrap .won{position:absolute;right:2px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none;font-weight:400;}
   .money-wrap input{padding-right:22px;}
-  .field{margin-bottom:24px;}
+  .field{margin-bottom:38px;}
   .seg{display:flex;flex-wrap:wrap;gap:2px;}
   .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;height:44px;padding:0 14px;transition:.15s;letter-spacing:0;position:relative;}
   .seg button:hover{color:var(--sub);}
@@ -161,7 +186,7 @@
   .disc{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55;}
 
   @media(min-width:820px){
-    #target-car .field,#target-machine .field,#target-moto .field{display:grid;grid-template-columns:120px 1fr;gap:4px 22px;align-items:baseline;}
+    #target-car .field,#target-machine .field,#target-moto .field{display:grid;grid-template-columns:130px 1fr;gap:6px 32px;align-items:baseline;}
     #target-car .field>label.lbl,#target-machine .field>label.lbl,#target-moto .field>label.lbl{grid-column:1;margin-bottom:0;padding-top:11px;}
     #target-car .field>*:not(label.lbl),#target-machine .field>*:not(label.lbl),#target-moto .field>*:not(label.lbl){grid-column:2;min-width:0;}
   }
@@ -188,6 +213,27 @@
   .lp-foot a:hover{color:var(--ink);}
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
+  /* ===== 모션 ===== */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .anim{animation:fadeUp .34s cubic-bezier(.22,.61,.24,1) both;}
+  .anim-soft{animation:fadeIn .3s ease both;}
+  /* 랜딩 목록: 순차 등장 */
+  #landing .lp-item{animation:fadeUp .42s cubic-bezier(.22,.61,.24,1) both;}
+  #landing .lp-item:nth-child(2){animation-delay:.04s;}
+  #landing .lp-item:nth-child(3){animation-delay:.08s;}
+  #landing .lp-item:nth-child(4){animation-delay:.12s;}
+  #landing .lp-item:nth-child(5){animation-delay:.16s;}
+  #landing .lp-item:nth-child(6){animation-delay:.2s;}
+  #landing .lp-item:nth-child(7){animation-delay:.24s;}
+  #landing .lp-hero{animation:fadeUp .5s cubic-bezier(.22,.61,.24,1) both;}
+  #landing .lp-group{animation:fadeIn .5s ease both;}
+  /* 결과 갱신 시 잔잔한 페이드 */
+  .row,.total{animation:fadeIn .26s ease both;}
+  @media (prefers-reduced-motion: reduce){
+    .anim,.anim-soft,#landing .lp-item,#landing .lp-hero,#landing .lp-group,.row,.total{animation:none !important;}
+    *{transition:none !important;}
+  }
   #search-results{max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:8px;}
   .sr-item{padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px;}
   .sr-item:hover{background:var(--surface);}
@@ -289,7 +335,7 @@
         <div class="seg" id="c-target">
           <button data-v="car" aria-pressed="true" onclick="pick('c-target','car',onTarget)">자동차</button>
           <button data-v="machine" aria-pressed="false" onclick="pick('c-target','machine',onTarget)">기계장비</button>
-          <button data-v="moto" aria-pressed="false" onclick="pick('c-target','moto',onTarget)">이륜차</button>
+          <button data-v="moto" aria-pressed="false" onclick="pick('c-target','moto',onTarget)">이륜자동차</button>
         </div>
       </div>
     </div>
@@ -511,7 +557,7 @@
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mc-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
-            <button data-v="trans" aria-pressed="false" onclick="pick('mc-type','trans',mCalc)">이전·무상</button>
+            <button data-v="trans" aria-pressed="false" onclick="pick('mc-type','trans',mCalc)">중고·증여·상속(이전)</button>
           </div></div>
         <div class="field"><label class="lbl">취득일 <span class="tip" tabindex="0" data-tip="잔금 지급일 또는 등록일. 이 날부터 60일 이내 신고·납부해야 가산세가 없습니다.">?</span></label>
           <input type="date" id="mc-acqdate" oninput="mCalc()">
@@ -663,7 +709,7 @@
             <button data-v="van" aria-pressed="false" onclick="pick('au-kind','van',onAutoKind)">승합</button>
             <button data-v="truck" aria-pressed="false" onclick="pick('au-kind','truck',onAutoKind)">화물</button>
             <button data-v="special" aria-pressed="false" onclick="pick('au-kind','special',onAutoKind)">특수</button>
-            <button data-v="moto" aria-pressed="false" onclick="pick('au-kind','moto',onAutoKind)">이륜</button>
+            <button data-v="moto" aria-pressed="false" onclick="pick('au-kind','moto',onAutoKind)">이륜자동차</button>
           </div>
         </div>
 
@@ -721,6 +767,22 @@
           </div>
         </div>
 
+        <div class="grp-h"><span>비과세</span><span class="en">Exclusion</span></div>
+        <div class="field"><label class="lbl">비과세 사유 (지방세법 §126)</label>
+          <select id="au-nontax" onchange="autoCalc()">
+            <option value="none">해당 없음</option>
+            <option value="gov">국가·지자체 국방·경호·경비·교통순찰·소방용</option>
+            <option value="gov2">국가·지자체 환자수송·청소·오물제거·도로공사용</option>
+            <option value="diplo">주한외교기관·국제연합기관·주한외국원조기관 사용</option>
+            <option value="post">정부 우편·전파관리 전용 특수구조 자동차</option>
+            <option value="export">「관세법」에 따라 수출신고 후 수출된 자동차</option>
+            <option value="disaster">천재지변·화재·교통사고로 멸실·파손되어 사용불가 (시장·군수 인정)</option>
+            <option value="scrap">자동차해체재활용업자에게 폐차되었음이 증명된 자동차</option>
+            <option value="auction">공매 등 강제집행 진행 중 (집행기관 인도일~경락대금 납부일 전)</option>
+          </select>
+          <div class="hint">비과세 대상이면 자동차세를 부과하지 않습니다. 수출·폐차·공매 사유는 <b>증빙서류를 갖춰 시장·군수·구청장에게 신청</b>해야 합니다(령 §121③).</div>
+        </div>
+
         <div class="grp-h"><span>감면</span><span class="en">Relief</span></div>
         <div class="field"><label class="lbl">감면 (지방세특례제한법)</label>
           <select id="au-relief" onchange="autoCalc()">
@@ -767,7 +829,7 @@
               <input type="checkbox" id="au-prepaid" onchange="autoCalc()" style="width:auto;height:auto;margin:0;"> 이미 <b>연납</b>으로 1년치를 냈다 (환급액 계산)
             </label>
             <div id="au-prepaid-when" class="hidden" style="margin-top:10px;">
-              <label class="lbl">연납 시기</label>
+              <label class="lbl">이미 낸 연납 시기</label>
               <select id="au-prepaid-month" onchange="autoCalc()">
                 <option value="1">1월 연납 (−4.58%)</option>
                 <option value="3">3월 연납 (−3.76%)</option>
@@ -816,6 +878,7 @@
         <li><b>이륜자동차</b> — 과세대상 <b>125cc 초과</b>(이하 비과세). 비영업 125~260cc 18,000 / 260~1,000cc 36,000 / 1,000cc 초과 54,000, 영업 3,300원.</li>
         <li><b>특수차</b> — 소형 영업 13,500·비영업 58,500 / 대형 영업 36,000·비영업 157,500. <b>전기·수소 승용</b> 비영업 10만·영업 2만(정액).</li>
         <li><b>지방교육세</b> = 자동차세 × 30%, <b>비영업 승용차에만</b> 부과(지방세법 §151). 승합·화물·특수·영업용은 없음.</li>
+        <li><b>비과세(§126)</b> — 국가·지자체의 국방·경호·소방·환자수송·청소·도로공사용, 주한외교기관 사용, 수출된 자동차, 폐차 증명 자동차, 공매 진행 중 자동차 등. 수출·폐차·공매는 신청 필요(령 §121③).</li>
         <li><b>감면</b> — 장애인(§17)·국가유공자 상이1~7급(§29④)은 <b>전액면제</b>, 보훈보상대상자는 <b>50% 경감</b>. 대상: 2,000cc 이하 또는 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜 중 <b>1대</b>. 등록 1년 내 이전·세대분리 시 추징(§17 일몰 2027.12.31).</li>
         <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%(차령 12년 상한). 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
       </ul>
@@ -825,12 +888,15 @@
 
   <!-- ============ 고지분 체납 ============ -->
   <div id="m-gozi" class="hidden">
+    <div class="card" style="margin-bottom:44px;"><h2>고지분 체납 가산세</h2>
+        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">고지서로 부과된 지방세(재산세·자동차세·주민세 등)를 <b>납기까지 내지 못한 경우</b>의 가산세를 계산합니다. 납기 다음 날부터 3%가 붙고, 이후 매달 0.66%씩 최대 60개월간 가산됩니다.</p>
+        </div>
     <div class="card"><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
       <label class="lbl" style="margin:0">낼 날짜 (납부 예정일)</label>
       <input type="date" id="g-pay" style="width:auto" oninput="recalcGozi()">
       <span class="hint" style="margin:0">이 날짜 기준으로 아래 모든 체납 건을 계산합니다.</span>
     </div></div>
-    <div class="card"><h2>체납 건 입력</h2><div id="rows"></div>
+    <div class="card"><h3 style="font-size:13px;font-weight:600;color:var(--sub);margin:0 0 18px;letter-spacing:.02em;">체납 건 입력</h3><div id="rows"></div>
       <button class="btn" style="width:100%;border-style:dashed;color:var(--teal)" onclick="addRow()">＋ 체납 건 추가</button></div>
     <div class="card"><h2>합계</h2><div id="grand-body"><div class="empty">낼 날짜와 체납 건을 입력하세요.</div></div></div>
   </div>
@@ -839,6 +905,8 @@
   <div id="m-shingo" class="hidden">
     <div class="grid2">
       <div class="card"><h2>신고납부분 가산세</h2>
+        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">취득세·등록면허세처럼 <b>스스로 신고·납부하는 세목</b>에서 기한을 넘겼거나 적게 신고한 경우의 가산세를 계산합니다. 무신고 20%·과소신고 10%(부정 40%)에 납부지연 가산세가 더해집니다.</p>
+        
         <div class="field"><label class="lbl">본세 (미납·과소납부 세액)</label>
           <div class="money-wrap"><input type="text" id="s-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);calcShingo()"><span class="won">원</span></div></div>
         <div class="field"><label class="lbl">신고 유형</label>
@@ -958,7 +1026,15 @@ function numv(id){return Number((document.getElementById(id).value||'').replace(
 function won(n){return Math.floor(n).toLocaleString('ko-KR');}
 function pick(group,v,cb){document.querySelectorAll('#'+group+' button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});if(cb)cb();}
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
-function sw(m){['chwi','auto','gozi','shingo','faq'].forEach(function(x){document.getElementById('m-'+x).classList.toggle('hidden',x!==m);document.getElementById('t-'+x).setAttribute('aria-selected',x===m);}); if(m!=='chwi') updateSticky('',null); }
+function sw(m){
+  ['chwi','auto','gozi','shingo','faq'].forEach(function(x){
+    var el=document.getElementById('m-'+x);
+    el.classList.toggle('hidden',x!==m);
+    document.getElementById('t-'+x).setAttribute('aria-selected',x===m);
+    if(x===m){ el.classList.remove('anim'); void el.offsetWidth; el.classList.add('anim'); }
+  });
+  if(m!=='chwi') updateSticky('',null);
+}
 
 /* ---------- 자동차 취득세 ---------- */
 function taxRate(chong,use,light){
@@ -1001,7 +1077,7 @@ function cCalc(){
   } else {
     h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   }
-  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':''))+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 '+(rate*100).toFixed(0)+'%'+(light==='1'?' · 경차':'')+(use==='영업'?' · 영업용':''))+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   if(!exempt50) h+='<div class="hint" style="text-align:right;margin-top:2px;">계산식: '+won(base)+'원 × '+(rate*100).toFixed(0)+'% = '+won(acq)+'원</div>';
   h+='<div class="row sub"><div class="rk">지방교육세 · 농어촌특별세<small>자동차 취득분은 비과세(0원)</small></div><div class="rv">0 원</div></div>';
   if(g.reduce>0||g.label){
@@ -1646,7 +1722,7 @@ function mCalc(){
   var tot=g.pay+edu+nong;
   var h='<div class="receipt-head">기계장비 취득세 (참고용)</div>';
   h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 '+(rate*100)+'% (기계장비)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 '+(rate*100)+'% (기계장비)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   if(!exempt50) h+='<div class="hint" style="text-align:right;margin-top:2px;">계산식: '+won(base)+' × '+(rate*100)+'% = '+won(acq)+'원</div>';
   if(kind==='other'){
     h+='<div class="row"><div class="rk">지방교육세<small>취득세액 × 1/3 의 20% ((세율−2%)분 × 20%)</small></div><div class="rv">'+won(edu)+' 원</div></div>';
@@ -1731,7 +1807,7 @@ function mtCalc(){
   var g=gamyeonG('mt',acq,base,rate); g.acq=acq; var tot=g.pay;
   var h='<div class="receipt-head">이륜자동차 취득세 (참고용)</div>';
   h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(비과세)':'세율 2% (이륜자동차)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 2% (이륜자동차)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   if(!exempt50) h+='<div class="hint" style="text-align:right;margin-top:2px;">계산식: '+won(base)+'원 × 2% = '+won(acq)+'원</div>';
   h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>세율 2%로 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+=gamyeonRow(g);
@@ -2030,10 +2106,12 @@ function autoDailyDays(){
 /* ===== 랜딩 ↔ 계산기 ===== */
 function enter(tab, target){
   document.getElementById('landing').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
+  var app=document.getElementById('app');
+  app.classList.remove('hidden');
   sw(tab);
   if(target){ pick('c-target', target, onTarget); }
   window.scrollTo(0,0);
+  app.classList.remove('anim'); void app.offsetWidth; app.classList.add('anim');
 }
 function goHome(){
   document.getElementById('app').classList.add('hidden');
@@ -2076,6 +2154,19 @@ function onAutoKind(){
 function autoCalc(){
   var box=document.getElementById('au-result'); if(!box) return;
   var use=pressed('au-use'), kind=pressed('au-kind'), biz=(use==='biz');
+  // 비과세 (지방세법 §126) — 세율 계산보다 우선
+  var ntx=document.getElementById('au-nontax').value;
+  if(ntx!=='none'){
+    var ntxNm={gov:'국가·지자체의 국방·경호·경비·교통순찰·소방용 자동차',gov2:'국가·지자체의 환자수송·청소·오물제거·도로공사용 자동차',diplo:'주한외교기관·국제연합기관·주한외국원조기관 사용 자동차',post:'정부 우편·전파관리 전용 특수구조 자동차',export:'「관세법」에 따라 수출신고 후 수출된 자동차',disaster:'천재지변·화재·교통사고로 멸실·파손되어 사용할 수 없는 자동차',scrap:'자동차해체재활용업자에게 폐차되었음이 증명된 자동차',auction:'공매 등 강제집행 진행 중인 자동차'}[ntx];
+    var needApply=(ntx==='export'||ntx==='disaster'||ntx==='scrap');
+    var hh='<div class="receipt-head">자동차세 산정</div>';
+    hh+='<div class="row"><div class="rk">비과세 사유<small>'+ntxNm+'</small></div><div class="rv">§126</div></div>';
+    hh+='<div class="total"><span class="tk">납부할 자동차세</span><span class="tv" style="color:var(--teal)">0<span class="u">원</span></span></div>';
+    hh+='<div class="info"><b>비과세 대상</b>입니다 — 자동차세를 부과하지 않습니다(지방세법 §126, 시행령 §121).'+(needApply?' 다만 이 사유는 <b>증빙서류를 갖춰 시장·군수·구청장에게 신청</b>해야 적용됩니다(령 §121③).':'')+'</div>';
+    hh+='<div class="result-actions"><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
+    box.innerHTML=hh; window._RESULTTEXT=box.innerText; updateSticky('자동차세 (비과세)', 0);
+    return;
+  }
   var base=0, info='', eduApplies=false, ageEligible=false, note='';
 
   if(kind==='passenger'){
@@ -2184,7 +2275,13 @@ function autoCalc(){
     h+='<div class="row"><div class="rk">연납 공제<small>'+pv+'월 · '+(prate*100).toFixed(2)+'%</small></div><div class="rv">−'+won(discount)+' 원</div></div>';
     h+='<div class="total" style="margin-top:10px"><span class="tk">연납 납부액</span><span class="tv" style="color:var(--teal)">'+won(payable)+'<span class="u">원</span></span></div></div>';
   } else {
-    h+='<div class="info">정기분은 6월(1기)·12월(2기)에 <b>절반씩</b> 부과됩니다. 각 기분 약 '+won(Math.floor(annual/2/10)*10)+'원.</div>';
+    var h1=Math.floor(annual/2/10)*10, h2=annual-h1;
+    h+='<div class="docs" style="margin-top:20px"><h4>기분별 납부 안내</h4>';
+    h+='<div class="row" style="padding-top:6px"><div class="rk">제1기분 (1~6월분)<small>납기 6월 16일 ~ 6월 30일</small></div><div class="rv">'+won(h1)+' 원</div></div>';
+    h+='<div class="row"><div class="rk">제2기분 (7~12월분)<small>납기 12월 16일 ~ 12월 31일</small></div><div class="rv">'+won(h2)+' 원</div></div>';
+    if(annual<=100000) h+='<div class="sub">연세액 10만원 이하는 제1기분에 <b>전액 부과</b>할 수 있습니다(§128④).</div>';
+    else h+='<div class="sub">분할납부 신청 시 각 기분의 1/2을 3월 16~31일, 9월 16~30일에 나눠 낼 수 있습니다(§128①).</div>';
+    h+='</div>';
   }
   // ===== 감면 (지특법 §17 장애인 / §29④ 국가유공자·보훈보상대상자) =====
   var relief=document.getElementById('au-relief').value;
