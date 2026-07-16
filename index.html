@@ -287,25 +287,15 @@
       <p class="lp-sub">Designed for Local Tax Administration<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
     </div>
     <nav class="lp-list">
-      <div class="lp-group">Vehicle</div>
+      <div class="lp-group">Tax</div>
       <a class="lp-item" onclick="enter('chwi','car')">
-        <span class="lp-ko">자동차 취득세</span>
-        <span class="lp-en">Automobile Acquisition Tax</span>
+        <span class="lp-ko">취득세</span>
+        <span class="lp-en">Acquisition Tax · 자동차 · 기계장비 · 이륜자동차</span>
         <span class="lp-arrow">→</span>
       </a>
       <a class="lp-item" onclick="enter('auto')">
         <span class="lp-ko">자동차세</span>
-        <span class="lp-en">Automobile Tax</span>
-        <span class="lp-arrow">→</span>
-      </a>
-      <a class="lp-item" onclick="enter('chwi','machine')">
-        <span class="lp-ko">기계장비 취득세</span>
-        <span class="lp-en">Machinery Acquisition Tax</span>
-        <span class="lp-arrow">→</span>
-      </a>
-      <a class="lp-item" onclick="enter('chwi','moto')">
-        <span class="lp-ko">이륜자동차 취득세</span>
-        <span class="lp-en">Motorcycle Acquisition Tax</span>
+        <span class="lp-en">Automobile Tax · 승용 · 승합 · 화물 · 특수 · 이륜</span>
         <span class="lp-arrow">→</span>
       </a>
       <div class="lp-group">Administration</div>
@@ -842,6 +832,13 @@
           </div>
         </div>
 
+        <div id="au-age-wrap">
+          <div class="grp-h"><span>차량 정보</span><span class="en">Vehicle</span></div>
+          <div class="field" id="au-year-box"><label class="lbl">최초 등록일 (연식) <span class="tip" tabindex="0" data-tip="자동차등록증의 '최초등록일'. 차령(연식) 계산에만 씁니다(사고판 날짜와 다름). 비영업 승용은 차령 3년째부터 세액이 매년 5%씩 자동 차감됩니다(최대 50%, 전기·수소·영업용 제외). 신청이 필요한 '감면'과 다릅니다. 기산일: 상반기 등록 1/1, 하반기 등록 7/1.">?</span></label>
+            <input type="date" id="au-regdate" oninput="autoCalc()">
+          </div>
+        </div>
+
         <div class="grp-h"><span>비과세</span><span class="en">Exclusion</span></div>
         <div class="field"><label class="lbl">비과세 사유 (지방세법 §126)</label>
           <select id="au-nontax" onchange="autoCalc()">
@@ -883,13 +880,6 @@
           <div class="hint">대상 차량: <b>2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜</b>. 취득세·자동차세 중 먼저 신청하는 <b>1대</b>에 한해 면제(§17 일몰 2027.12.31).</div>
         </div>
 
-        <div id="au-age-wrap">
-          <div class="grp-h"><span>차령 경감</span><span class="en">Age relief</span></div>
-          <div class="field" id="au-year-box"><label class="lbl">자동차 최초 등록일 <span class="tip" tabindex="0" data-tip="자동차등록증의 '최초등록일'. 차령 경감 계산에만 씁니다(사고판 날짜와 다름). 비영업 승용은 등록 3년째부터 매년 5%씩 최대 50% 경감(전기·수소·영업용 제외). 기산일: 상반기 등록 1/1, 하반기 등록 7/1.">?</span></label>
-            <input type="date" id="au-regdate" oninput="autoCalc()">
-          </div>
-        </div>
-
         <div id="au-prepay-wrap">
         <div class="grp-h"><span>연납</span><span class="en">Prepay</span></div>
         <div class="field"><label class="lbl">연납 신청 시기 <span class="tip" tabindex="0" data-tip="연세액(본세+교육세)을 미리 내면 남은 기간에 대해 공제받습니다. 2026년 공제율: 1월 4.58% / 3월 3.76% / 6월 2.51% / 9월 1.25%. 공제율은 매년 개정됩니다.">?</span></label>
@@ -922,7 +912,7 @@
         <li><b>지방교육세</b> = 자동차세 × 30%, <b>비영업 승용차에만</b> 부과(지방세법 §151). 승합·화물·특수·영업용은 없음.</li>
         <li><b>비과세(§126)</b> — 국가·지자체의 국방·경호·소방·환자수송·청소·도로공사용, 주한외교기관 사용, 수출된 자동차, 폐차 증명 자동차, 공매 진행 중 자동차 등. 수출·폐차·공매는 신청 필요(령 §121③).</li>
         <li><b>감면</b> — 장애인(§17)·국가유공자 상이1~7급(§29④)은 <b>전액면제</b>, 보훈보상대상자는 <b>50% 경감</b>. 대상: 2,000cc 이하 또는 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜 중 <b>1대</b>. 등록 1년 내 이전·세대분리 시 추징(§17 일몰 2027.12.31).</li>
-        <li><b>차령 경감</b> — 비영업 승용, 3년째부터 매년 5%씩 최대 50%(차령 12년 상한). 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
+        <li><b>차령 반영(연식)</b> — 비영업 승용은 차령 3년째부터 세액이 매년 5%씩 자동 차감(최대 50%, 12년 상한). <b>감면과 달리 신청·요건이 없고 자동 적용</b>됩니다. 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
       </ul>
       <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회하세요.</div>
     </div>
@@ -1082,7 +1072,7 @@ var WORKLIST={
   car:['취득일·신고기한(60일) 확인','과세표준(신고가액 vs 시가표준액) 확인','차종·영업용 여부 확인','감면 대상·요건 충족 여부 확인','공동명의·지분율 확인'],
   machine:['취득일·신고기한(60일) 확인','기종·등록대상 여부 확인','과세표준(취득가액 vs 시가표준액) 확인','지방교육세·농특세 해당 여부 확인'],
   moto:['취득일·신고기한(60일) 확인','배기량(50cc 이상) 과세대상 확인','과세표준·면세점(50만원) 확인'],
-  auto:['영업용·비영업용 구분 확인','연납 신청 여부 확인','말소·이전등록 여부(일할 대상) 확인','차령 경감 기산일 확인','비과세·감면 대상 여부 확인']
+  auto:['영업용·비영업용 구분 확인','연납 신청 여부 확인','말소·이전등록 여부(일할 대상) 확인','차령(연식) 기산일 확인','비과세·감면 대상 여부 확인']
 };
 var NEXTCALC={
   car:[['자동차세 계산','보유 중 매년 내는 세금',"enter('auto')"],['신고납부분 가산세','기한 넘겼을 때',"enter('shingo')"],['다른 차량 다시 계산','입력값 초기화',"resetInputs()"]],
@@ -2308,7 +2298,7 @@ function autoCalc(){
     }
   }
 
-  // 차령 경감 (비영업 승용 내연만)
+  // 차령 반영: 연식별 세액 자동 차감 (비영업 승용 내연만)
   var reduceRate=0, ageYears=0, giSan='';
   if(ageEligible){
     var rd=document.getElementById('au-regdate').value;
@@ -2329,7 +2319,7 @@ function autoCalc(){
 
   var h='<div class="receipt-head">자동차세 산정 (연세액)</div>';
   h+='<div class="row"><div class="rk">자동차세 본세<small>'+info+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  if(reduceRate>0) h+='<div class="row sub"><div class="rk">차령 경감<small>차령 '+ageYears+'년 · '+Math.round(reduceRate*100)+'% (기산일 '+giSan+')</small></div><div class="rv">−'+won(base-reduced)+' 원</div></div>';
+  if(reduceRate>0) h+='<div class="row sub"><div class="rk">차령 반영 (연식)<small>차령 '+ageYears+'년 · 세액 '+Math.round(reduceRate*100)+'% 차감 · 기산일 '+giSan+' · 자동 적용</small></div><div class="rv">−'+won(base-reduced)+' 원</div></div>';
   if(reduceRate>0){
     var half=Math.floor(reduced/2/10)*10;
     h+='<div class="row sub"><div class="rk">제1기분 (1~6월)<small>A/2 − (A/2 × 5%)(n−2), 차령 '+ageYears+'년</small></div><div class="rv">'+won(half)+' 원</div></div>';
@@ -2446,7 +2436,7 @@ function autoCalc(){
   h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
    +'<li>본 계산은 <b>개산(참고용)</b>이며, 실제 부과액은 차량 등록정보·과세기준일에 따라 달라질 수 있습니다.</li>'
    +'<li>비과세·감면 대상 여부는 <b>별도 확인·신청</b>이 필요합니다(관할 시·군·구청).</li>'
-   +'<li>연납 공제율·차령 경감은 매년 개정되며, 지자체 조례로 표준세율의 50%까지 가감될 수 있습니다(§127③).</li>'
+   +'<li>연납 공제율·차령 반영률은 매년 개정될 수 있으며, 지자체 조례로 표준세율의 50%까지 가감될 수 있습니다(§127③).</li>'
    +'</ul></div>';
   h+=worklistHtml('auto')+nextCalcHtml('auto');
   box.innerHTML=h; window._RESULTTEXT=box.innerText; animateTotals(box);
