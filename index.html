@@ -152,8 +152,8 @@
   #sticky-total .st-l{font-size:12px;font-weight:500;opacity:.8;}
   #sticky-total .st-v{font-size:19px;font-weight:700;}
   @media (min-width:761px){ #sticky-total{display:none !important;} }
-  .total{margin-top:40px;padding:26px 0;border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);border-radius:0;background:transparent;display:block;}
-  .total .tk{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+  .total{margin-top:40px;padding:26px 0;border:0;border-top:2px solid var(--seal);border-bottom:1px solid var(--ink);border-radius:0;background:transparent;display:block;}
+  .total .tk{display:block;font-size:11px;font-weight:600;color:var(--seal);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
   .total .tv{display:block;font-size:clamp(40px,10vw,58px);font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
@@ -205,6 +205,25 @@
   .lp-foot a:hover{color:var(--ink);}
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
+  /* ===== 종이 질감 (엔틱 법전 컨셉) ===== */
+  body{background-image:linear-gradient(180deg,#262624 0%,#242422 55%,#212120 100%);background-attachment:fixed;}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:radial-gradient(rgba(241,238,231,.035) 1px, transparent 1px);
+    background-size:3px 3px;opacity:.55;}
+  .wrap{position:relative;z-index:1;}
+
+  /* ===== 법령 각주 (법전 컨셉) ===== */
+  .basis{position:relative;}
+  .basis h3{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+    border-top:1px solid var(--line-strong);padding-top:16px;margin:0 0 16px;}
+  .basis ul{list-style:none;padding:0;margin:0;counter-reset:fn;}
+  .basis ul li{counter-increment:fn;position:relative;padding:9px 0 9px 26px;font-size:12.5px;line-height:1.75;
+    color:var(--muted);border-bottom:1px solid rgba(241,238,231,.06);}
+  .basis ul li::before{content:counter(fn);position:absolute;left:0;top:9px;font-size:10px;color:var(--seal);
+    font-variant-numeric:tabular-nums;letter-spacing:0;}
+  .basis ul li b{color:var(--sub);font-weight:600;}
+  .basis .disc{margin-top:16px;font-size:11.5px;color:var(--muted);opacity:.72;line-height:1.7;padding-left:26px;}
+
   /* ===== 다음 계산 / 실무 체크리스트 ===== */
   .nextcalc{margin-top:26px;padding-top:20px;border-top:1px solid var(--line);}
   .nextcalc .nc-h{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
