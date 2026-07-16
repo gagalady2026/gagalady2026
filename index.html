@@ -25,14 +25,14 @@
 <meta name="twitter:image" content="https://jibangsae.netlify.app/og.png">
 <style>
   :root{
-    /* 동준 — 웜 다크 (시연1 확정) · 대비 강화 */
-    --color-bg-main:#242422; --color-bg-card:transparent; --color-bg-input:#2E2E2B;
-    --color-text-main:#F1EEE7; --color-text-muted:#ABA79E; --color-border:#514E48;
-    --color-accent:#8A9A82; --color-accent-light:#33362F;
-    --paper:var(--color-bg-main);--surface:#2E2E2B;--ink:var(--color-text-main);--muted:var(--color-text-muted);
-    --sub:#D2CDC3;--line:var(--color-border);--line-strong:#635F58;
+    /* D.J — 앤틱 서재 (브라운 차콜 · 황동 포인트) */
+    --color-bg-main:#1F1C17; --color-bg-card:transparent; --color-bg-input:#262219;
+    --color-text-main:#DED6C6; --color-text-muted:#948A79; --color-border:rgba(222,214,198,.10);
+    --color-accent:#9A8265; --color-accent-light:#2A251C;
+    --paper:var(--color-bg-main);--surface:#262219;--ink:var(--color-text-main);--muted:var(--color-text-muted);
+    --sub:#BCB2A0;--line:var(--color-border);--line-strong:rgba(222,214,198,.20);
     --teal:var(--color-accent);--teal-soft:var(--color-accent-light);
-    --seal:#CE9270;--seal-soft:#3A322C;--focus:#8A9A82;--shadow:none;--radius:4px;
+    --seal:#B3926F;--seal-soft:#2E271F;--focus:#9A8265;--shadow:none;--radius:4px;
   }
   a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
   *{box-sizing:border-box;}html,body{margin:0;padding:0;}
@@ -44,12 +44,12 @@
   #m-chwi{max-width:1280px;}
   /* 글 위주 단(가산세·FAQ·안내)은 읽기 좋은 폭으로 */
   #m-gozi,#m-shingo,#m-faq,.basis{max-width:880px;}
-  header.head{border-bottom:1px solid var(--line);padding:96px 0 64px;margin-bottom:64px;position:relative;}
+  header.head{border-bottom:1px solid var(--line);padding:40px 0 24px;margin-bottom:56px;position:relative;}
   .kicker{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;color:var(--muted);margin-bottom:20px;text-transform:uppercase;}
   header.head h1{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(27px,3.4vw,34px);font-weight:500;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
   .hero-sub{margin:24px 0 0;color:var(--muted);font-size:14px;line-height:1.8;letter-spacing:.04em;max-width:520px;}
   .site-footer{margin-top:120px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;}
-  .site-footer .fl{font-size:14px;font-weight:700;color:var(--sub);letter-spacing:-.01em;}
+  .site-footer .fl{font-size:14px;font-weight:500;color:var(--sub);letter-spacing:-.01em;}
   .site-footer .fr{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.7;text-align:right;}
   .site-footer .fr a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);}
   .site-footer .fr a:hover{color:var(--ink);}
@@ -57,7 +57,7 @@
   .tabs{display:flex;gap:4px;margin-bottom:56px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
   .tab{appearance:none;border:none;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);padding:11px 16px;border-bottom:1.5px solid transparent;margin-bottom:-1px;transition:.15s;letter-spacing:0;}
   .tab:hover{color:var(--sub);}
-  .tab[aria-selected="true"]{color:var(--ink);border-bottom:1px solid var(--ink);font-weight:600;}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom:1px solid var(--seal);font-weight:500;}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:64px;}
   .card h2{font-family:'Noto Serif KR',Georgia,serif;font-size:17px;font-weight:500;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
@@ -77,16 +77,16 @@
   input:focus,select:focus{outline:none;border-bottom-color:var(--ink);}
   .money-wrap{position:relative;}.money-wrap .won{position:absolute;right:2px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none;font-weight:400;}
   .money-wrap input{padding-right:22px;}
-  .field{margin-bottom:40px;}
+  .field{margin-bottom:26px;}
   .seg{display:flex;flex-wrap:wrap;gap:2px;}
   .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;height:44px;padding:0 14px;transition:.15s;letter-spacing:0;position:relative;}
   .seg button:hover{color:var(--sub);}
-  .seg button[aria-pressed="true"]{color:var(--ink);background:transparent;font-weight:600;box-shadow:inset 0 -1px 0 var(--seal);}
+  .seg button[aria-pressed="true"]{color:var(--ink);background:transparent;font-weight:500;box-shadow:inset 0 -1px 0 var(--seal);}
   .hint{font-size:13px;font-weight:400;color:var(--muted);opacity:.75;margin-top:8px;line-height:1.65;letter-spacing:0;}
   .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid rgba(241,238,231,.07);}
   .row:first-of-type{padding-top:0;}
   .row .rk{font-size:12.5px;color:var(--muted);letter-spacing:.02em;}.row .rk small{display:block;color:var(--muted);opacity:.62;font-size:10.5px;margin-top:3px;letter-spacing:0;}
-  .row .rv{font-size:15.5px;font-weight:600;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  .row .rv{font-size:15.5px;font-weight:500;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
   .row.sub .rk,.row.sub .rv{color:var(--muted);font-weight:500;}
   .docs{margin-top:24px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:16px 0;}
   .docs h4{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--ink);}
@@ -145,7 +145,7 @@
   .pal-item .pi-tag{font-size:10.5px;font-weight:500;color:var(--muted);white-space:nowrap;}
   .pal-empty{padding:22px;text-align:center;color:var(--muted);font-size:13px;}
   .ko-echo{max-width:340px;font-size:11.5px;color:var(--sub);font-weight:600;margin-top:5px;text-align:right;}
-  .grp-h{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-strong);padding-top:16px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin:64px 0 24px;}
+  .grp-h{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-strong);padding-top:16px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin:72px 0 32px;}
   .grp-h .en{font-size:10.5px;font-weight:500;letter-spacing:.12em;color:var(--muted);}
   .grp-h:first-of-type{margin-top:4px;}
   #sticky-total{position:fixed;left:0;right:0;bottom:0;background:var(--teal);color:#23241F;padding:14px 20px;display:none;z-index:60;cursor:pointer;}
@@ -155,7 +155,7 @@
   @media (min-width:761px){ #sticky-total{display:none !important;} }
   .total{margin-top:40px;padding:26px 0;border:0;border-top:2px solid var(--seal);border-bottom:1px solid var(--ink);border-radius:0;background:transparent;display:block;}
   .total .tk{display:block;font-size:11px;font-weight:600;color:var(--seal);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
-  .total .tv{display:block;font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(38px,9.4vw,54px);font-weight:600;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
+  .total .tv{display:block;font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(38px,9.4vw,54px);font-weight:500;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
   .warn{margin-top:14px;font-size:12px;color:var(--sub);background:transparent;border:1px solid var(--line);border-left:2px solid var(--seal);border-radius:6px;padding:11px 13px;line-height:1.6;}
@@ -163,9 +163,9 @@
   .info{margin-top:14px;font-size:12px;color:var(--sub);background:var(--surface);border-radius:6px;padding:11px 13px;line-height:1.6;}
   .info b{color:var(--ink);}
   .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:0;align-items:start;
-    background-image:linear-gradient(to bottom,var(--line),var(--line));background-repeat:no-repeat;background-size:1px 100%;background-position:60% 0;}
+    }
   .grid2>.card:nth-child(1){padding-right:56px;}
-  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding-left:56px;padding-top:8px;}
+  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding:28px 32px 32px;margin-left:32px;background:rgba(222,214,198,.055);border:1px solid rgba(222,214,198,.11);}
   @media(max-width:680px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2>.card:nth-child(2){position:static;padding-left:0;}}
   .btn{appearance:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);letter-spacing:.04em;padding:9px 16px;border-radius:2px;transition:.2s;}
   .btn:hover{color:var(--ink);border-color:var(--ink);}
@@ -206,8 +206,15 @@
   .lp-foot a:hover{color:var(--ink);}
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
+  /* ===== 세목 헤더 (법전 표제) ===== */
+  .tax-head{margin:0 0 56px;padding-bottom:24px;border-bottom:1px solid var(--line-strong);}
+  .tax-head .th-ko{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(26px,3.2vw,34px);font-weight:500;
+    letter-spacing:-.02em;color:var(--ink);line-height:1.15;display:block;}
+  .tax-head .th-en{display:block;margin-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+  .tax-head .th-basis{display:block;margin-top:14px;font-size:12.5px;color:var(--muted);opacity:.8;line-height:1.7;}
+
   /* ===== 종이 질감 (엔틱 법전 컨셉) ===== */
-  body{background-image:linear-gradient(180deg,#1C1C1A 0%,#1A1A18 55%,#171716 100%);background-attachment:fixed;}
+  body{background-image:linear-gradient(180deg,#191710 0%,#171512 55%,#141210 100%);background-attachment:fixed;}
   /* 진짜 필름 그레인 (SVG fractal noise) */
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
@@ -324,8 +331,6 @@
   <div id="app" class="hidden">
   <header class="head">
     <button class="kicker" onclick="goHome()" style="border:0;background:none;padding:0;cursor:pointer;font-family:inherit;text-align:left;">← D.J · LOCAL TAX</button>
-    <h1>지방세 계산기</h1>
-    <p class="hero-sub">자동차·기계장비·이륜차 취득세와 체납 가산세를<br>실무 기준으로 빠르고 정확하게 계산합니다.</p>
     <button class="btn sm" onclick="openPalette()" style="position:absolute;top:26px;right:0;">Search <span style="color:var(--muted);font-weight:500">⌘K</span></button>
   </header>
 
@@ -379,8 +384,7 @@
     <div id="target-car">
     <div class="grid2">
       <div class="card">
-        <h2>자동차 취득세</h2>
-        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">취득일과 차량 정보를 기준으로 예상 취득세를 계산합니다. 감면·면세점·공채·가산세를 함께 반영합니다.</p>
+        <div class="tax-head"><span class="th-ko">자동차 취득세</span><span class="th-en">Vehicle Acquisition Tax</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 감면·면세점·공채·가산세를 함께 반영합니다.</span></div>
 
         
         <div class="field"><label class="lbl">취득 유형</label>
@@ -573,8 +577,7 @@
     <div id="target-machine" class="hidden">
     <div class="grid2">
       <div class="card">
-        <h2>기계장비 취득세</h2>
-        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">건설기계 기종과 취득가액을 기준으로 취득세·지방교육세·농어촌특별세를 계산합니다.</p>
+        <div class="tax-head"><span class="th-ko">기계장비 취득세</span><span class="th-en">Machinery Acquisition Tax</span><span class="th-basis">지방세법 §12①3 · 2026 기계장비 시가표준액 기준 — 취득세·지방교육세·농어촌특별세를 계산합니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mc-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
@@ -639,8 +642,7 @@
     <div id="target-moto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <h2>이륜자동차 취득세</h2>
-        <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">이륜자동차의 취득가액 또는 시가표준액을 기준으로 예상 취득세를 계산합니다.</p>
+        <div class="tax-head"><span class="th-ko">이륜자동차 취득세</span><span class="th-en">Motorcycle Acquisition Tax</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 배기량 50cc 이상 이륜자동차가 과세대상입니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mt-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mt-type','new',mtCalc)">신규(신차)</button>
@@ -714,8 +716,7 @@
   <div id="m-auto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <h2>자동차세 계산</h2>
-        <p class="hint" style="margin-top:-18px;margin-bottom:26px;opacity:.78">소유에 대한 자동차세(정기분) 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</p>
+        <div class="tax-head"><span class="th-ko">자동차세</span><span class="th-en">Automobile Tax · Ownership</span><span class="th-basis">지방세법 §127 · 소유에 대한 자동차세(정기분) — 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</span></div>
 
         <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
         <div class="field"><label class="lbl">구분</label>
@@ -1008,7 +1009,7 @@
 
   <footer class="site-footer">
     <div class="fl">
-      <button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:700;margin:0">← 지방세 계산기 · D.J</button>
+      <button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:500;margin:0">← 지방세 계산기 · D.J</button>
       <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.8;font-family:'Noto Serif KR',Georgia,serif;">
         지방세 실무자를 위한 계산 도구<br>
         <span style="opacity:.8">실무에서 반복되는 계산을 조금이라도 줄이기 위해 만들었습니다.</span>
