@@ -207,10 +207,15 @@
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
   /* ===== 종이 질감 (엔틱 법전 컨셉) ===== */
-  body{background-image:linear-gradient(180deg,#262624 0%,#242422 55%,#212120 100%);background-attachment:fixed;}
+  body{background-image:linear-gradient(180deg,#1C1C1A 0%,#1A1A18 55%,#171716 100%);background-attachment:fixed;}
+  /* 진짜 필름 그레인 (SVG fractal noise) */
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background-image:radial-gradient(rgba(241,238,231,.035) 1px, transparent 1px);
-    background-size:3px 3px;opacity:.55;}
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    background-size:200px 200px;opacity:.13;mix-blend-mode:screen;}
+  /* 종이 결(가로 섬유) — 아주 미세하게 */
+  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:repeating-linear-gradient(0deg, rgba(241,238,231,.012) 0px, rgba(241,238,231,.012) 1px, transparent 1px, transparent 3px);
+    opacity:.6;}
   .wrap{position:relative;z-index:1;}
 
   /* ===== 법령 각주 (법전 컨셉) ===== */
