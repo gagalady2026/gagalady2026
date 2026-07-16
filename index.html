@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <title>지방세 계산기 | D.J</title>
 <meta name="description" content="자동차·기계장비·이륜자동차 취득세, 자동차세, 체납 가산세를 2026년 지방세법 기준으로 계산합니다. 감면·면세점·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
 <meta name="theme-color" content="#242422">
@@ -46,7 +46,7 @@
   #m-gozi,#m-shingo,#m-faq,.basis{max-width:880px;}
   header.head{border-bottom:1px solid var(--line);padding:56px 0 48px;margin-bottom:64px;position:relative;}
   .kicker{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;color:var(--muted);margin-bottom:20px;text-transform:uppercase;}
-  header.head h1{font-size:clamp(30px,4vw,38px);font-weight:400;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
+  header.head h1{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(28px,3.6vw,36px);font-weight:500;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
   .hero-sub{margin:20px 0 0;color:var(--muted);font-size:14.5px;line-height:1.7;letter-spacing:0;max-width:520px;}
   .site-footer{margin-top:120px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;}
   .site-footer .fl{font-size:14px;font-weight:700;color:var(--sub);letter-spacing:-.01em;}
@@ -59,10 +59,11 @@
   .tab:hover{color:var(--sub);}
   .tab[aria-selected="true"]{color:var(--ink);border-bottom:1.5px solid var(--teal);font-weight:600;}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:80px;}
-  .card h2{font-size:19px;font-weight:500;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
+  .card h2{font-family:'Noto Serif KR',Georgia,serif;font-size:19px;font-weight:500;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
   input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;height:44px;font-family:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:0 2px;transition:border-color .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
   .money-wrap{max-width:340px;}
+  .money-wrap input{text-align:right;font-weight:600;}
   select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;height:44px;padding:0 22px 0 2px;color:var(--ink);font-weight:500;cursor:pointer;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
     background-position:calc(100% - 8px) center,calc(100% - 3px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
@@ -82,7 +83,7 @@
   .seg button:hover{color:var(--sub);}
   .seg button[aria-pressed="true"]{color:var(--ink);background:var(--teal-soft);font-weight:500;box-shadow:inset 0 -2px 0 var(--teal);}
   .hint{font-size:12px;color:var(--muted);opacity:.78;margin-top:8px;line-height:1.6;letter-spacing:0;}
-  .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid rgba(241,238,231,.07);}
   .row:first-of-type{padding-top:0;}
   .row .rk{font-size:12.5px;color:var(--muted);letter-spacing:.02em;}.row .rk small{display:block;color:var(--muted);opacity:.62;font-size:10.5px;margin-top:3px;letter-spacing:0;}
   .row .rv{font-size:15.5px;font-weight:600;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
@@ -154,7 +155,7 @@
   @media (min-width:761px){ #sticky-total{display:none !important;} }
   .total{margin-top:40px;padding:26px 0;border:0;border-top:2px solid var(--seal);border-bottom:1px solid var(--ink);border-radius:0;background:transparent;display:block;}
   .total .tk{display:block;font-size:11px;font-weight:600;color:var(--seal);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
-  .total .tv{display:block;font-size:clamp(40px,10vw,58px);font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
+  .total .tv{display:block;font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(38px,9.4vw,54px);font-weight:600;color:var(--ink);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
   .warn{margin-top:14px;font-size:12px;color:var(--sub);background:transparent;border:1px solid var(--line);border-left:2px solid var(--seal);border-radius:6px;padding:11px 13px;line-height:1.6;}
@@ -214,10 +215,10 @@
 
   /* ===== 법령 각주 (법전 컨셉) ===== */
   .basis{position:relative;}
-  .basis h3{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  .basis h3{font-family:'Noto Serif KR',Georgia,serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
     border-top:1px solid var(--line-strong);padding-top:16px;margin:0 0 16px;}
   .basis ul{list-style:none;padding:0;margin:0;counter-reset:fn;}
-  .basis ul li{counter-increment:fn;position:relative;padding:9px 0 9px 26px;font-size:12.5px;line-height:1.75;
+  .basis ul li{counter-increment:fn;position:relative;font-family:'Noto Serif KR',Georgia,serif;padding:9px 0 9px 26px;font-size:12.5px;line-height:1.85;
     color:var(--muted);border-bottom:1px solid rgba(241,238,231,.06);}
   .basis ul li::before{content:counter(fn);position:absolute;left:0;top:9px;font-size:10px;color:var(--seal);
     font-variant-numeric:tabular-nums;letter-spacing:0;}
@@ -412,15 +413,15 @@
             <button data-v="영업" aria-pressed="false" onclick="pick('c-use','영업',cCalc)">영업용</button>
           </div></div>
 
-        <div class="field"><label class="lbl">경차 여부</label>
+        <div class="field"><label class="lbl">차량 규격</label>
           <div class="seg" id="c-light">
             <button data-v="0" aria-pressed="true" onclick="pick('c-light','0',cCalc)">일반</button>
-            <button data-v="1" aria-pressed="false" onclick="pick('c-light','1',cCalc)">경차</button>
+            <button data-v="1" aria-pressed="false" onclick="pick('c-light','1',cCalc)">경형</button>
           </div></div>
 
         <!-- 신규: 공급가액 -->
         <div class="field" id="c-new-box">
-          <label class="lbl">차량 가격 (과세표준) <span class="tip" tabindex="0" data-tip="세금계산서·제작증(수입은 수입신고필증)의 '공급가액'(부가가치세 제외)을 넣으세요. 계약서 금액이 부가세 포함이면 아래 '부가세 포함가'를 선택하면 자동으로 나눠줍니다.">?</span></label>
+          <label class="lbl">취득가액 (과세표준) <span class="tip" tabindex="0" data-tip="세금계산서·제작증(수입은 수입신고필증)의 '공급가액'(부가가치세 제외)을 넣으세요. 계약서 금액이 부가세 포함이면 아래 '부가세 포함가'를 선택하면 자동으로 나눠줍니다.">?</span></label>
           <div class="money-wrap"><input type="text" id="c-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
           <div class="seg" id="c-vat" style="margin-top:8px">
             <button data-v="ex" aria-pressed="true" onclick="pick('c-vat','ex',cCalc)">부가세 별도(공급가액)</button>
@@ -567,7 +568,7 @@
       </div>
 
       <div class="card">
-        <h2>산정 결과</h2>
+        <h2>세액 산출 내역</h2>
         <div id="c-result"><div class="empty">차종·용도·과세표준을 입력하세요.</div></div>
       </div>
     </div>
@@ -635,7 +636,7 @@
           <div id="mc-gamyeon-info"></div>
         </div>
       </div>
-      <div class="card"><h2>산정 결과</h2><div id="mc-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="mc-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
     </div>
     </div><!-- /target-machine -->
 
@@ -709,7 +710,7 @@
           <div id="mt-gamyeon-info"></div>
         </div>
       </div>
-      <div class="card"><h2>산정 결과</h2><div id="mt-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="mt-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
     </div>
     </div><!-- /target-moto -->
   </div>
@@ -889,7 +890,7 @@
         </div>
       </div>
 
-      <div class="card"><h2>산정 결과</h2>
+      <div class="card"><h2>세액 산출 내역</h2>
         <div id="au-result"><div class="empty">배기량을 입력하세요.</div></div>
       </div>
     </div>
@@ -917,13 +918,13 @@
         <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">고지서로 부과된 지방세(재산세·자동차세·주민세 등)를 <b>납기까지 내지 못한 경우</b>의 가산세를 계산합니다. 납기 다음 날부터 3%가 붙고, 이후 매달 0.66%씩 최대 60개월간 가산됩니다.</p>
         </div>
     <div class="card"><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <label class="lbl" style="margin:0">낼 날짜 (납부 예정일)</label>
+      <label class="lbl" style="margin:0">납부 예정일 (납부 예정일)</label>
       <input type="date" id="g-pay" style="width:auto" oninput="recalcGozi()">
       <span class="hint" style="margin:0">이 날짜 기준으로 아래 모든 체납 건을 계산합니다.</span>
     </div></div>
     <div class="card"><h3 style="font-size:13px;font-weight:600;color:var(--sub);margin:0 0 18px;letter-spacing:.02em;">체납 건 입력</h3><div id="rows"></div>
       <button class="btn" style="width:100%;border-style:dashed;color:var(--teal)" onclick="addRow()">＋ 체납 건 추가</button></div>
-    <div class="card"><h2>합계</h2><div id="grand-body"><div class="empty">낼 날짜와 체납 건을 입력하세요.</div></div></div>
+    <div class="card"><h2>합계</h2><div id="grand-body"><div class="empty">납부 예정일와 체납 건을 입력하세요.</div></div></div>
   </div>
 
   <!-- ============ 신고납부분 ============ -->
@@ -932,7 +933,7 @@
       <div class="card"><h2>신고납부분 가산세</h2>
         <p class="hint" style="margin-top:-24px;margin-bottom:30px;opacity:.78">취득세·등록면허세처럼 <b>스스로 신고·납부하는 세목</b>에서 기한을 넘겼거나 적게 신고한 경우의 가산세를 계산합니다. 무신고 20%·과소신고 10%(부정 40%)에 납부지연 가산세가 더해집니다.</p>
         
-        <div class="field"><label class="lbl">본세 (미납·과소납부 세액)</label>
+        <div class="field"><label class="lbl">미납 본세</label>
           <div class="money-wrap"><input type="text" id="s-tax" inputmode="numeric" placeholder="0" oninput="fmt(this);calcShingo()"><span class="won">원</span></div></div>
         <div class="field"><label class="lbl">신고 유형</label>
           <div class="seg" id="s-type">
@@ -944,7 +945,7 @@
         <div class="field"><label class="lbl">법정납부기한</label><input type="date" id="s-due" oninput="calcShingo()"></div>
         <div class="field"><label class="lbl">자진납부일(또는 납세고지일)</label><input type="date" id="s-pay" oninput="calcShingo()"></div>
       </div>
-      <div class="card"><h2>산정 결과</h2><div id="s-result"><div class="empty">본세·납부기한·납부일을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="s-result"><div class="empty">본세·납부기한·납부일을 입력하세요.</div></div></div>
     </div>
   </div>
 
@@ -1577,7 +1578,7 @@ function recalcGozi(){
     res.innerHTML=badge+'<div class="row" style="border:0;padding:6px 0 0"><div class="rk" style="font-size:12px;color:var(--muted)">최초 3% '+won(first)+' + '+(applyM?(isOld?'중가산금':'월가산')+' '+(mr*100).toFixed(2)+'%×'+months+'개월 '+won(monthly):'월가산 미적용(45만/30만 미만)')+'</div><div class="rv">'+won(tax+pen)+' 원</div></div>';
   });
   var b=document.getElementById('grand-body');
-  if(!pay||vc===0){b.innerHTML='<div class="empty">낼 날짜와 체납 건을 입력하세요.</div>';return;}
+  if(!pay||vc===0){b.innerHTML='<div class="empty">납부 예정일와 체납 건을 입력하세요.</div>';return;}
   b.innerHTML='<div class="row"><div class="rk">본세 합계 ('+vc+'건)</div><div class="rv">'+won(sT)+' 원</div></div>'
     +'<div class="row"><div class="rk">가산세 합계</div><div class="rv">'+won(sP)+' 원</div></div>'
     +'<div class="total"><span class="tk">총 납부할 금액</span><span class="tv">'+won(sT+sP)+'<span class="u">원</span></span></div>';
