@@ -205,6 +205,20 @@
   .lp-foot a:hover{color:var(--ink);}
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:17px;}}
   .hidden{display:none !important;}
+  /* ===== 다음 계산 / 실무 체크리스트 ===== */
+  .nextcalc{margin-top:26px;padding-top:20px;border-top:1px solid var(--line);}
+  .nextcalc .nc-h{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .nextcalc a{display:flex;justify-content:space-between;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);
+    color:var(--sub);font-size:13.5px;text-decoration:none;cursor:pointer;transition:padding-left .2s ease,color .2s ease;}
+  .nextcalc a:hover{padding-left:8px;color:var(--ink);}
+  .nextcalc a .nc-ar{color:var(--muted);transition:transform .2s ease;}
+  .nextcalc a:hover .nc-ar{transform:translateX(5px);color:var(--teal);}
+  .worklist{margin-top:24px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .worklist .wl-h{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .worklist label{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:12.5px;color:var(--sub);cursor:pointer;line-height:1.5;}
+  .worklist input{width:auto;height:auto;margin:2px 0 0;accent-color:var(--teal);flex:none;}
+  .worklist label:has(input:checked){color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line-strong);}
+
   /* ===== 모션 ===== */
   @keyframes fadeUp{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -1017,6 +1031,32 @@ function fmt(el){
 function numv(id){return Number((document.getElementById(id).value||'').replace(/[^0-9]/g,''))||0;}
 function won(n){return Math.floor(n).toLocaleString('ko-KR');}
 function pick(group,v,cb){document.querySelectorAll('#'+group+' button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});if(cb)cb();}
+/* 실무 체크리스트 + 다음 추천 계산 */
+var WORKLIST={
+  car:['취득일·신고기한(60일) 확인','과세표준(신고가액 vs 시가표준액) 확인','차종·영업용 여부 확인','감면 대상·요건 충족 여부 확인','공동명의·지분율 확인'],
+  machine:['취득일·신고기한(60일) 확인','기종·등록대상 여부 확인','과세표준(취득가액 vs 시가표준액) 확인','지방교육세·농특세 해당 여부 확인'],
+  moto:['취득일·신고기한(60일) 확인','배기량(50cc 이상) 과세대상 확인','과세표준·면세점(50만원) 확인'],
+  auto:['영업용·비영업용 구분 확인','연납 신청 여부 확인','말소·이전등록 여부(일할 대상) 확인','차령 경감 기산일 확인','비과세·감면 대상 여부 확인']
+};
+var NEXTCALC={
+  car:[['자동차세 계산','보유 중 매년 내는 세금',"enter('auto')"],['신고납부분 가산세','기한 넘겼을 때',"enter('shingo')"],['다른 차량 다시 계산','입력값 초기화',"resetInputs()"]],
+  machine:[['고지분 체납 가산세','고지서 미납 시',"enter('gozi')"],['자동차 취득세','승용·승합·화물',"enter('chwi','car')"]],
+  moto:[['자동차세 계산','125cc 초과 과세',"enter('auto')"],['자동차 취득세','승용·승합·화물',"enter('chwi','car')"]],
+  auto:[['자동차 취득세','취득 시 1회 납부',"enter('chwi','car')"],['고지분 체납 가산세','자동차세 미납 시',"enter('gozi')"]]
+};
+function worklistHtml(k){
+  var items=WORKLIST[k]||[];
+  if(!items.length) return '';
+  return '<div class="worklist"><div class="wl-h">실무 확인사항</div>'+
+    items.map(function(t,i){return '<label><input type="checkbox"><span>'+t+'</span></label>';}).join('')+'</div>';
+}
+function nextCalcHtml(k){
+  var items=NEXTCALC[k]||[];
+  if(!items.length) return '';
+  return '<div class="nextcalc"><div class="nc-h">다음으로 많이 하는 계산</div>'+
+    items.map(function(x){return '<a onclick="'+x[2]+'"><span><b style="font-weight:600">'+x[0]+'</b> <span style="color:var(--muted);font-size:12px;margin-left:6px">'+x[1]+'</span></span><span class="nc-ar">→</span></a>';}).join('')+'</div>';
+}
+
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
 function sw(m){
   ['chwi','auto','gozi','shingo','faq'].forEach(function(x){
@@ -1152,6 +1192,7 @@ function cCalc(){
   } else { window._GRANDTOT=null; }
   h+='<a class="wetax-btn" href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스에서 신고·조회하러 가기 →</a>';
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
+  h+=worklistHtml(pressed('c-target'))+nextCalcHtml(pressed('c-target'));
   box.innerHTML=h;
   window._RESULTTEXT = box.innerText;
   animateTotals(box);
@@ -1732,6 +1773,7 @@ function mCalc(){
   if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 등록면허세가 별도 부과될 수 있으니 위택스로 확정하세요.</div>';
   if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스로 확정하세요.</div>';
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
+  h+=worklistHtml('machine')+nextCalcHtml('machine');
   box.innerHTML=h;
   window._RESULTTEXT=box.innerText;
   animateTotals(box);
@@ -1809,6 +1851,7 @@ function mtCalc(){
   if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 이 경우 등록면허세가 있을 수 있으니(이륜 기준 별도 확인) 위택스로 확정하세요.</div>';
   if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스로 확정하세요.</div>';
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
+  h+=worklistHtml('moto')+nextCalcHtml('moto');
   box.innerHTML=h;
   window._RESULTTEXT=box.innerText;
   animateTotals(box);
@@ -2330,6 +2373,7 @@ function autoCalc(){
   }
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">💾 저장</button><button type="button" onclick="copyResult()">📋 결과 복사</button><button type="button" onclick="shareResult()">↗ 공유</button><button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>';
   h+='<a class="wetax-btn" href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스에서 차량번호로 조회 →</a>';
+  h+=worklistHtml('auto')+nextCalcHtml('auto');
   box.innerHTML=h; window._RESULTTEXT=box.innerText; animateTotals(box);
 }
 
