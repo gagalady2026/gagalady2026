@@ -441,7 +441,7 @@
         <div class="grp-h"><span>지분</span><span class="en">Share</span></div>
         <div class="field">
           <label class="lbl">취득 지분율 (%)</label>
-          <div class="money-wrap"><input type="number" id="c-share" min="0" max="100" step="0.01" value="100" style="text-align:right;font-weight:600" oninput="cCalc()"><span class="won">%</span></div>
+          <div class="money-wrap"><input type="number" id="c-share" inputmode="decimal" min="0" max="100" step="0.01" value="100" style="text-align:right;font-weight:600" oninput="cCalc()"><span class="won">%</span></div>
           <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 입력하세요(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.<br>※ 개인택시·지입 화물처럼 <b>공동명의자 간 용도(영업/비영업)가 다르면</b> 지분별로 세율(7% vs 4%)을 나눠 개별 산정해야 합니다.</div>
         </div>
 
@@ -542,7 +542,7 @@
           <div id="c-bond-inputs" class="hidden">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div id="c-cc-box"><label class="lbl">배기량 (cc)</label><input type="text" id="c-cc" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"></div>
-              <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" min="0" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="if(this.value<0)this.value=0;cCalc()"></div>
+              <div id="c-ton-box" class="hidden"><label class="lbl">최대적재량 (톤)</label><input type="number" id="c-ton" inputmode="decimal" min="0" step="0.1" placeholder="0" style="text-align:right;font-weight:600" oninput="if(this.value<0)this.value=0;cCalc()"></div>
             </div>
             <div class="hint">배기량·최대적재량은 <b>자동차등록증</b>에 적혀 있습니다.</div>
             <label class="lbl" style="margin-top:8px">연료</label>
@@ -2343,6 +2343,18 @@ function autoCalc(){
       h+='<div class="row"><div class="rk">보유일수<small>'+dd.Y+'년 '+dd.total+'일 기준</small></div><div class="rv">'+dd.days+'일</div></div>';
       h+='<div class="total" style="margin-top:10px"><span class="tk">'+({buy:'매수인 납부세액',sell:'매도인 납부세액',new:'신규등록분 납부세액',scrap:'말소분 납부세액'}[pressed('au-mode')]||'일할 납부세액')+'</span><span class="tv" style="color:var(--teal)">'+won(prorated)+'<span class="u">원</span></span></div>';
       if(buseng) h+='<div class="sub">일할세액 2,000원 미만 → 소액부징수(0원).</div>';
+      // 매도/매수: 양 당사자 안분 내역 동시 표시
+      if(pressed('au-mode')==='sell'||pressed('au-mode')==='buy'){
+        var sellDays=dd.total-dd.days, buyDays=dd.days;
+        if(pressed('au-mode')==='sell'){ sellDays=dd.days; buyDays=dd.total-dd.days; }
+        var sellTax=Math.floor(annual*sellDays/dd.total/10)*10, buyTax=Math.floor(annual*buyDays/dd.total/10)*10;
+        if(sellTax<2000) sellTax=0; if(buyTax<2000) buyTax=0;
+        h+='</div><div class="docs" style="margin-top:20px"><h4>양 당사자 안분 내역</h4>';
+        h+='<div class="row" style="padding-top:6px"><div class="rk">매도인 (양도인)<small>1.1 ~ 이전등록일 전날 · '+sellDays+'일</small></div><div class="rv">'+won(sellTax)+' 원</div></div>';
+        h+='<div class="row"><div class="rk">매수인 (양수인)<small>이전등록일 ~ 12.31 · '+buyDays+'일</small></div><div class="rv">'+won(buyTax)+' 원</div></div>';
+        h+='<div class="row sub"><div class="rk">합계<small>연세액 '+won(annual)+'원 · '+dd.total+'일</small></div><div class="rv">'+won(sellTax+buyTax)+' 원</div></div>';
+        h+='<div class="sub">이전등록일 <b>당일은 매수인</b> 부담입니다(§129·령§126). 각자에게 별도 고지됩니다.</div>';
+      }
       if(pressed('au-mode')==='new'||pressed('au-mode')==='buy'){
         var av=prepayAvailable(document.getElementById('au-eventdate').value);
         h+= av.length
