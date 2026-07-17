@@ -198,7 +198,7 @@
   /* ===== 랜딩 ===== */
   #landing{padding:0 0 60px;}
   .lp-hero{min-height:52vh;display:flex;flex-direction:column;justify-content:flex-end;padding:80px 0 56px;}
-  .lp-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:44px;}
+  .lp-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:44px;}
   .lp-meta{text-align:right;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:15px;color:var(--muted);line-height:1.5;}
   .lp-meta span{font-family:inherit;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.75;}
   .lp-kicker{font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
@@ -283,8 +283,8 @@
 
   /* 브랜드 마크 (이동준 로고) */
   .brandmark{height:18px;width:auto;flex:none;display:inline-block;vertical-align:middle;margin-right:10px;position:relative;top:-1px;}
-  .lp-mark{height:40px;width:auto;align-self:flex-start;flex:none;display:block;margin:0 0 30px;}
-  @media(max-width:680px){ .lp-mark{height:32px;} }
+  .lp-mark{position:absolute;left:50%;top:0;transform:translateX(-50%);height:19px;width:auto;flex:none;display:block;margin:0;}
+  @media(max-width:680px){ .lp-mark{height:16px;} }
 
   /* ===== 입력 순서 안내 (스테퍼) ===== */
   .steps{margin:0 0 22px;padding:0 0 18px;border-bottom:1px dotted rgba(53,53,51,.26);}
@@ -353,8 +353,7 @@
   <!-- ============ 랜딩 ============ -->
   <div id="landing">
     <div class="lp-hero">
-      <div class="lp-top"><span class="lp-kicker">이동준 · 지방세 실무</span><span class="lp-meta">2026<br><span>지방세법 기준</span></span></div>
-      <img class="lp-mark" src="logo.png" alt="이동준 로고">
+      <div class="lp-top"><span class="lp-kicker">이동준 · 지방세 실무</span><img class="lp-mark" src="logo.png" alt="LEEDONGJOON"><span class="lp-meta">2026<br><span>지방세법 기준</span></span></div>
       <h1 class="lp-title">LOCAL TAX<br>CALCULATOR</h1>
       <p class="lp-sub">calm. precise. useful.<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
     </div>
