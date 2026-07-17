@@ -24,19 +24,64 @@
 <meta name="twitter:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
 <meta name="twitter:image" content="https://jibangsae.netlify.app/og.png">
 <style>
-  :root{
-    /* 이동준 LEEDONGJOON — 로고 공식색 (차콜 · 세이지 · 크림) */
-    --color-bg-main:#F4F2ED; --color-bg-card:#FAF9F6; --color-bg-input:#FDFCFA;
-    --color-text-main:#353533; --color-text-muted:#706F68; --color-border:#E4E1D9;
-    --color-accent:#77826A; --color-accent-light:#E9EBE3;
-    --paper:var(--color-bg-main);--surface:#FAF9F6;--ink:var(--color-text-main);--muted:var(--color-text-muted);
-    --sub:#4E4E4A;--line:#E7E4DC;--line-strong:#DFD8CD;
-    --teal:var(--color-accent);--teal-soft:var(--color-accent-light);--teal-ink:#616B57;
-    --seal:#77826A;--seal-soft:#E9EBE3;--shutter:#616B57;--focus:#77826A;--shadow:none;--radius:4px;
+    :root{
+    /* ===== LEEDONGJOON 디자인 토큰 ===== */
+
+    /* 1. 색 — 로고 공식 3색 */
+    --charcoal:#353533;        /* 잉크 */
+    --sage:#77826A;            /* 포인트(그래픽 전용) */
+    --sage-ink:#616B57;        /* 포인트(글자용, 5.0:1) */
+    --sage-soft:#E9EBE3;
+    --cream:#DFD8CD;           /* 괘선·경계 */
+
+    /* 2. 층위 — 벽 → 종이 → 입력 (단조 증가) */
+    --wall:#F4F2ED;            /* ① 배경 */
+    --wall-top:#F7F5F2;
+    --wall-bottom:#F0EDE6;
+    --paper-1:#FAF9F6;         /* ② 결과 종이 */
+    --paper-2:#FDFCFA;         /* ③ 입력면 */
+    --paper-3:#FFFFFF;         /* ④ 입력 포커스 */
+
+    /* 3. 텍스트 */
+    --ink:var(--charcoal);
+    --sub:#4E4E4A;
+    --muted:#706F68;           /* 4.5:1 통과 */
+
+    /* 4. 선 */
+    --line:#E7E4DC;            /* 기본 괘선 */
+    --line-strong:var(--cream);
+    --hair:rgba(53,53,51,.11); /* 결과 항목 구분 */
+    --dotted:rgba(53,53,51,.30);
+    --scrim:rgba(53,53,51,.32); /* 오버레이 */
+    --fiber:var(--fiber); /* 종이 섬유결 */
+    --hair-soft:rgba(53,53,51,.09);
+
+    /* 5. 여백 리듬 (8 · 16 · 24 · 40 · 64) */
+    --sp-1:8px; --sp-2:16px; --sp-3:24px; --sp-4:40px; --sp-5:64px;
+
+    /* 6. 서체 */
+    --font-display:'Instrument Serif','Gowun Batang',Georgia,serif;
+    --font-text:'IBM Plex Sans','Gothic A1','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+
+    /* 7. 모션 */
+    --ease:cubic-bezier(.22,.61,.24,1);
+    --dur:.34s;
+
+    /* 8. 형태 */
+    --radius:4px; --control-h:44px; --shadow:none;
+
+    /* ===== 별칭 (기존 코드 호환) ===== */
+    --color-bg-main:var(--wall); --color-bg-card:var(--paper-1); --color-bg-input:var(--paper-2);
+    --color-text-main:var(--charcoal); --color-text-muted:var(--muted); --color-border:#E4E1D9;
+    --color-accent:var(--sage); --color-accent-light:var(--sage-soft);
+    --paper:var(--wall); --surface:var(--paper-1);
+    --teal:var(--sage); --teal-soft:var(--sage-soft); --teal-ink:var(--sage-ink);
+    --seal:var(--sage); --seal-soft:var(--sage-soft); --shutter:var(--sage-ink); --focus:var(--sage);
   }
   a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
   *{box-sizing:border-box;}html,body{margin:0;padding:0;}
-  body{background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans","Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-text);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
   .wrap{width:min(92vw,1180px);margin:0 auto;padding:24px 0 96px;}
   @media(min-width:1440px){.wrap{max-width:1280px;}}
   @media(max-width:768px){.wrap{width:100%;padding:20px 22px 90px;}}
@@ -47,7 +92,7 @@
   #m-auto,#m-gozi,#m-shingo,#m-faq{padding-top:44px;}
   header.head{border-bottom:1px solid var(--line);padding:40px 0 24px;margin-bottom:56px;position:relative;}
   .kicker{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;color:var(--muted);margin-bottom:20px;text-transform:uppercase;}
-  header.head h1{font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:clamp(27px,3.4vw,34px);font-weight:400;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
+  header.head h1{font-family:var(--font-display);font-size:clamp(27px,3.4vw,34px);font-weight:400;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
   .hero-sub{margin:24px 0 0;color:var(--muted);font-size:14px;line-height:1.8;letter-spacing:.04em;max-width:520px;}
   .site-footer{margin-top:120px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;}
   .site-footer .fl{font-size:14px;font-weight:500;color:var(--sub);letter-spacing:-.01em;}
@@ -60,12 +105,12 @@
   .tab:hover{color:var(--sub);}
   .tab[aria-selected="true"]{color:var(--ink);border-bottom:1.5px solid var(--teal);font-weight:600;}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:64px;}
-  .card h2{font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:17px;font-weight:400;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
+  .card h2{font-family:var(--font-display);font-size:17px;font-weight:400;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
-  input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;height:44px;font-family:inherit;font-size:16px;color:var(--ink);background:#FDFCFA;border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;padding:0 10px;transition:border-color .25s ease,background .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
+  input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;height:44px;font-family:inherit;font-size:16px;color:var(--ink);background:var(--paper-2);border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;padding:0 10px;transition:border-color .25s ease,background .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
   .money-wrap{max-width:340px;}
   .money-wrap input{text-align:right;font-weight:600;}
-  select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:#FDFCFA;border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;height:44px;padding:0 30px 0 10px;color:var(--ink);font-weight:500;cursor:pointer;
+  select{appearance:none;-webkit-appearance:none;-moz-appearance:none;background:var(--paper-2);border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;height:44px;padding:0 30px 0 10px;color:var(--ink);font-weight:500;cursor:pointer;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
     background-position:calc(100% - 8px) center,calc(100% - 3px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
   select:focus{outline:none;border-bottom:1.5px solid var(--ink);}
@@ -75,7 +120,7 @@
   input[type=date]{color-scheme:dark;}
   input[type=number]{-moz-appearance:textfield;}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-  input:focus,select:focus{outline:none;border-bottom-color:var(--teal);background:#FFFFFF;}
+  input:focus,select:focus{outline:none;border-bottom-color:var(--teal);background:var(--paper-3);}
   .money-wrap{position:relative;}.money-wrap .won{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none;font-weight:400;}
   .money-wrap input{padding-right:32px;}
   .field{margin-bottom:26px;}
@@ -86,11 +131,11 @@
   .hint{font-size:13px;font-weight:400;color:var(--muted);opacity:.75;margin-top:8px;line-height:1.65;letter-spacing:0;}
     .row{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-bottom:0;}
   .row .rk{flex:none;max-width:58%;}
-  .row .lead{flex:1 1 auto;border-bottom:1px dotted rgba(53,53,51,.30);transform:translateY(-3px);min-width:14px;}
+  .row .lead{flex:1 1 auto;border-bottom:1px dotted var(--dotted);transform:translateY(-3px);min-width:14px;}
   .row .rv{flex:none;margin-left:auto;}
   .row:first-of-type{padding-top:0;}
   .row .rk{font-size:12.5px;color:var(--muted);letter-spacing:.02em;}.row .rk small{display:block;color:var(--muted);opacity:.62;font-size:10.5px;margin-top:3px;letter-spacing:0;}
-  .row .rv{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:400;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+  .row .rv{font-family:var(--font-mono);font-size:14px;font-weight:400;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
   .row.sub .rk,.row.sub .rv{color:var(--muted);font-weight:500;}
   .docs{margin-top:24px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:16px 0;}
   .docs h4{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--ink);}
@@ -135,7 +180,7 @@
   .gwarn li b{color:var(--ink);}
   .gwarn li:before{content:"·";position:absolute;left:5px;color:var(--muted);font-weight:800;}
   .receipt-head{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px;}
-  #palette{position:fixed;inset:0;background:rgba(17,17,17,.32);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:80px 16px;backdrop-filter:blur(2px);}
+  #palette{position:fixed;inset:0;background:var(--scrim);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:80px 16px;backdrop-filter:blur(2px);}
   #palette.open{display:flex;}
   .pal-box{background:var(--paper);width:100%;max-width:540px;border:1px solid var(--line-strong);border-radius:8px;box-shadow:0 16px 48px rgba(17,17,17,.16);overflow:hidden;display:flex;flex-direction:column;max-height:80vh;}
   .pal-top{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line);}
@@ -152,19 +197,19 @@
   .grp-h{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-strong);padding-top:16px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin:72px 0 32px;}
   .grp-h .en{font-size:10.5px;font-weight:500;letter-spacing:.12em;color:var(--muted);}
   .grp-h:first-of-type{margin-top:4px;}
-  #sticky-total{position:fixed;left:0;right:0;bottom:0;background:var(--teal);color:#F8F5EF;padding:14px 20px;display:none;z-index:60;cursor:pointer;}
+  #sticky-total{position:fixed;left:0;right:0;bottom:0;background:var(--teal);color:var(--paper-2);padding:14px 20px;display:none;z-index:60;cursor:pointer;}
   #sticky-total .st-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
   #sticky-total .st-l{font-size:12px;font-weight:500;opacity:.8;}
   #sticky-total .st-v{font-size:19px;font-weight:700;}
   @media (min-width:761px){ #sticky-total{display:none !important;} }
     .total{margin-top:30px;padding:22px 0 24px;border:0;border-top:3px double var(--ink);border-bottom:3px double var(--ink);border-radius:0;background:transparent;display:block;}
   .total .tk{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
-  .total .tv{display:block;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:clamp(40px,9.6vw,56px);font-weight:400;color:var(--ink);letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
+  .total .tv{display:block;font-family:var(--font-display);font-size:clamp(40px,9.6vw,56px);font-weight:400;color:var(--ink);letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
     .empty{color:var(--muted);font-size:12.5px;text-align:center;padding:64px 16px 60px;letter-spacing:.02em;line-height:1.9;position:relative;}
   .empty::before{content:"";display:block;width:34px;height:1px;background:var(--line-strong);margin:0 auto 22px;}
   .empty::after{content:"";display:block;width:34px;height:1px;background:var(--line-strong);margin:22px auto 0;}
-  .empty b{display:block;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:14.5px;font-weight:400;color:var(--sub);margin-bottom:6px;letter-spacing:0;}
+  .empty b{display:block;font-family:var(--font-display);font-size:14.5px;font-weight:400;color:var(--sub);margin-bottom:6px;letter-spacing:0;}
   .empty::before{content:"";display:block;width:28px;height:1px;background:var(--line-strong);margin:0 auto 18px;}
   .empty::after{content:"산출 내역이 여기에 표시됩니다";display:block;margin-top:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:.55;}
   .warn{margin-top:14px;font-size:12px;color:var(--sub);background:transparent;border:1px solid var(--line);border-left:2px solid var(--seal);border-radius:6px;padding:11px 13px;line-height:1.6;}
@@ -174,7 +219,7 @@
   .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:0;align-items:start;
     }
   .grid2>.card:nth-child(1){padding-right:56px;}
-  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding:30px 34px 36px;margin-left:32px;background:#FAF9F6;border:0;border-top:1px solid var(--ink);box-shadow:none;position:relative;padding-bottom:44px;}
+  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding:30px 34px 36px;margin-left:32px;background:var(--paper-1);border:0;border-top:1px solid var(--ink);box-shadow:none;position:relative;padding-bottom:44px;}
   .grid2>.card:nth-child(2)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
     background:radial-gradient(circle at 5px -2px, transparent 5px, var(--paper) 5.5px);
     background-size:10px 10px;background-repeat:repeat-x;}
@@ -182,7 +227,7 @@
   .btn{appearance:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);letter-spacing:.04em;padding:9px 16px;border-radius:2px;transition:.2s;}
   .btn:hover{color:var(--ink);border-color:var(--ink);}
   .btn.sm{font-size:11.5px;padding:7px 13px;}
-  .btn.primary{background:var(--teal);color:#F8F5EF;border:0;border-radius:6px;padding:11px 18px;font-weight:700;}.btn.primary:hover{opacity:.9;}
+  .btn.primary{background:var(--teal);color:var(--paper-2);border:0;border-radius:6px;padding:11px 18px;font-weight:700;}.btn.primary:hover{opacity:.9;}
   .actions{display:flex;gap:20px;margin:6px 0 28px;}
   .basis{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:22px 0 0;box-shadow:none;}
   .basis h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
@@ -199,10 +244,10 @@
   #landing{padding:0 0 60px;}
   .lp-hero{min-height:52vh;display:flex;flex-direction:column;justify-content:flex-end;padding:80px 0 56px;}
   .lp-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:44px;}
-  .lp-meta{text-align:right;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:15px;color:var(--muted);line-height:1.5;}
+  .lp-meta{text-align:right;font-family:var(--font-display);font-size:15px;color:var(--muted);line-height:1.5;}
   .lp-meta span{font-family:inherit;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.75;}
   .lp-kicker{font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
-  .lp-title{font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:clamp(42px,7vw,74px);font-weight:400;letter-spacing:-.015em;line-height:1.14;margin:0;color:var(--ink);}
+  .lp-title{font-family:var(--font-display);font-size:clamp(42px,7vw,74px);font-weight:400;letter-spacing:-.015em;line-height:1.14;margin:0;color:var(--ink);}
   .lp-sub{margin:28px 0 0;font-size:13px;letter-spacing:.06em;color:var(--muted);line-height:1.9;text-transform:uppercase;}
   .lp-sub span{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px;}
   .lp-list{border-top:1px solid var(--line-strong);margin-top:8px;}
@@ -213,7 +258,7 @@
   .lp-item:hover{padding-left:12px;}
   .lp-item:hover .lp-arrow{opacity:1;transform:translateX(4px);}
   .lp-item:hover .lp-ko{color:var(--teal);}
-  .lp-ko{grid-column:1;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:.22s;}
+  .lp-ko{grid-column:1;font-family:var(--font-display);font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:.22s;}
   .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
   .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:.5;transition:.22s;}
   .lp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:56px;font-size:11.5px;color:var(--muted);flex-wrap:wrap;}
@@ -223,7 +268,7 @@
   .hidden{display:none !important;}
   /* ===== 세목 헤더 (법전 표제) ===== */
   .tax-head{margin:0 0 56px;padding-bottom:24px;border-bottom:1px solid var(--line-strong);}
-  .tax-head .th-ko{font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:clamp(26px,3.2vw,34px);font-weight:400;
+  .tax-head .th-ko{font-family:var(--font-display);font-size:clamp(26px,3.2vw,34px);font-weight:400;
     letter-spacing:-.02em;color:var(--ink);line-height:1.15;display:block;}
   .tax-head .th-en{display:block;margin-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
   .tax-head .th-basis{display:block;margin-top:14px;font-size:12.5px;color:var(--muted);opacity:.8;line-height:1.7;}
@@ -258,24 +303,24 @@
   }
 
   /* ===== 종이 질감 (엔틱 법전 컨셉) ===== */
-  body{background-image:linear-gradient(180deg,#F7F5F2 0%,#F4F2ED 55%,#F0EDE6 100%);background-attachment:fixed;}
+  body{background-image:linear-gradient(180deg,var(--wall-top) 0%,var(--wall) 55%,var(--wall-bottom) 100%);background-attachment:fixed;}
   /* 진짜 필름 그레인 (SVG fractal noise) */
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
     background-size:200px 200px;opacity:.055;mix-blend-mode:multiply;}
   /* 종이 결(가로 섬유) — 아주 미세하게 */
   body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background-image:repeating-linear-gradient(0deg, rgba(53,53,51,.014) 0px, rgba(53,53,51,.014) 1px, transparent 1px, transparent 3px);
+    background-image:repeating-linear-gradient(0deg, var(--fiber) 0px, var(--fiber) 1px, transparent 1px, transparent 3px);
     opacity:.6;}
   .wrap{position:relative;z-index:1;}
 
   /* ===== 법령 각주 (법전 컨셉) ===== */
   .basis{position:relative;}
-  .basis h3{font-family:'Instrument Serif','Gowun Batang',Georgia,serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  .basis h3{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
     border-top:1px solid var(--line-strong);padding-top:16px;margin:0 0 16px;}
   .basis ul{list-style:none;padding:0;margin:0;counter-reset:fn;}
-  .basis ul li{counter-increment:fn;position:relative;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;padding:9px 0 9px 26px;font-size:12.5px;line-height:1.85;
-    color:var(--muted);border-bottom:1px solid rgba(53,53,51,.09);}
+  .basis ul li{counter-increment:fn;position:relative;font-family:var(--font-display);padding:9px 0 9px 26px;font-size:12.5px;line-height:1.85;
+    color:var(--muted);border-bottom:1px solid var(--hair-soft);}
   .basis ul li::before{content:counter(fn);position:absolute;left:0;top:9px;font-size:10px;color:var(--shutter);
     font-variant-numeric:tabular-nums;letter-spacing:0;}
   .basis ul li b{color:var(--sub);font-weight:600;}
@@ -287,12 +332,12 @@
   @media(max-width:680px){ .lp-mark{height:16px;} }
 
   /* ===== 입력 순서 안내 (스테퍼) ===== */
-  .steps{margin:0 0 22px;padding:0 0 18px;border-bottom:1px dotted rgba(53,53,51,.26);}
+  .steps{margin:0 0 22px;padding:0 0 18px;border-bottom:1px dotted var(--dotted);}
   .steps .st-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .steps ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;}
   .steps li{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;
     font-variant-numeric:tabular-nums;transition:color .2s ease;}
-  .steps li .mk{font-family:'IBM Plex Mono',monospace;font-size:10.5px;width:15px;text-align:center;color:var(--muted);}
+  .steps li .mk{font-family:var(--font-mono);font-size:10.5px;width:15px;text-align:center;color:var(--muted);}
   .steps li.done{color:var(--sub);}
   .steps li.done .mk{color:var(--teal-ink);}
   .steps li.todo{color:var(--seal);font-weight:500;}
@@ -387,7 +432,7 @@
       </a>
     </nav>
     <div class="lp-foot">
-      <span>확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스</a>에서 확인하세요.</span>
+      <span>확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스</a>에서 확인할 수 있습니다.</span>
       <button class="btn sm" onclick="openPalette()">Search <span style="color:var(--muted)">⌘K</span></button>
     </div>
   </div>
@@ -490,14 +535,14 @@
             <button data-v="ex" aria-pressed="true" onclick="pick('c-vat','ex',cCalc)">부가세 별도(공급가액)</button>
             <button data-v="in" aria-pressed="false" onclick="pick('c-vat','in',cCalc)">부가세 포함가</button>
           </div>
-          <div class="hint">과세표준은 <b>부가가치세를 뺀 공급가액</b>입니다. 계약서·견적서 금액이 부가세 포함가라면 <b>“부가세 포함가”</b>를 선택하세요(자동으로 1.1로 나눠 계산). 제작증(수입은 수입신고필증) 기준.</div>
+          <div class="hint">과세표준은 <b>부가가치세를 뺀 공급가액</b>입니다. 계약서·견적서 금액이 부가세 포함가라면 <b>“부가세 포함가”</b>를 선택하면 됩니다(자동으로 1.1로 나눠 계산). 제작증(수입은 수입신고필증) 기준.</div>
         </div>
 
         <!-- 이전/무상: 시가표준액 (+이전은 신고가액) -->
         <div class="field hidden" id="c-report-box">
           <label class="lbl">신고가액 (실거래가)</label>
           <div class="money-wrap"><input type="text" id="c-report" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
-          <div class="hint">실제 매매금액을 입력하세요. 비우거나 시가표준액보다 낮으면 <b>시가표준액</b>이 과세표준이 됩니다.</div>
+          <div class="hint">실제 매매금액을 기준으로 합니다. 비우거나 시가표준액보다 낮으면 <b>시가표준액</b>이 과세표준이 됩니다.</div>
         </div>
         <div class="field hidden" id="c-siga-box">
           <label class="lbl">시가표준액 <span class="tip" tabindex="0" data-tip="차량의 과세 기준가격. 아래 '차명으로 찾기'로 조회하거나 위택스에서 확인할 수 있습니다. 신고가액(실거래가)이 이보다 높으면 신고가액이 과세표준이 됩니다.">?</span></label>
@@ -510,7 +555,7 @@
         <div class="field">
           <label class="lbl">취득 지분율 (%)</label>
           <div class="money-wrap"><input type="number" id="c-share" inputmode="decimal" min="0" max="100" step="0.01" value="100" style="text-align:right;font-weight:600" oninput="cCalc()"><span class="won">%</span></div>
-          <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 입력하세요(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.<br>※ 개인택시·지입 화물처럼 <b>공동명의자 간 용도(영업/비영업)가 다르면</b> 지분별로 세율(7% vs 4%)을 나눠 개별 산정해야 합니다.</div>
+          <div class="hint">지분 이전이면 <b>취득한 지분율</b>을 기준으로 합니다(예: 부부 각 50). 취득세·감면은 지분만큼의 과세표준으로 계산됩니다. 100%면 전부 취득.<br>※ 개인택시·지입 화물처럼 <b>공동명의자 간 용도(영업/비영업)가 다르면</b> 지분별로 세율(7% vs 4%)을 나눠 개별 산정해야 합니다.</div>
         </div>
 
         <!-- 차명 검색 영역 -->
@@ -632,7 +677,7 @@
 
       <div class="card">
         <h2>세액 산출 내역</h2>
-        <div id="c-result"><div class="empty">차종·용도·과세표준을 입력하세요.</div></div>
+        <div id="c-result"><div class="empty"><b>세액 산출 대기</b>차종·용도·과세표준을 입력하면<br>산출 내역이 표시됩니다.</div></div>
       </div>
     </div>
     </div><!-- /target-car -->
@@ -698,7 +743,7 @@
           <div id="mc-gamyeon-info"></div>
         </div>
       </div>
-      <div class="card"><h2>세액 산출 내역</h2><div id="mc-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="mc-result"><div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
     </div><!-- /target-machine -->
 
@@ -771,7 +816,7 @@
           <div id="mt-gamyeon-info"></div>
         </div>
       </div>
-      <div class="card"><h2>세액 산출 내역</h2><div id="mt-result"><div class="empty">취득가액(과세표준)을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="mt-result"><div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
     </div><!-- /target-moto -->
   </div>
@@ -979,7 +1024,7 @@
         <li><b>감면</b> — 장애인(§17)·국가유공자 상이1~7급(§29④)은 <b>전액면제</b>, 보훈보상대상자는 <b>50% 경감</b>. 대상: 2,000cc 이하 또는 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜 중 <b>1대</b>. 등록 1년 내 이전·세대분리 시 추징(§17 일몰 2027.12.31).</li>
         <li><b>차령 반영(연식)</b> — 비영업 승용은 차령 3년째부터 세액이 매년 5%씩 자동 차감(최대 50%, 12년 상한). <b>감면과 달리 신청·요건이 없고 자동 적용</b>됩니다. 각 기분세액 = A/2 − (A/2×5%)(n−2) (§127①2). <b>일할계산</b> = 연세액 × 보유일수 ÷ 총일수(§128⑤·령§126). <b>연납 공제(2026)</b> 1월 4.58 / 3월 3.76 / 6월 2.51 / 9월 1.25%.</li>
       </ul>
-      <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회하세요.</div>
+      <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회할 수 있습니다.</div>
     </div>
   </div>
 
@@ -995,7 +1040,7 @@
     </div></div>
     <div class="card"><h3 style="font-size:13px;font-weight:600;color:var(--sub);margin:0 0 18px;letter-spacing:.02em;">체납 건 입력</h3><div id="rows"></div>
       <button class="btn" style="width:100%;border-style:dashed;color:var(--teal)" onclick="addRow()">＋ 체납 건 추가</button></div>
-    <div class="card"><h2>합계</h2><div id="grand-body"><div class="empty">납부 예정일와 체납 건을 입력하세요.</div></div></div>
+    <div class="card"><h2>합계</h2><div id="grand-body"><div class="empty"><b>가산세 산출 대기</b>납부 예정일과 체납 건을 입력하면<br>가산세가 표시됩니다.</div></div></div>
   </div>
 
   <!-- ============ 신고납부분 ============ -->
@@ -1016,17 +1061,17 @@
         <div class="field"><label class="lbl">법정납부기한</label><input type="date" id="s-due" oninput="calcShingo()"></div>
         <div class="field"><label class="lbl">자진납부일(또는 납세고지일)</label><input type="date" id="s-pay" oninput="calcShingo()"></div>
       </div>
-      <div class="card"><h2>세액 산출 내역</h2><div id="s-result"><div class="empty">본세·납부기한·납부일을 입력하세요.</div></div></div>
+      <div class="card"><h2>세액 산출 내역</h2><div id="s-result"><div class="empty"><b>가산세 산출 대기</b>본세·납부기한·납부일을 입력하면<br>가산세가 표시됩니다.</div></div></div>
     </div>
   </div>
 
   <!-- ============ 지방세 안내 (FAQ) ============ -->
   <div id="m-faq" class="hidden">
     <div class="card faq">
-      <div class="note">아래는 일반적인 지방세 안내입니다(참고용). 납기·감면·분납 요건 등 세부 사항과 확정 금액은 <b>위택스(wetax.go.kr)</b> 또는 <b>관할 시·군·구청</b>에서 확인하세요.</div>
+      <div class="note">아래는 일반적인 지방세 안내입니다(참고용). 납기·감면·분납 요건 등 세부 사항과 확정 금액은 <b>위택스(wetax.go.kr)</b> 또는 <b>관할 시·군·구청</b>에서 확인할 수 있습니다.</div>
 
       <div class="cat">취득세</div>
-      <details><summary>상속받은 차·부동산의 취득세 신고기한은 언제까지인가요?</summary><div class="a">상속으로 부동산·자동차를 취득하면 <b>취득세 신고·납부</b> 의무가 생깁니다. 신고기한은 일반 취득(60일)과 달라, <b>상속개시일(사망일)이 속한 달의 말일부터 6개월 이내</b>입니다(국외 거주 상속인이 있으면 9개월). 이 기한을 일반 60일로 착각해 넘기면 가산세가 부과되니 주의하세요. 재산세·자동차세 등 기존 지방세는 상속인이 승계합니다.</div></details>
+      <details><summary>상속받은 차·부동산의 취득세 신고기한은 언제까지인가요?</summary><div class="a">상속으로 부동산·자동차를 취득하면 <b>취득세 신고·납부</b> 의무가 생깁니다. 신고기한은 일반 취득(60일)과 달라, <b>상속개시일(사망일)이 속한 달의 말일부터 6개월 이내</b>입니다(국외 거주 상속인이 있으면 9개월). 이 기한을 일반 60일로 착각해 넘기면 가산세가 부과됩니다. 재산세·자동차세 등 기존 지방세는 상속인이 승계합니다.</div></details>
       <details><summary>자동차·기계장비·이륜차 취득세는 어떻게 계산하나요?</summary><div class="a"><button class="lnk" onclick="sw('chwi')" style="margin:0;font-size:12.5px">[취득세] 탭에서 직접 모의계산 →</button> 해보세요. 과세표준·세율·감면·면세점·가산세까지 한 번에 계산됩니다. 확정 세액은 위택스 신고 시 확인됩니다.</div></details>
       <details><summary>취득세 감면 대상이 있나요?</summary><div class="a">지방세특례제한법에 따라 장애인·국가유공자·다자녀·경형·전기·수소차 등 다양한 감면이 있습니다. 대상·한도·기간이 항목마다 다르고 신청이 필요하니, 자동차 취득세 감면은 [취득세] 탭의 <b>감면 대상 확인</b>에서 자가진단해볼 수 있습니다.</div></details>
 
@@ -1036,9 +1081,9 @@
       <details><summary>5월에 집을 팔았는데 재산세가 부과되었습니다.</summary><div class="a">재산세는 <b>6월 1일 기준 소유자</b>에게 1년치가 부과됩니다. 6월 1일 이전에 잔금·등기를 마쳐 소유권이 넘어갔다면 <b>매수인</b>이, 6월 1일에 아직 소유자였다면 매도인이 납부합니다. 하루 차이로 납세의무자가 갈리니 매매 계약 시 확인이 필요합니다.</div></details>
 
       <div class="cat">자동차세</div>
-      <details><summary>자동차세(정기분)는 언제 내나요?</summary><div class="a">보유에 대한 자동차세는 <b>6월(1기)과 12월(2기)</b> 두 번 부과됩니다. 연초에 1년치를 미리 내는 <b>연납</b>을 신청하면 일정액을 공제받는데, 공제율은 해마다 조정되니 위택스에서 확인하세요.</div></details>
-      <details><summary>차를 팔거나 폐차했는데 자동차세가 부과되었습니다.</summary><div class="a">자동차세는 <b>소유한 기간만큼 일할계산</b>됩니다. 매도·폐차·이전등록이 되면 그 시점까지만 부과되는데, 등록 처리 시점이나 정기분 부과 시기와 겹쳐 나올 수 있습니다. 실제 소유기간과 다르면 관할 지자체에 확인·정정을 요청하세요.</div></details>
-      <details><summary>연납으로 1년치를 냈는데 차를 팔면 어떻게 되나요?</summary><div class="a">연납(연세액 선납) 후 매도·폐차·이전하면, <b>소유하지 않은 남은 기간만큼 일할계산하여 환급</b>됩니다. 별도 신청 없이 등록 정보를 기준으로 환급 처리되며, 미리 등록해 둔 계좌나 안내에 따라 환급받습니다. 환급이 지연되거나 계좌 정보가 없으면 관할 지자체에 문의하세요.</div></details>
+      <details><summary>자동차세(정기분)는 언제 내나요?</summary><div class="a">보유에 대한 자동차세는 <b>6월(1기)과 12월(2기)</b> 두 번 부과됩니다. 연초에 1년치를 미리 내는 <b>연납</b>을 신청하면 일정액을 공제받는데, 공제율은 해마다 조정되니 위택스에서 확인할 수 있습니다.</div></details>
+      <details><summary>차를 팔거나 폐차했는데 자동차세가 부과되었습니다.</summary><div class="a">자동차세는 <b>소유한 기간만큼 일할계산</b>됩니다. 매도·폐차·이전등록이 되면 그 시점까지만 부과되는데, 등록 처리 시점이나 정기분 부과 시기와 겹쳐 나올 수 있습니다. 실제 소유기간과 다르면 관할 지자체에 확인·정정을 요청할 수 있습니다.</div></details>
+      <details><summary>연납으로 1년치를 냈는데 차를 팔면 어떻게 되나요?</summary><div class="a">연납(연세액 선납) 후 매도·폐차·이전하면, <b>소유하지 않은 남은 기간만큼 일할계산하여 환급</b>됩니다. 별도 신청 없이 등록 정보를 기준으로 환급 처리되며, 미리 등록해 둔 계좌나 안내에 따라 환급받습니다. 환급이 지연되거나 계좌 정보가 없으면 관할 지자체에 문의할 수 있습니다.</div></details>
       <details><summary>이사하면 자동차세는 어디에 내나요?</summary><div class="a">자동차세는 <b>자동차등록원부상 주소지</b> 기준으로 과세됩니다. 이사하면 다음 부과분부터 새 주소지 지자체로 넘어갑니다.</div></details>
 
       <div class="cat">주민세</div>
@@ -1068,20 +1113,20 @@
       <li id="basis-chwi"><b>자동차 취득세</b> — 과세표준(신규: 공급가액 / 이전: 신고가액과 시가표준액 중 큰 값 / 무상: 시가표준액) × 세율. 비영업 승용 7%·경차 4%, 승합·화물 비영업 5%·경차 4%, 영업 4%(지방세법 §12). 자동차 취득분은 <b>지방교육세·농어촌특별세가 붙지 않아 0원</b>이며, 취득세만 납부합니다. 시가표준액 = 기준가격 × 경과연수별 잔가율(2026년 표).</li>
       <li><b>가산세</b> — 신고기한(취득일부터 60일) 경과 시 무신고 20% + 납부지연가산세(1일 0.022%). "신고납부분" 탭에서 산출.</li>
     </ul>
-    <div class="disc">※ 실무 참고용 개산입니다. 감면(지특법 §17·§29·§22의2·§66·§67)은 요건·한도·최소납부세제·추징 조건이 있어, 요건 충족 여부는 선택값에 따라 계산됩니다. 최종 세액·감면액은 위택스 "지방세 미리계산"으로 확정하세요. 시가표준액표는 매년 1월 갱신됩니다.</div>
+    <div class="disc">※ 실무 참고용 개산입니다. 감면(지특법 §17·§29·§22의2·§66·§67)은 요건·한도·최소납부세제·추징 조건이 있어, 요건 충족 여부는 선택값에 따라 계산됩니다. 최종 세액·감면액은 위택스 "지방세 미리계산"에서 확정됩니다. 시가표준액표는 매년 1월 갱신됩니다.</div>
   </div>
 
   <footer class="site-footer">
     <div class="fl">
       <button class="lnk" onclick="goHome()" style="font-size:14px;font-weight:500;margin:0">← 지방세 계산기 · 이동준</button>
-      <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.8;font-family:'Instrument Serif','Gowun Batang',Georgia,serif;">
+      <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.8;font-family:var(--font-display);">
         LEEDONGJOON · 이동준<br>
         <span style="opacity:.8">calm. precise. useful.<br>실무에서 반복되는 계산을 줄이기 위해 만들었습니다.</span>
       </div>
     </div>
     <div class="fr">
       2026 시가표준액 · 지방세법 기준 · 실무 참고용 개산<br>
-      확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스(wetax.go.kr)</a>에서 확인하세요.<br>
+      확정 세액은 <a href="https://www.wetax.go.kr" target="_blank" rel="noopener">위택스(wetax.go.kr)</a>에서 확인할 수 있습니다.<br>
       <span style="opacity:.6;letter-spacing:.1em;">VERSION 2026.07</span>
     </div>
   </footer>
@@ -1243,10 +1288,10 @@ function cCalc(){
       h+='<div class="row" style="padding-top:8px"><div class="rk">등록면허세<small>과표 × '+(lrate*100)+'%'+(minApplied?' → 최저한세 15,000원 적용':'')+'</small></div><div class="rv">'+won(lreg)+' 원</div></div>';
       h+='<div class="row"><div class="rk">지방교육세<small>등록면허세 × 20%</small></div><div class="rv">'+won(ledu)+' 원</div></div>';
       h+='<div class="total" style="margin-top:10px"><span class="tk">등록면허세 합계</span><span class="tv" style="font-size:20px">'+won(lreg+ledu)+'<span class="u">원</span></span></div>';
-      h+='<div class="sub" style="margin-top:6px">※ 취득세가 감면 등으로 0원인 경우(면세점이 아닌 경우)에는 등록면허세가 부과되지 않습니다. 최종 세액은 위택스로 확정하세요.</div></div>';
+      h+='<div class="sub" style="margin-top:6px">※ 취득세가 감면 등으로 0원인 경우(면세점이 아닌 경우)에는 등록면허세가 부과되지 않습니다. 최종 세액은 위택스에서 확정됩니다.</div></div>';
     }
   }
-  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스로 확정하세요.</div>';
+  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도·추징 조건이 있으니 최종 금액은 위택스에서 확정됩니다.</div>';
   var b = share<100 ? null : gongchae(base);
   if(share<100 && document.getElementById('c-region').value!=='none'){
     h+='<div class="docs"><div class="sub">지분 이전(취득 지분 '+share+'%)에서는 채권 매입 계산을 제외했습니다.</div></div>';
@@ -1289,7 +1334,7 @@ function cCalc(){
       h+='<div class="row"><div class="rk">납부지연가산세<small>'+days+'일 × 0.022%</small></div><div class="rv">'+won(lp)+' 원</div></div>';
       h+='<div class="total" style="margin-top:8px"><span class="tk">가산세 포함 총 납부액</span><span class="tv" style="color:var(--seal)">'+won(grand)+'<span class="u">원</span></span></div>';
       if(capped)h+='<div class="sub">납부지연가산세가 본세 75% 한도로 조정되었습니다.</div>';
-      h+='<div class="sub">※ 무신고(20%) 기준입니다. 과소·부정신고 등 다른 유형은 "신고납부분 가산세" 탭에서 계산하세요.</div></div>';
+      h+='<div class="sub">※ 무신고(20%) 기준입니다. 과소·부정신고 등 다른 유형은 "신고납부분 가산세" 탭에서 계산합니다.</div></div>';
       window._GRANDTOT=grand;
     } else {
       var msg = '신고·납부 기한: <b>'+dstr+'</b>까지 (D-'+dleft+'). 오늘 신고·납부하면 가산세가 없습니다.';
@@ -1322,7 +1367,7 @@ function shareResult(){
 /* 감면 요건 안내문 */
 var GAMYEON_REQ={
   none:'',
-  disabled:'중증(1~3급)·시각 4급 등 장애인이 보철·생업용으로 취득하는 1대. 대상 차량: 2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜. 본인 또는 세대 공동명의. 요건 충족 시 취득세 전액면제(최소납부 배제)이며 공채 매입도 면제됩니다. 대상 장애등급은 지역 조례마다 다를 수 있으니 확인하세요. 등록 후 1년 내 부득이한 사유 없이 이전 시 추징. (2027.12.31.까지)',
+  disabled:'중증(1~3급)·시각 4급 등 장애인이 보철·생업용으로 취득하는 1대. 대상 차량: 2,000cc 이하 승용 / 7~10인승 승용 / 15인승 이하 승합 / 1톤 이하 화물 / 이륜. 본인 또는 세대 공동명의. 요건 충족 시 취득세 전액면제(최소납부 배제)이며 공채 매입도 면제됩니다. 대상 장애등급은 지역 조례마다 다를 수 있습니다. 등록 후 1년 내 부득이한 사유 없이 이전 시 추징. (2027.12.31.까지)',
   veteran:'국가유공자(상이 1~7급) 등이 취득하는 1대. 대상 차량 범위는 장애인용과 동일. 요건 충족 시 취득세 전액면제이며 공채 매입도 면제됩니다. 대상 등급 기준은 지역 조례 확인. (2027.12.31.까지)',
   multi3:'18세 미만 자녀 3명 이상 양육자가 양육 목적으로 취득하는 1대. 6인 이하 승용은 140만원 한도, 7인승 이상·승합·화물은 200만원 이하 면제·초과 시 15% 납부. 공동명의로 취득하는 경우 세대를 같이하는 가족(배우자·자녀 등)과의 공동명의여야 감면됩니다(가족이 아닌 제3자 공동명의는 감면 불가). 지분 이전이어도 한도(140/200만원)는 전액 적용. (2027.12.31.까지)',
   multi2:'18세 미만 자녀 2명 양육자가 취득하는 1대. 취득세 50% 경감(6인 이하 승용은 70만원 한도). 공동명의는 세대를 같이하는 가족과의 공동명의여야 감면됩니다. (2027.12.31.까지)',
@@ -1340,18 +1385,18 @@ function onGamyeon(){
   document.getElementById('c-prevtax-box').classList.toggle('hidden', v!=='exchange');
   document.getElementById('c-prevval-box').classList.toggle('hidden', v!=='disaster');
   var chk=GAMYEON_CHECK[v], el=document.getElementById('c-gamyeon-check');
-  var html = chk ? '<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
+  var html = chk ? '<div class="checklist"><div class="ct">신고 전 확인사항</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>' : '';
   var warn=GAMYEON_WARN[v];
   if(warn) html += '<div class="gwarn"><div class="ct">⚠ 주의사항</div><ul>'+warn.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
   el.innerHTML=html;
 }
 var GAMYEON_WARN={
-  disabled:['<b>1세대 1대</b>만 감면됩니다. 세대원이 이미 감면받은 차가 있으면 중복 불가.','장애인 본인이 <b>직접 사용</b>해야 하며, 공동명의자는 주민등록상 <b>같은 세대의 가족</b>이어야 합니다.','감면 후 <b>1년 이내</b>에 사망·혼인·해외이주 등 정당한 사유 없이 소유권을 이전하거나 세대를 분가하면 <b>감면세액이 추징</b>됩니다.','장애 정도(등급) 기준은 지자체 조례마다 다를 수 있으니 확인하세요.'],
-  veteran:['1세대 1대 한정, 공동명의는 같은 세대 가족만.','감면 후 1년 내 정당한 사유 없는 소유권 이전·세대분가 시 추징.','대상 등급(상이등급) 기준을 확인하세요.'],
+  disabled:['<b>1세대 1대</b>만 감면됩니다. 세대원이 이미 감면받은 차가 있으면 중복 불가.','장애인 본인이 <b>직접 사용</b>해야 하며, 공동명의자는 주민등록상 <b>같은 세대의 가족</b>이어야 합니다.','감면 후 <b>1년 이내</b>에 사망·혼인·해외이주 등 정당한 사유 없이 소유권을 이전하거나 세대를 분가하면 <b>감면세액이 추징</b>됩니다.','장애 정도(등급) 기준은 지자체 조례마다 다를 수 있습니다.'],
+  veteran:['1세대 1대 한정, 공동명의는 같은 세대 가족만.','감면 후 1년 내 정당한 사유 없는 소유권 이전·세대분가 시 추징.','대상 등급(상이등급) 기준은 관할 지자체에서 확인할 수 있습니다.'],
   multi3:['공동명의 시 <b>가족이 아닌 제3자</b>와 공동명의면 감면 불가.','이미 다자녀 감면으로 등록한 차가 있으면 <b>추가 감면 불가</b>(양육 목적 1대 한정).','자녀가 <b>18세 이상</b>이 되어 요건을 벗어난 뒤 취득하면 대상 아님.','감면 후 1년 내 정당한 사유 없이 소유권 이전 시 추징될 수 있습니다.'],
   multi2:['가족이 아닌 제3자와 공동명의면 감면 불가.','양육 목적 1대 한정, 자녀 연령(18세 미만) 요건 확인.','감면 후 1년 내 소유권 이전 시 추징 주의.'],
   light:['경형 요건(배기량·규격)을 벗어나면 감면 대상 아닙니다.','감면 한도(75만원)를 넘는 고가 경차는 초과분이 과세됩니다.'],
-  ev:['감면 <b>일몰기한(2026.12.31.)</b>에 유의하세요. 취득 시점 기준입니다.','감면 한도(140만원)를 초과하면 초과분은 과세됩니다.','환경친화적 자동차 요건(자동차등록증·인증) 확인.'],
+  ev:['감면 <b>일몰기한(2026.12.31.)</b>이 적용됩니다. 취득 시점 기준입니다.','감면 한도(140만원)를 초과하면 초과분은 과세됩니다.','환경친화적 자동차 요건(자동차등록증·인증) 확인.'],
   fcev:['감면 일몰기한(2027.12.31.)에 유의.','한도(140만원) 초과분은 과세.'],
   exchange:['교환 취득 세액이 <b>종전 납부세액을 초과</b>하면 초과분은 과세됩니다(종전 가액이 더 커도 환급 없음).','제작결함이 아닌 단순 변심·중고 교환은 대상이 아닙니다.','추징규정은 없으나 취득 당시 요건 충족 여부는 확인이 필요합니다.'],
   disaster:['<b>전기합선 화재·운행 중 교통사고·정비불량 화재</b> 등 과실 사고는 불가항력이 아니어서 대상이 아닙니다.','멸실·파손일부터 <b>2년</b>이 지나면 대상이 아닙니다.','종전 자동차 가액 초과분은 과세됩니다.']
@@ -1386,7 +1431,7 @@ function selfcheck(){
   if(!rec){ el.innerHTML='<span style="color:var(--muted)">해당하는 감면이 없어 보입니다(일반 취득세).</span>'; return; }
   el.innerHTML='<div style="color:var(--teal);font-weight:700">→ '+label+' 대상일 수 있습니다.</div>'
     +'<button class="btn sm primary" type="button" style="margin-top:6px" onclick="applyRec(\''+rec+'\')">이 감면 적용</button>'
-    +'<div class="hint">가능성 안내일 뿐이며, 실제 감면 여부·요건은 창구에서 확인하세요.</div>';
+    +'<div class="hint">가능성 안내일 뿐이며, 실제 감면 여부·요건은 창구에서 확인할 수 있습니다.</div>';
 }
 function applyRec(v){ document.getElementById('c-gamyeon').value=v; onGamyeon(); cCalc(); }
 function gamyeon(acq, base, rate){
@@ -1469,7 +1514,7 @@ function docsHtml(){
   var v=document.getElementById('c-gamyeon').value;
   var d=GAMYEON_DOCS[v];
   if(!d) return '';
-  var h='<div class="docs"><h4>'+d.title+'</h4><div class="sub">일반 기준입니다. 세부 서류는 관할 시·군·구청/차량등록 기준으로 확인하세요.</div><ul>';
+  var h='<div class="docs"><h4>'+d.title+'</h4><div class="sub">일반 기준입니다. 세부 서류는 관할 시·군·구청/차량등록 기준으로 확인할 수 있습니다.</div><ul>';
   h+=d.items.map(function(x){return '<li>'+x+'</li>';}).join('');
   if(d.minor){ h+='</ul><div class="grp">미성년자인 경우 추가</div><ul>'+d.minor.map(function(x){return '<li>'+x+'</li>';}).join(''); }
   h+='</ul></div>';
@@ -1568,8 +1613,8 @@ function loadVeh(){
   vehLoading=true;
   document.getElementById('search-status').textContent='시가표준액 데이터 불러오는 중…';
   fetch('./vehicle_base.json').then(function(r){return r.json();}).then(function(d){
-    VEH=d; vehLoading=false; document.getElementById('search-status').textContent='총 '+d.length.toLocaleString()+'건 · 차명을 입력하세요.';
-  }).catch(function(){vehLoading=false;document.getElementById('search-status').textContent='데이터를 불러오지 못했습니다. vehicle_base.json 파일을 확인하세요.';});
+    VEH=d; vehLoading=false; document.getElementById('search-status').textContent='총 '+d.length.toLocaleString()+'건 · 차명 검색';
+  }).catch(function(){vehLoading=false;document.getElementById('search-status').textContent='차명 데이터를 불러오지 못했습니다. 새로고침하면 복구됩니다. 취득가액은 직접 입력할 수 있습니다.';});
 }
 var searchTimer=null, selected=null;
 function doSearch(){
@@ -1588,7 +1633,7 @@ function runSearch(){
     if(v.t!==chong) continue;
     if((v.n+v.f+v.m).replace(/\s/g,'').toLowerCase().indexOf(q)>=0){ out.push(v); n++; }
   }
-  document.getElementById('search-status').textContent = out.length? (n>=40?'상위 40건 표시':'검색 결과 '+out.length+'건') : '결과 없음 (차종 선택을 확인하세요)';
+  document.getElementById('search-status').textContent = out.length? (n>=40?'상위 40건 표시':'검색 결과 '+out.length+'건') : '결과 없음 (차종 선택을 확인해 보세요)';
   res.innerHTML = out.map(function(v,i){
     return '<div class="sr-item" onclick="selectVeh('+i+')">'+
       '<span class="sr-price">'+(v.p*1000).toLocaleString()+'원</span>'+
@@ -1668,7 +1713,7 @@ function recalcGozi(){
     res.innerHTML=badge+'<div class="row" style="border:0;padding:6px 0 0"><div class="rk" style="font-size:12px;color:var(--muted)">최초 3% '+won(first)+' + '+(applyM?(isOld?'중가산금':'월가산')+' '+(mr*100).toFixed(2)+'%×'+months+'개월 '+won(monthly):'월가산 미적용(45만/30만 미만)')+'</div><div class="rv">'+won(tax+pen)+' 원</div></div>';
   });
   var b=document.getElementById('grand-body');
-  if(!pay||vc===0){b.innerHTML='<div class="empty">납부 예정일와 체납 건을 입력하세요.</div>';return;}
+  if(!pay||vc===0){b.innerHTML='<div class="empty"><b>가산세 산출 대기</b>납부 예정일과 체납 건을 입력하면<br>가산세가 표시됩니다.</div>';return;}
   b.innerHTML='<div class="row"><div class="rk">본세 합계 ('+vc+'건)</div><div class="rv">'+won(sT)+' 원</div></div>'
     +'<div class="row"><div class="rk">가산세 합계</div><div class="rv">'+won(sP)+' 원</div></div>'
     +'<div class="total"><span class="tk">총 납부할 금액</span><span class="tv">'+won(sT+sP)+'<span class="u">원</span></span></div>';
@@ -1679,7 +1724,7 @@ var sType='no';
 function pickType(v){sType=v;document.querySelectorAll('#s-type button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v);});calcShingo();}
 function calcShingo(){
   var tax=numv('s-tax'),due=dval('s-due'),pay=dval('s-pay'),box=document.getElementById('s-result');
-  if(!tax||!due||!pay){box.innerHTML='<div class="empty">본세·납부기한·납부일을 입력하세요.</div>';return;}
+  if(!tax||!due||!pay){box.innerHTML='<div class="empty"><b>가산세 산출 대기</b>본세·납부기한·납부일을 입력하면<br>가산세가 표시됩니다.</div>';return;}
   if(pay<=due){box.innerHTML='<div class="empty">납부일이 납기 이내입니다.</div>';return;}
   var rr=0,rl='';
   if(sType==='no'){rr=.20;rl='무신고가산세 (20%)';}else if(sType==='under'){rr=.10;rl='과소신고가산세 (10%)';}
@@ -1728,8 +1773,8 @@ function mLoad(){
   if(MACH||machLoading) return; machLoading=true;
   document.getElementById('mc-status').textContent='기계장비 데이터 불러오는 중…';
   fetch('./machine_base.json').then(function(r){return r.json();}).then(function(d){
-    MACH=d; machLoading=false; document.getElementById('mc-status').textContent='총 '+d.length.toLocaleString()+'건 · 기종명을 입력하세요.';
-  }).catch(function(){machLoading=false;document.getElementById('mc-status').textContent='machine_base.json 파일을 확인하세요.';});
+    MACH=d; machLoading=false; document.getElementById('mc-status').textContent='총 '+d.length.toLocaleString()+'건 · 기종명 검색';
+  }).catch(function(){machLoading=false;document.getElementById('mc-status').textContent='기종 데이터를 불러오지 못했습니다. 새로고침하면 복구됩니다. 취득가액은 직접 입력할 수 있습니다.';});
 }
 function mSearch(){ clearTimeout(mTimer); mTimer=setTimeout(mRun,220); }
 function mRun(){
@@ -1818,7 +1863,7 @@ function onGamyeonG(prefix, recalc){
   document.getElementById(prefix+'-prevval-box').classList.toggle('hidden', v!=='disaster');
   var info=document.getElementById(prefix+'-gamyeon-info');
   var html = GAMYEON_REQ[v]?'<div class="hint">'+GAMYEON_REQ[v]+'</div>':'';
-  var chk=GAMYEON_CHECK[v]; if(chk) html+='<div class="checklist"><div class="ct">✔ 신고 전 확인하세요</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+  var chk=GAMYEON_CHECK[v]; if(chk) html+='<div class="checklist"><div class="ct">신고 전 확인사항</div><ul>'+chk.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
   var w=GAMYEON_WARN[v]; if(w) html+='<div class="gwarn"><div class="ct">⚠ 주의사항</div><ul>'+w.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
   info.innerHTML=html;
   if(recalc) recalc();
@@ -1840,7 +1885,7 @@ function mCalc(){
   if(t==='new'){ base=sig; baseLabel='취득가액'; }
   else { base=Math.max(rep,sig); baseLabel=(rep>=sig&&rep>0)?'신고가액(매매금액)':'시가표준액'; }
   var box=document.getElementById('mc-result');
-  if(!base){ box.innerHTML='<div class="empty">취득가액(과세표준)을 입력하세요.</div>'; updateSticky('',null); return; }
+  if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div>'; updateSticky('',null); return; }
   var kind = document.getElementById('mc-unreg').checked ? 'unreg'
            : (isDumpMixer(mSelected && mSelected.k) ? 'dump' : 'other');
   var kn=document.getElementById('mc-kind-auto');
@@ -1880,8 +1925,8 @@ function mCalc(){
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   if(t!=='new') h+='<div class="info">이전등록(중고)은 <b>신고가액(매매금액)과 시가표준액 중 큰 값</b>이 과세표준입니다. 무상(증여·상속)은 시가표준액이 과세표준입니다.</div>';
   h+=ddayPenaltyHtml('mc-acqdate', tot);
-  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 등록면허세가 별도 부과될 수 있으니 위택스로 확정하세요.</div>';
-  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스로 확정하세요.</div>';
+  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 등록면허세가 별도 부과될 수 있으니 위택스에서 확정됩니다.</div>';
+  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스에서 확정됩니다.</div>';
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">저장</button><button type="button" onclick="copyResult()">복사</button><button type="button" onclick="shareResult()">공유</button><button type="button" onclick="window.print()">인쇄</button></div>';
   h+=worklistHtml('machine')+nextCalcHtml('machine');
   box.innerHTML=h;
@@ -1897,8 +1942,8 @@ function mtLoad(){
   if(MOTO||motoLoading) return; motoLoading=true;
   document.getElementById('mt-status').textContent='이륜 데이터 불러오는 중…';
   fetch('./moto_base.json').then(function(r){return r.json();}).then(function(d){
-    MOTO=d; motoLoading=false; document.getElementById('mt-status').textContent='총 '+d.length.toLocaleString()+'건 · 차명을 입력하세요.';
-  }).catch(function(){motoLoading=false;document.getElementById('mt-status').textContent='moto_base.json 파일을 확인하세요.';});
+    MOTO=d; motoLoading=false; document.getElementById('mt-status').textContent='총 '+d.length.toLocaleString()+'건 · 차명 검색';
+  }).catch(function(){motoLoading=false;document.getElementById('mt-status').textContent='이륜 데이터를 불러오지 못했습니다. 새로고침하면 복구됩니다. 취득가액은 직접 입력할 수 있습니다.';});
 }
 function mtSearch(){ clearTimeout(mtTimer); mtTimer=setTimeout(mtRun,220); }
 function mtRun(){
@@ -1945,7 +1990,7 @@ function mtCalc(){
   else if(t==='trans'){ var rep=numv('mt-report'), sig=numv('mt-siga'); base=Math.max(rep,sig); baseLabel=(rep>=sig&&rep>0)?'신고가액(매매금액)':'시가표준액'; }
   else { base=numv('mt-siga'); baseLabel='시가표준액'; }
   var box=document.getElementById('mt-result');
-  if(!base){ box.innerHTML='<div class="empty">취득가액(과세표준)을 입력하세요.</div>'; updateSticky('',null); return; }
+  if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div>'; updateSticky('',null); return; }
   var exempt50 = base<=500000, rate=0.02;
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
   var g=gamyeonG('mt',acq,base,rate); g.acq=acq; var tot=g.pay;
@@ -1958,8 +2003,8 @@ function mtCalc(){
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<span class="u">원</span></span></div>';
   h+=ddayPenaltyHtml('mt-acqdate', tot);
   if(pressed('mt-type')==='trans') h+='<div class="info">중고 이전은 <b>신고가액(매매금액)과 시가표준액 중 큰 값</b>이 과세표준입니다.</div>';
-  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 이 경우 등록면허세가 있을 수 있으니(이륜 기준 별도 확인) 위택스로 확정하세요.</div>';
-  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스로 확정하세요.</div>';
+  if(exempt50) h+='<div class="warn">취득가액 50만원 이하는 취득세 면세점(비과세)입니다. 이 경우 등록면허세가 있을 수 있으니(이륜 기준 별도 확인) 위택스에서 확정됩니다.</div>';
+  if(g.label) h+='<div class="warn">감면액은 참고용입니다. 요건·한도는 위택스에서 확정됩니다.</div>';
   h+='<div class="result-actions"><button type="button" onclick="saveRecent()">저장</button><button type="button" onclick="copyResult()">복사</button><button type="button" onclick="shareResult()">공유</button><button type="button" onclick="window.print()">인쇄</button></div>';
   h+=worklistHtml('moto')+nextCalcHtml('moto');
   box.innerHTML=h;
@@ -2170,7 +2215,7 @@ function ddayPenaltyHtml(acqDateId, tot){
     h+='<div class="row"><div class="rk">납부지연가산세<small>'+days+'일 × 0.022%</small></div><div class="rv">'+won(lp)+' 원</div></div>';
     h+='<div class="total" style="margin-top:10px"><span class="tk">가산세 포함 총 납부액</span><span class="tv">'+won(grand)+'<span class="u">원</span></span></div>';
     if(capped)h+='<div class="sub">납부지연가산세가 본세 75% 한도로 조정되었습니다.</div>';
-    h+='<div class="sub">※ 무신고(20%) 기준입니다. 과소·부정신고는 "신고납부분 가산세" 탭에서 계산하세요.</div></div>';
+    h+='<div class="sub">※ 무신고(20%) 기준입니다. 과소·부정신고는 "신고납부분 가산세" 탭에서 계산합니다.</div></div>';
     return h;
   }
   var dleft=Math.round((due-today)/86400000);
@@ -2360,7 +2405,7 @@ function autoCalc(){
     }
   } else if(kind==='van'){
     var vt=document.getElementById('au-van-type').value, row=AUTO_VAN[vt], v=biz?row[0]:row[1];
-    if(v==null){ box.innerHTML='<div class="empty">'+AUTO_VAN_NM[vt]+'는 영업용 기준입니다. 용도를 영업용으로 선택하세요.</div>'; updateSticky('',null); return; }
+    if(v==null){ box.innerHTML='<div class="empty">'+AUTO_VAN_NM[vt]+'는 영업용 기준입니다. 용도를 영업용으로 두어야 합니다.</div>'; updateSticky('',null); return; }
     base=v; info=AUTO_VAN_NM[vt]+' 정액';
   } else if(kind==='truck'){
     var kg=numv('au-ton'), tt=document.getElementById('au-truck-type').value;
@@ -2385,7 +2430,7 @@ function autoCalc(){
     if(!mcc){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>차종과 배기량을 입력하면<br>연세액이 표시됩니다.</div>'; updateSticky('',null); return; }
     var mt=autoMotoTax(mcc,biz); base=mt.tax; info=mt.label;
     if(base===0){
-      box.innerHTML='<div class="receipt-head">자동차세 산정</div><div class="info">배기량 <b>'+mcc.toLocaleString('ko-KR')+'cc</b> 이륜자동차는 <b>자동차세 과세대상이 아닙니다</b>(125cc 초과분만 과세). 취득세는 별도로 과세되니 [취득세] 탭 이륜차에서 계산하세요.</div>';
+      box.innerHTML='<div class="receipt-head">자동차세 산정</div><div class="info">배기량 <b>'+mcc.toLocaleString('ko-KR')+'cc</b> 이륜자동차는 <b>자동차세 과세대상이 아닙니다</b>(125cc 초과분만 과세). 취득세는 별도로 과세되니 [취득세] 탭에서 계산합니다.</div>';
       window._RESULTTEXT=box.innerText; updateSticky('',null); return;
     }
   }
@@ -2427,7 +2472,7 @@ function autoCalc(){
   var _m=pressed('au-mode');
   if(_m==='new'||_m==='buy'||_m==='sell'||_m==='scrap'){
     var dd=autoDailyDays();
-    if(!dd){ h+='<div class="info">일할 사유 발생일을 입력하세요.</div>'; }
+    if(!dd){ h+='<div class="info">사유 발생일을 입력하면 일할세액이 표시됩니다.</div>'; }
     else {
       var prorated=Math.floor(annual*dd.days/dd.total/10)*10, buseng=(prorated<2000);
       if(buseng) prorated=0;
@@ -2455,7 +2500,7 @@ function autoCalc(){
         var av=prepayAvailable(document.getElementById('au-eventdate').value);
         h+= av.length
           ? '<div class="sub">이 취득일 기준 <b>신청 가능한 연납</b>: '+av.join('월 · ')+'월. (신청기간: 1/16~31, 3/16~31, 6/16~30, 9/16~30)</div>'
-          : '<div class="sub">이 취득일 기준 <b>올해 신청 가능한 연납이 없습니다.</b> 다음 연도 1월 연납을 이용하세요.</div>';
+          : '<div class="sub">이 취득일 기준 <b>올해 신청 가능한 연납이 없습니다.</b> 다음 연도 1월 연납을 이용할 수 있습니다.</div>';
       }
       // 연납 환급
       var pre=document.getElementById('au-prepaid');
@@ -2470,7 +2515,7 @@ function autoCalc(){
         h+='<div class="total" style="margin-top:10px"><span class="tk">환급 예상액</span><span class="tv" style="color:var(--teal)">'+won(refund)+'<span class="u">원</span></span></div>';
         h+='<div class="sub">말소·이전등록일 기준으로 관할 지자체가 환부결정 후 지급합니다(위택스 환급신청 가능).</div>';
       }
-      h+='<div class="sub">양도일 당일은 양수인 부담. 차령 3년↑ 비영업 승용은 기분별 정밀계산과 소액 차이가 날 수 있어 위택스로 확정하세요.</div></div>';
+      h+='<div class="sub">양도일 당일은 양수인 부담. 차령 3년↑ 비영업 승용은 기분별 정밀계산과 소액 차이가 날 수 있어 위택스에서 확정됩니다.</div></div>';
     }
   } else if(_m==='prepay' && prate>0){
     h+='<div class="docs" style="margin-top:20px"><h4>연납 적용</h4>';
