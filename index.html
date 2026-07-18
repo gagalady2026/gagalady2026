@@ -45,7 +45,9 @@
     /* 3. 텍스트 */
     --ink:var(--charcoal);
     --sub:#4E4E4A;
-    --muted:#6B6A63;           /* 4.70:1 통과 */
+    --muted:#6C6860;           /* 힌트 — 4.96:1 */
+    --label:#4A4844;           /* 라벨 — 8.2:1, 본문 다음 위계 */
+    --desc:#5D5B55;            /* 설명 — 6.1:1 */
 
     /* 4. 선 */
     --line:#EBE7DF;            /* 기본 괘선 — 거의 안 보이게 */
@@ -93,7 +95,7 @@
   header.head{border-bottom:1px solid var(--line);padding:40px 0 24px;margin-bottom:56px;position:relative;}
   .kicker{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;color:var(--muted);margin-bottom:20px;text-transform:uppercase;}
   header.head h1{font-family:var(--font-display);font-size:clamp(27px,3.4vw,34px);font-weight:400;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1.02;}
-  .hero-sub{margin:24px 0 0;color:var(--muted);font-size:14px;line-height:1.8;letter-spacing:.04em;max-width:520px;}
+  .hero-sub{margin:24px 0 0;color:var(--desc);font-size:14px;line-height:1.8;letter-spacing:.04em;max-width:520px;}
   .site-footer{margin-top:120px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;}
   .site-footer .fl{font-size:14px;font-weight:500;color:var(--sub);letter-spacing:-.01em;}
   .site-footer .fr{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.7;text-align:right;}
@@ -106,7 +108,7 @@
   .tab[aria-selected="true"]{color:var(--ink);border-bottom:1.5px solid var(--teal);font-weight:600;}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:64px;}
   .card h2{font-family:var(--font-display);font-size:17px;font-weight:400;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
-  label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--muted);letter-spacing:.12em;}
+  label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--label);letter-spacing:.12em;}
   input[type=text],input[type=date],input[type=number],select{width:100%;max-width:340px;height:44px;font-family:inherit;font-size:16px;color:var(--ink);background:var(--paper-2);border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;padding:0 10px;transition:border-color .25s ease,background .25s ease;font-variant-numeric:tabular-nums;letter-spacing:0;}
   .money-wrap{max-width:340px;}
   .money-wrap input{text-align:right;font-weight:600;}
@@ -239,7 +241,9 @@
   .disc{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55;}
 
   @media(min-width:820px){
-    #target-car .field,#target-machine .field,#target-moto .field{display:grid;grid-template-columns:130px 1fr;gap:6px 32px;align-items:baseline;}
+    .field{display:grid;grid-template-columns:130px 1fr;gap:6px 32px;align-items:baseline;}
+    .field > .lbl{grid-column:1;padding-top:11px;margin-bottom:0;}
+    .field > :not(.lbl){grid-column:2;min-width:0;}
     #target-car .field>label.lbl,#target-machine .field>label.lbl,#target-moto .field>label.lbl{grid-column:1;margin-bottom:0;padding-top:11px;}
     #target-car .field>*:not(label.lbl),#target-machine .field>*:not(label.lbl),#target-moto .field>*:not(label.lbl){grid-column:2;min-width:0;}
   }
