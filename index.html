@@ -206,12 +206,15 @@
   .total .tk{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
   .total .tv{display:block;font-family:var(--font-display);font-size:clamp(40px,9.6vw,56px);font-weight:400;color:var(--ink);letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
-    .empty{color:var(--muted);font-size:12.5px;text-align:center;padding:64px 16px 60px;letter-spacing:.02em;line-height:1.9;position:relative;}
-  .empty::before{content:"";display:block;width:34px;height:1px;background:var(--line-strong);margin:0 auto 22px;}
-  .empty::after{content:"";display:block;width:34px;height:1px;background:var(--line-strong);margin:22px auto 0;}
-  .empty b{display:block;font-family:var(--font-display);font-size:14.5px;font-weight:400;color:var(--sub);margin-bottom:6px;letter-spacing:0;}
-  .empty::before{content:"";display:block;width:28px;height:1px;background:var(--line-strong);margin:0 auto 18px;}
-  .empty::after{content:"산출 내역이 여기에 표시됩니다";display:block;margin-top:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:.55;}
+    .empty{color:var(--muted);font-size:12.5px;padding:36px 4px 30px;letter-spacing:.01em;line-height:1.85;}
+  .empty .em-kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:16px;border-bottom:1px solid var(--line-strong);margin-bottom:22px;}
+  .empty .em-lead{font-family:var(--font-display);font-size:15px;color:var(--sub);text-align:center;margin-bottom:6px;}
+  .empty .em-sub{text-align:center;font-size:12px;color:var(--muted);margin-bottom:26px;line-height:1.75;}
+  .empty ol{list-style:none;margin:0;padding:0;counter-reset:em;}
+  .empty ol li{counter-increment:em;display:flex;align-items:baseline;gap:12px;padding:9px 2px;border-bottom:1px dotted var(--hair);font-size:12.5px;color:var(--muted);}
+  .empty ol li::before{content:counter(em,decimal-leading-zero);font-family:var(--font-mono);font-size:10px;color:var(--sage-ink);min-width:18px;}
+  .empty .em-foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-strong);text-align:center;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  
   .warn{margin-top:14px;font-size:12px;color:var(--sub);background:transparent;border:1px solid var(--line);border-left:2px solid var(--seal);border-radius:6px;padding:11px 13px;line-height:1.6;}
   .warn b{color:var(--ink);}
   .info{margin-top:14px;font-size:12px;color:var(--sub);background:var(--surface);border-radius:6px;padding:11px 13px;line-height:1.6;}
@@ -223,7 +226,7 @@
   .grid2>.card:nth-child(2)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
     background:radial-gradient(circle at 5px -2px, transparent 5px, var(--paper) 5.5px);
     background-size:10px 10px;background-repeat:repeat-x;}
-  @media(max-width:680px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2>.card:nth-child(2){position:static;padding-left:0;}}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2>.card:nth-child(2){position:static;padding-left:0;}}
   .btn{appearance:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);letter-spacing:.04em;padding:9px 16px;border-radius:2px;transition:.2s;}
   .btn:hover{color:var(--ink);border-color:var(--ink);}
   .btn.sm{font-size:11.5px;padding:7px 13px;}
@@ -1337,7 +1340,7 @@ function deungCalc(){
     tax=o.flat; if(heavy){ tax=o.flat*3; note='대도시 중과 3배'; }
   }else{
     base=numv('d-base');
-    if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>'+(o.base||'과세표준')+'을 입력하면<br>산출 내역이 표시됩니다.</div>'; return; }
+    if(!base){ box.innerHTML=EMPTY.deung; return; }
     if(heavy) rate=o.rate*3;
     tax=Math.floor(base*rate/10)*10;
     if(o.min && tax<o.min){ tax=o.min; note='최저세액 '+won(o.min)+'원 적용'; }
@@ -1394,7 +1397,7 @@ function cCalc(){
   } else { base=numv('c-siga'); baseLabel='시가표준액'; }
 
   var box=document.getElementById('c-result');
-  if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>취득가액 또는 시가표준액을 입력하면<br>산출 내역이 표시됩니다.</div>'+docsHtml(); updateSticky('',null); return; }
+  if(!base){ box.innerHTML=EMPTY.car+docsHtml(); updateSticky('',null); return; }
   var baseFull=base;
   var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
   base=Math.floor(baseFull*share/100);
@@ -2061,7 +2064,7 @@ function mCalc(){
   if(t==='new'){ base=sig; baseLabel='취득가액'; }
   else { base=Math.max(rep,sig); baseLabel=(rep>=sig&&rep>0)?'신고가액(매매금액)':'시가표준액'; }
   var box=document.getElementById('mc-result');
-  if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div>'; updateSticky('',null); return; }
+  if(!base){ box.innerHTML=EMPTY.machine; updateSticky('',null); return; }
   var kind = document.getElementById('mc-unreg').checked ? 'unreg'
            : (isDumpMixer(mSelected && mSelected.k) ? 'dump' : 'other');
   var kn=document.getElementById('mc-kind-auto');
@@ -2166,7 +2169,7 @@ function mtCalc(){
   else if(t==='trans'){ var rep=numv('mt-report'), sig=numv('mt-siga'); base=Math.max(rep,sig); baseLabel=(rep>=sig&&rep>0)?'신고가액(매매금액)':'시가표준액'; }
   else { base=numv('mt-siga'); baseLabel='시가표준액'; }
   var box=document.getElementById('mt-result');
-  if(!base){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div>'; updateSticky('',null); return; }
+  if(!base){ box.innerHTML=EMPTY.moto; updateSticky('',null); return; }
   var exempt50 = base<=500000, rate=0.02;
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
   var g=gamyeonG('mt',acq,base,rate); g.acq=acq; var tot=g.pay;
@@ -2350,6 +2353,34 @@ function focusField(id){
   el.scrollIntoView({block:'center',behavior:'smooth'});
   setTimeout(function(){ try{ el.focus({preventScroll:true}); }catch(e){} }, 260);
 }
+
+function initEmpty(){
+  var map={'c-result':'car','mc-result':'machine','mt-result':'moto','au-result':'auto','d-result':'deung'};
+  for(var id in map){ var el=document.getElementById(id); if(el && el.querySelector('.empty')) el.innerHTML=EMPTY[map[id]]; }
+}
+/* 빈 상태 — 계산 기록지 (앞으로 나올 항목을 목차처럼 예고) */
+function emptySheet(kicker, lead, sub, items){
+  var li=items.map(function(t){return '<li>'+t+'</li>';}).join('');
+  return '<div class="empty">'
+    +'<div class="em-kicker">'+kicker+'</div>'
+    +'<div class="em-lead">'+lead+'</div>'
+    +'<div class="em-sub">'+sub+'</div>'
+    +'<ol>'+li+'</ol>'
+    +'<div class="em-foot">2026 지방세법 기준</div>'
+    +'</div>';
+}
+var EMPTY={
+  car:  emptySheet('Acquisition Tax','산출 준비','취득 정보를 입력하면 아래 순서로 기록됩니다.',
+        ['과세표준 (취득가액)','적용 세율','산출 취득세','지방교육세 · 농어촌특별세','신고·납부할 세액']),
+  machine: emptySheet('Machinery Acquisition','산출 준비','취득가액을 입력하면 아래 순서로 기록됩니다.',
+        ['과세표준 (취득가액)','적용 세율 3%','산출 취득세','지방교육세 · 농어촌특별세','신고·납부할 세액']),
+  moto: emptySheet('Motorcycle Acquisition','산출 준비','취득가액을 입력하면 아래 순서로 기록됩니다.',
+        ['과세표준 (취득가액)','적용 세율 2%','신고·납부할 세액']),
+  auto: emptySheet('Automobile Tax','산출 준비','차종과 과세 정보를 입력하면 아래 순서로 기록됩니다.',
+        ['과세 기준 (배기량·정액)','연세액','차령 반영 (연식)','지방교육세','연 납부세액']),
+  deung: emptySheet('Registration Licence','산출 준비','등기 종류와 과세표준을 입력하면 아래 순서로 기록됩니다.',
+        ['과세표준 (등록 당시 가액)','적용 세율','등록면허세','지방교육세','신고·납부할 세액'])
+};
 
 /* 영수증 점선 리더: 항목명과 금액 사이를 점선으로 채움 */
 function addLeaders(box){
@@ -2588,7 +2619,7 @@ function autoCalc(){
       base = biz? 20000 : 100000; info='전기·수소 정액';
     } else {
       var cc=numv('au-cc');
-      if(!cc){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>차종과 배기량을 입력하면<br>연세액이 표시됩니다.</div>'; updateSticky('',null); return; }
+      if(!cc){ box.innerHTML=EMPTY.auto; updateSticky('',null); return; }
       var rate = biz ? (cc<=1600?18:cc<=2500?19:24) : (cc<=1000?80:cc<=1600?140:200);
       base = cc*rate; info=cc.toLocaleString('ko-KR')+'cc × '+rate+'원';
       ageEligible = !biz;              // 차령경감: 비영업 승용 내연만
@@ -2617,7 +2648,7 @@ function autoCalc(){
     base = biz?r[0]:r[1]; info=AUTO_SPECIAL_NM[st]+' 정액';
   } else if(kind==='moto'){
     var mcc=numv('au-moto-cc');
-    if(!mcc){ box.innerHTML='<div class="empty"><b>세액 산출 대기</b>차종과 배기량을 입력하면<br>연세액이 표시됩니다.</div>'; updateSticky('',null); return; }
+    if(!mcc){ box.innerHTML=EMPTY.auto; updateSticky('',null); return; }
     var mt=autoMotoTax(mcc,biz); base=mt.tax; info=mt.label;
     if(base===0){
       box.innerHTML='<div class="receipt-head">자동차세 산정</div><div class="info">배기량 <b>'+mcc.toLocaleString('ko-KR')+'cc</b> 이륜자동차는 <b>자동차세 과세대상이 아닙니다</b>(125cc 초과분만 과세). 취득세는 별도로 과세되니 [취득세] 탭에서 계산합니다.</div>';
@@ -2805,7 +2836,7 @@ function autoCalc(){
   box.innerHTML=h; window._RESULTTEXT=box.innerText; animateTotals(box);
 }
 
-addRow(); cCalc(); renderRecent(); autoCalc(); onDeungKind(); clampDateInputs();
+addRow(); initEmpty(); cCalc(); renderRecent(); autoCalc(); onDeungKind(); clampDateInputs();
 </script>
 <div id="sticky-total" onclick="var r=document.querySelector('#m-chwi .card h2'); var boxes={car:'c-result',machine:'mc-result',moto:'mt-result'}; var el=document.getElementById(boxes[pressed('c-target')]); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});">
   <div class="st-in"><span class="st-l" id="st-label">신고·납부할 세액</span><span class="st-v" id="st-value">0원</span></div>
