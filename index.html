@@ -1079,6 +1079,7 @@
         <div class="field"><label class="lbl">등기 종류</label>
           <select id="d-type" onchange="deungCalc()"></select>
           <div class="hint" id="d-type-hint"></div>
+          <div class="info" id="d-car-note" style="display:none;margin-top:10px">자동차 <b>소유권 취득(신규·이전)</b>은 등록면허세가 아니라 <b>취득세</b> 대상입니다. 이 탭은 저당권·명의변경 등 <b>취득이 수반되지 않는 등록</b>만 계산합니다.</div>
         </div>
 
         <div class="field" id="d-base-box"><label class="lbl" id="d-base-lbl">과세표준</label>
@@ -1307,12 +1308,14 @@ var DEUNG={
     {v:'chg',    t:'그 밖의 변경등기 (자본 증가 없음)', flat:40200,                law:'§28①6바'}
   ],
   car:[
-    {v:'mortg',  t:'저당권 설정·이전',  rate:.002, base:'채권금액', law:'§28①9'},
-    {v:'etc',    t:'그 밖의 등록',      flat:15000,                law:'§28①9'}
+    {v:'mortg', t:'저당권 설정·이전',        rate:.002, base:'채권금액',   law:'§28①9나'},
+    {v:'etc',   t:'그 밖의 등록 (명의변경 등)', flat:15000,               law:'§28①9다'}
   ]
 };
 function onDeungKind(){
   var k=pressed('d-kind'), sel=document.getElementById('d-type');
+  var carNote=document.getElementById('d-car-note');
+  if(carNote) carNote.style.display = (k==='car')?'':'none';
   sel.innerHTML=DEUNG[k].map(function(o){return '<option value="'+o.v+'">'+o.t+'</option>';}).join('');
   deungCalc();
 }
@@ -1346,7 +1349,8 @@ function deungCalc(){
     if(o.min && tax<o.min){ tax=o.min; note='최저세액 '+won(o.min)+'원 적용'; }
     if(!o.min && tax<6000){ tax=6000; note='그 밖의 등기 세율(6,000원) 적용 (§28① 단서)'; }
   }
-  var edu=Math.floor(tax*0.2/10)*10;   // 지방교육세 20% (§151①2)
+  var isCar=(pressed('d-kind')==='car');
+  var edu=isCar ? 0 : Math.floor(tax*0.2/10)*10;   // 자동차 등록면허세는 지방교육세 제외 (§150 2호 · §124 자동차), 그 외 20% (§151①2)
   var tot=tax+edu;
 
   var h=appliedHtml([
@@ -1360,12 +1364,17 @@ function deungCalc(){
   h+='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
   if(!isFlat) h+='<div class="row"><div class="rk">과세표준<small>'+o.base+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   h+='<div class="row"><div class="rk">등록면허세<small>'+(isFlat?'건당 정액':(rate*100).toFixed(1)+'%')+(note?' · '+note:'')+'</small></div><div class="rv">'+won(tax)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">지방교육세<small>등록면허세의 20% (§151①2)</small></div><div class="rv">'+won(edu)+' 원</div></div>';
+  if(isCar){
+    h+='<div class="row sub"><div class="rk">지방교육세<small>자동차 등록면허세는 부과 대상 아님 (§150 2호 · §124)</small></div><div class="rv">해당 없음</div></div>';
+  } else {
+    h+='<div class="row"><div class="rk">지방교육세<small>등록면허세의 20% (§151①2)</small></div><div class="rv">'+won(edu)+' 원</div></div>';
+  }
   h+='<div class="total"><span class="tk">신고·납부할 세액</span><span class="tv">'+won(tot)+'<small>원</small></span></div>';
   h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
    +'<li>등기·등록을 하기 전까지 신고·납부합니다(§30).</li>'
    +'<li>대도시(과밀억제권역) 법인 설립·전입·지점 설치는 <b>3배 중과</b>(§28②). 시행령 §26① 중과 제외 업종은 제외됩니다.</li>'
    +'<li>정률로 산출한 세액이 <b>6,000원</b>보다 적으면 6,000원을 적용합니다(§28① 단서).</li>'
+   +(isCar?'<li><b>자동차 등록면허세에는 지방교육세가 부과되지 않습니다</b>(§150 2호 · §124). 부동산·법인·기계장비 등은 20%가 부과됩니다.</li>':'')
    +'</ul></div>';
   h+=worklistHtml('deung')+nextCalcHtml('deung');
   box.innerHTML=h; addLeaders(box); animateTotals(box);
@@ -1514,6 +1523,8 @@ function cCalc(){
   ], document.getElementById('c-acqdate').value||null);
   if(!document.getElementById('c-acqdate').value){
     h+='<div class="info" style="margin-top:12px"><b>취득일 미입력</b> — 세액은 정확합니다. 취득일을 입력하면 <b>신고기한(60일)</b>과 기한 초과 시 <b>가산세</b>가 함께 계산됩니다.</div>';
+  } else {
+    h+=ddayPenaltyHtml('c-acqdate', tot);
   }
   h+=appliedHtml([
     ['취득 유형', {new:'신차(신규등록)',trans:'중고차(이전등록)',free:'증여·상속(무상)'}[t]],
