@@ -445,7 +445,7 @@
       </a>
       <a class="lp-item" onclick="enter('deung')">
         <span class="lp-ko">등록면허세</span>
-        <span class="lp-en">Registration Licence Tax · 부동산 · 법인 · 자동차 저당권</span>
+        <span class="lp-en">Registration Licence Tax · 부동산 · 법인 · 기계장비 · 자동차</span>
         <span class="lp-arrow">→</span>
       </a>
       <div class="lp-group">Administration</div>
@@ -1072,6 +1072,7 @@
           <div class="seg" id="d-kind">
             <button data-v="realty" aria-pressed="true" onclick="pick('d-kind','realty',onDeungKind)">부동산</button>
             <button data-v="corp" aria-pressed="false" onclick="pick('d-kind','corp',onDeungKind)">법인</button>
+            <button data-v="machine" aria-pressed="false" onclick="pick('d-kind','machine',onDeungKind)">기계장비</button>
             <button data-v="car" aria-pressed="false" onclick="pick('d-kind','car',onDeungKind)">자동차</button>
           </div>
         </div>
@@ -1087,6 +1088,10 @@
           <div class="hint" id="d-base-hint">등록 당시의 가액 또는 채권금액을 입력합니다(§27).</div>
         </div>
 
+        <div class="field hidden" id="d-constr-box"><label class="lbl">건설기계 구분</label>
+          <label class="chk"><input type="checkbox" id="d-constr" onchange="deungCalc()"> 덤프트럭·콘크리트믹서트럭 (자동차세 과세대상)</label>
+          <div class="hint">덤프트럭·콘크리트믹서트럭은 지방세법 §124상 <b>자동차</b>에 포함되어, 등록면허세에 <b>지방교육세가 부과되지 않습니다</b>(§150 2호). 그 밖의 기계장비는 20%가 부과됩니다.</div>
+        </div>
         <div class="field hidden" id="d-heavy-box"><label class="lbl">대도시 중과</label>
           <label class="chk"><input type="checkbox" id="d-heavy" onchange="deungCalc()"> 과밀억제권역 내 설립·전입·지점 설치</label>
           <div class="hint">해당 시 세율 <b>3배</b>(§28②). 시행령 §26① 중과 제외 업종은 제외됩니다.</div>
@@ -1310,12 +1315,18 @@ var DEUNG={
   car:[
     {v:'mortg', t:'저당권 설정·이전',        rate:.002, base:'채권금액',   law:'§28①9나'},
     {v:'etc',   t:'그 밖의 등록 (명의변경 등)', flat:15000,               law:'§28①9다'}
+  ],
+  machine:[
+    {v:'mortg',  t:'저당권 설정·이전',        rate:.002, base:'채권금액', law:'§28①8나'},
+    {v:'etc',    t:'그 밖의 등록',            flat:15000,               law:'§28①8다'}
   ]
 };
 function onDeungKind(){
   var k=pressed('d-kind'), sel=document.getElementById('d-type');
   var carNote=document.getElementById('d-car-note');
   if(carNote) carNote.style.display = (k==='car')?'':'none';
+  var cbox=document.getElementById('d-constr-box');
+  if(cbox) cbox.classList.toggle('hidden', k!=='machine');
   sel.innerHTML=DEUNG[k].map(function(o){return '<option value="'+o.v+'">'+o.t+'</option>';}).join('');
   deungCalc();
 }
@@ -1349,12 +1360,14 @@ function deungCalc(){
     if(o.min && tax<o.min){ tax=o.min; note='최저세액 '+won(o.min)+'원 적용'; }
     if(!o.min && tax<6000){ tax=6000; note='그 밖의 등기 세율(6,000원) 적용 (§28① 단서)'; }
   }
-  var isCar=(pressed('d-kind')==='car');
+  var dk=pressed('d-kind');
+  var isDumpMixer = (dk==='machine') && document.getElementById('d-constr') && document.getElementById('d-constr').checked;
+  var isCar = (dk==='car') || isDumpMixer;
   var edu=isCar ? 0 : Math.floor(tax*0.2/10)*10;   // 자동차 등록면허세는 지방교육세 제외 (§150 2호 · §124 자동차), 그 외 20% (§151①2)
   var tot=tax+edu;
 
   var h=appliedHtml([
-    ['등기 구분', {realty:'부동산',corp:'법인',car:'자동차'}[pressed('d-kind')]],
+    ['등기 구분', {realty:'부동산',corp:'법인',machine:'기계장비',car:'자동차'}[pressed('d-kind')]],
     ['등기 종류', o.t],
     ['과세표준', isFlat? '정액' : won(base)+'원'],
     ['적용 세율', isFlat? won(o.flat)+'원(건당)' : (rate*100).toFixed(1)+'%'],
@@ -1365,7 +1378,7 @@ function deungCalc(){
   if(!isFlat) h+='<div class="row"><div class="rk">과세표준<small>'+o.base+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
   h+='<div class="row"><div class="rk">등록면허세<small>'+(isFlat?'건당 정액':(rate*100).toFixed(1)+'%')+(note?' · '+note:'')+'</small></div><div class="rv">'+won(tax)+' 원</div></div>';
   if(isCar){
-    h+='<div class="row sub"><div class="rk">지방교육세<small>자동차 등록면허세는 부과 대상 아님 (§150 2호 · §124)</small></div><div class="rv">해당 없음</div></div>';
+    h+='<div class="row sub"><div class="rk">지방교육세<small>'+(dk==='car'?'자동차':'덤프·믹서(자동차세 과세대상 건설기계)')+' 등록면허세는 부과 대상 아님 (§150 2호 · §124)</small></div><div class="rv">해당 없음</div></div>';
   } else {
     h+='<div class="row"><div class="rk">지방교육세<small>등록면허세의 20% (§151①2)</small></div><div class="rv">'+won(edu)+' 원</div></div>';
   }
