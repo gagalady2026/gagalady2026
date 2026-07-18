@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Gothic+A1:wght@300;400;500;600&display=swap" rel="stylesheet">
 <title>지방세 계산기 | 이동준</title>
 <meta name="description" content="자동차·기계장비·이륜자동차 취득세, 자동차세, 체납 가산세를 2026년 지방세법 기준으로 계산합니다. 감면·면세점·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
-<meta name="theme-color" content="#F4F2ED">
+<meta name="theme-color" content="#F2EEE7">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!-- 링크 미리보기 (카톡·슬랙·메신저) -->
@@ -32,23 +32,23 @@
     --sage:#77826A;            /* 포인트(그래픽 전용) */
     --sage-ink:#616B57;        /* 포인트(글자용, 5.0:1) */
     --sage-soft:#E9EBE3;
-    --cream:#DFD8CD;           /* 괘선·경계 */
+    --cream:#E8E3DB;           /* 괘선·경계 */
 
     /* 2. 층위 — 벽 → 종이 → 입력 (단조 증가) */
-    --wall:#F4F2ED;            /* ① 배경 */
-    --wall-top:#F7F5F2;
-    --wall-bottom:#F0EDE6;
-    --paper-1:#FAF9F6;         /* ② 결과 종이 */
-    --paper-2:#FDFCFA;         /* ③ 입력면 */
+    --wall:#F2EEE7;            /* ① 배경 — 바랜 한지 */
+    --wall-top:#F5F1EB;
+    --wall-bottom:#EDE8DF;
+    --paper-1:#F8F5EF;         /* ② 결과 종이 */
+    --paper-2:#FCFAF5;         /* ③ 입력면 */
     --paper-3:#FFFFFF;         /* ④ 입력 포커스 */
 
     /* 3. 텍스트 */
     --ink:var(--charcoal);
     --sub:#4E4E4A;
-    --muted:#706F68;           /* 4.5:1 통과 */
+    --muted:#6B6A63;           /* 4.70:1 통과 */
 
     /* 4. 선 */
-    --line:#E7E4DC;            /* 기본 괘선 */
+    --line:#EBE7DF;            /* 기본 괘선 — 거의 안 보이게 */
     --line-strong:var(--cream);
     --hair:rgba(53,53,51,.11); /* 결과 항목 구분 */
     --dotted:rgba(53,53,51,.30);
@@ -73,7 +73,7 @@
 
     /* ===== 별칭 (기존 코드 호환) ===== */
     --color-bg-main:var(--wall); --color-bg-card:var(--paper-1); --color-bg-input:var(--paper-2);
-    --color-text-main:var(--charcoal); --color-text-muted:var(--muted); --color-border:#E4E1D9;
+    --color-text-main:var(--charcoal); --color-text-muted:var(--muted); --color-border:#EBE7DF;
     --color-accent:var(--sage); --color-accent-light:var(--sage-soft);
     --paper:var(--wall); --surface:var(--paper-1);
     --teal:var(--sage); --teal-soft:var(--sage-soft); --teal-ink:var(--sage-ink);
@@ -247,7 +247,8 @@
   .lp-meta{text-align:right;font-family:var(--font-display);font-size:15px;color:var(--muted);line-height:1.5;}
   .lp-meta span{font-family:inherit;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.75;}
   .lp-kicker{font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
-  .lp-title{font-family:var(--font-display);font-size:clamp(42px,7vw,74px);font-weight:400;letter-spacing:-.015em;line-height:1.14;margin:0;color:var(--ink);}
+  .lp-title{font-family:var(--font-display);font-size:clamp(42px,7vw,74px);font-weight:400;letter-spacing:-.015em;line-height:1.1;margin:0;color:var(--ink);}
+  .lp-title-sm{display:inline-block;font-size:.46em;letter-spacing:.02em;color:var(--sub);margin-top:.12em;}
   .lp-sub{margin:28px 0 0;font-size:13px;letter-spacing:.06em;color:var(--muted);line-height:1.9;text-transform:uppercase;}
   .lp-sub span{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px;}
   .lp-list{border-top:1px solid var(--line-strong);margin-top:8px;}
@@ -255,12 +256,15 @@
   .lp-group:first-child{padding-top:18px;}
   .lp-item{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:4px 16px;
     padding:26px 2px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;transition:.22s ease;position:relative;}
-  .lp-item:hover{padding-left:12px;}
-  .lp-item:hover .lp-arrow{opacity:1;transform:translateX(4px);}
-  .lp-item:hover .lp-ko{color:var(--teal);}
-  .lp-ko{grid-column:1;font-family:var(--font-display);font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:.22s;}
-  .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
-  .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:.5;transition:.22s;}
+  .lp-item:hover .lp-en{transform:translate(-6px,-2px);}
+  .lp-item:hover   .lp-item:hover .lp-ko{transform:translateX(-6px);}
+  .lp-ko{grid-column:1;font-family:var(--font-display);font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:transform .28s var(--ease),color .28s var(--ease);}
+  .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:transform .28s var(--ease);}
+  .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:0;transform:translateX(-5px);transition:opacity .28s var(--ease),transform .28s var(--ease);}
+  /* 버드나무 — hover 시 부드럽게 흔들림 (0.28s) */
+  .lp-item:hover .lp-ko{transform:translateX(-6px);}
+  .lp-item:hover .lp-en{transform:translate(-6px,-2px);}
+  .lp-item:hover .lp-arrow{opacity:.7;transform:translateX(0);}
   .lp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:56px;font-size:11.5px;color:var(--muted);flex-wrap:wrap;}
   .lp-foot a{color:var(--muted);border-bottom:1px solid var(--line);text-decoration:none;}
   .lp-foot a:hover{color:var(--ink);}
@@ -421,7 +425,7 @@
   <div id="landing">
     <div class="lp-hero">
       <div class="lp-top"><span class="lp-kicker">이동준 · 지방세 실무</span><img class="lp-mark" src="logo.png" alt="LEEDONGJOON"><span class="lp-meta">2026<br><span>지방세법 기준</span></span></div>
-      <h1 class="lp-title">LOCAL TAX<br>CALCULATOR</h1>
+      <h1 class="lp-title">LOCAL TAX<br><span class="lp-title-sm">Calculator</span></h1>
       <p class="lp-sub">calm. precise. useful.<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
     </div>
     <nav class="lp-list">
