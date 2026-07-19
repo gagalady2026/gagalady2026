@@ -5,24 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Gothic+A1:wght@300;400;500;600&display=swap" rel="stylesheet">
-<title>지방세 계산기 | 이동준</title>
+<title>지방세 실무 계산기 · LOCAL TAX</title>
 <meta name="description" content="자동차·기계장비·이륜자동차 취득세, 자동차세, 체납 가산세를 2026년 지방세법 기준으로 계산합니다. 감면·면세점·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
 <meta name="theme-color" content="#F2EEE7">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!-- 링크 미리보기 (카톡·슬랙·메신저) -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="지방세 계산기 · 이동준">
-<meta property="og:title" content="지방세 계산기 · 이동준">
+<meta property="og:site_name" content="LOCAL TAX · 지방세 실무 계산기">
+<meta property="og:title" content="LOCAL TAX · 지방세 실무 계산기">
 <meta property="og:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
-<meta property="og:url" content="https://jibangsae.netlify.app/">
-<meta property="og:image" content="https://jibangsae.netlify.app/og.png">
+<link rel="canonical" href="https://gagalady2026.github.io/gagalady2026/">
+  <meta property="og:url" content="https://gagalady2026.github.io/gagalady2026/">
+<meta property="og:image" content="https://gagalady2026.github.io/gagalady2026/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="지방세 계산기 · 이동준">
+<meta name="twitter:title" content="LOCAL TAX · 지방세 실무 계산기">
 <meta name="twitter:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
-<meta name="twitter:image" content="https://jibangsae.netlify.app/og.png">
+<meta name="twitter:image" content="https://gagalady2026.github.io/gagalady2026/og.png">
 <style>
     :root{
     /* ===== LEEDONGJOON 디자인 토큰 ===== */
@@ -55,7 +56,7 @@
     --hair:rgba(53,53,51,.11); /* 결과 항목 구분 */
     --dotted:rgba(53,53,51,.30);
     --scrim:rgba(53,53,51,.32); /* 오버레이 */
-    --fiber:var(--fiber); /* 종이 섬유결 */
+    --fiber:rgba(53,53,51,.018); /* 종이 섬유결 */
     --hair-soft:rgba(53,53,51,.09);
 
     /* 5. 여백 리듬 (8 · 16 · 24 · 40 · 64) */
@@ -119,7 +120,7 @@
   select option{background:var(--surface);color:var(--ink);}
   ::placeholder{color:var(--muted);opacity:1;}
   input[type=text],input[type=number]{text-align:right;font-weight:600;}
-  input[type=date]{color-scheme:dark;}
+  input[type=date]{color-scheme:light;}
   input[type=number]{-moz-appearance:textfield;}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   input:focus,select:focus{outline:none;border-bottom-color:var(--teal);background:var(--paper-3);}
@@ -224,7 +225,7 @@
   .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:0;align-items:start;
     }
   .grid2>.card:nth-child(1){padding-right:56px;}
-  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding:30px 34px 36px;margin-left:32px;background:var(--paper-1);border:0;border-top:1px solid var(--ink);box-shadow:none;position:relative;padding-bottom:44px;}
+  .grid2>.card:nth-child(2){position:sticky;top:32px;align-self:start;padding:30px 34px 36px;margin-left:32px;background:var(--paper-1);border:0;border-top:1px solid var(--ink);box-shadow:none;padding-bottom:44px;}
   .grid2>.card:nth-child(2)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
     background:radial-gradient(circle at 5px -2px, transparent 5px, var(--paper) 5.5px);
     background-size:10px 10px;background-repeat:repeat-x;}
@@ -264,7 +265,7 @@
   .lp-item{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:4px 16px;
     padding:26px 2px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;transition:.22s ease;position:relative;}
   .lp-item:hover .lp-en{transform:translate(-6px,-2px);}
-  .lp-item:hover   .lp-item:hover .lp-ko{transform:translateX(-6px);}
+  .lp-item:hover .lp-ko{transform:translateX(-6px);}
   .lp-ko{grid-column:1;font-family:var(--font-display);font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:transform .28s var(--ease),color .28s var(--ease);}
   .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:transform .28s var(--ease);}
   .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:0;transform:translateX(-5px);transition:opacity .28s var(--ease),transform .28s var(--ease);}
@@ -343,7 +344,7 @@
   @media(max-width:680px){ .lp-mark{height:16px;} }
 
   /* ===== 적용 기준 요약 ===== */
-  .applied{margin-top:var(--sp-3);padding-top:var(--sp-2);border-top:1px dotted var(--dotted);}
+  
   .applied .ap-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .applied ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:5px 18px;}
   .applied li{font-size:12px;color:var(--sub);display:flex;gap:7px;align-items:baseline;line-height:1.6;}
@@ -354,7 +355,7 @@
   @media(max-width:680px){.applied ul{grid-template-columns:1fr;}}
 
   /* ===== 적용 기준 요약 ===== */
-  .applied{margin-top:var(--sp-3);padding-top:18px;border-top:1px solid var(--line);}
+  .applied{margin-top:var(--sp-3);padding-top:var(--sp-2);border-top:1px dotted var(--dotted);}
   .applied .ap-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
   .applied ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;}
   .applied li{font-size:12px;color:var(--sub);display:flex;gap:7px;align-items:baseline;line-height:1.5;}
@@ -1294,6 +1295,37 @@ function sw(m){
   if(m!=='chwi') updateSticky('',null);
 }
 
+/* ═══════════════════════════════════════════════════════
+   세율·기준 데이터 (연 1회 개정 시 이 블록만 수정)
+   ═══════════════════════════════════════════════════════ */
+var TAX_RULES = {
+  effectiveFrom: '2026-01-01',
+  version: '2026.01',
+  reviewedAt: '2026-07-19',
+
+  // 취득세 (지방세법 §12)
+  acqVehicle: {         // 자동차
+    passengerNonBiz: 0.07,   // 비영업 승용
+    etcNonBiz:       0.05,   // 비영업 승합·화물
+    compact:         0.04,   // 경형(경차)
+    commercial:      0.04    // 영업용
+  },
+  acqMachine:  { registered: 0.03, unregistered: 0.02 },  // 기계장비 §12①3
+  acqMoto:     { rate: 0.02, exemptUnder: 500000 },        // 이륜 (면세점 50만)
+  acqExemptUnder: 500000,   // 취득세 면세점 (과표 50만 이하)
+
+  // 부가세 (§10)
+  eduTax: 0.20,             // 지방교육세 (등록면허세·취득세 등 20%)
+  ruralTax: 0.10,           // 농어촌특별세 (2% 적용세액의 10%)
+  machineEduBase: 0.02,     // 기계장비 교육세 기준(표준세율-2%)
+
+  // 차령 감면 (자동차세, 비영업 승용)
+  ageRelief: { startYear: 3, perYear: 0.05, max: 0.50 },
+
+  // 가산세 (§20, 신고납부분)
+  penalty: { noReport: 0.20, lateDaily: 0.00022, reportDeadlineDays: 60 }
+};
+
 /* ---------- 등록면허세 (등록분) · 지방세법 §28 ---------- */
 var DEUNG={
   realty:[
@@ -1400,10 +1432,10 @@ function deungCalc(){
 
 /* ---------- 자동차 취득세 ---------- */
 function taxRate(chong,use,light){
-  if(use==='영업') return 0.04;
-  if(light==='1') return 0.04;
-  if(chong==='승용') return 0.07;
-  return 0.05; // 승합·화물 비영업
+  if(use==='영업') return TAX_RULES.acqVehicle.commercial;
+  if(light==='1') return TAX_RULES.acqVehicle.compact;
+  if(chong==='승용') return TAX_RULES.acqVehicle.passengerNonBiz;
+  return TAX_RULES.acqVehicle.etcNonBiz; // 승합·화물 비영업
 }
 function onTypeUI(){
   var t=pressed('c-type');
@@ -2102,17 +2134,17 @@ function mCalc(){
       : nm ? ('<b>'+nm+'</b> → '+(kind==='dump'?'덤프·믹서트럭 · 세율 3% (교육세·농특세 없음)':'등록대상 건설기계 · 세율 3% (교육세·농특세 부과)'))
            : '기종을 선택하면 자동 판정됩니다. <span style="color:var(--muted)">(기본: 등록대상 건설기계 3%)</span>';
   }
-  var rate = (kind==='unreg') ? 0.02 : 0.03;
+  var rate = (kind==='unreg') ? TAX_RULES.acqMachine.unregistered : TAX_RULES.acqMachine.registered;
   var exempt50=base<=500000;
   var acq=exempt50?0:Math.floor(base*rate/10)*10;
   var g=gamyeonG('mc',acq,base,rate); g.acq=acq;
   // 지방교육세·농특세: 덤프·믹서트럭은 없음, 그 외 등록대상 건설기계는 부과
   var edu=0, nong=0;
   if(!exempt50 && kind==='other'){
-    edu  = Math.floor(base*(rate-0.02)*0.20/10)*10;  // (표준세율-2%) 적용세액 × 20%
-    nong = Math.floor(base*0.02*0.10/10)*10;         // 2% 적용세액 × 10%
+    edu  = Math.floor(base*(rate-TAX_RULES.machineEduBase)*TAX_RULES.eduTax/10)*10;  // (표준세율-2%) 적용세액 × 20%
+    nong = Math.floor(base*TAX_RULES.machineEduBase*TAX_RULES.ruralTax/10)*10;         // 2% 적용세액 × 10%
   } else if(!exempt50 && kind==='unreg'){
-    nong = Math.floor(base*0.02*0.10/10)*10;         // 2%분 농특세만
+    nong = Math.floor(base*TAX_RULES.machineEduBase*TAX_RULES.ruralTax/10)*10;         // 2%분 농특세만
   }
   var tot=g.pay+edu+nong;
   var h='<div class="receipt-head">기계장비 취득세 (참고용)</div>';
@@ -2198,7 +2230,7 @@ function mtCalc(){
   else { base=numv('mt-siga'); baseLabel='시가표준액'; }
   var box=document.getElementById('mt-result');
   if(!base){ box.innerHTML=EMPTY.moto; updateSticky('',null); return; }
-  var exempt50 = base<=500000, rate=0.02;
+  var exempt50 = base<=TAX_RULES.acqMoto.exemptUnder, rate=TAX_RULES.acqMoto.rate;
   var acq = exempt50 ? 0 : Math.floor(base*rate/10)*10;
   var g=gamyeonG('mt',acq,base,rate); g.acq=acq; var tot=g.pay;
   var h='<div class="receipt-head">이륜자동차 취득세 (참고용)</div>';
@@ -2693,7 +2725,7 @@ function autoCalc(){
       var d=new Date(rd+'T00:00:00'), ry=d.getFullYear(), rm=d.getMonth()+1;
       giSan = (rm<=6)?'1월 1일':'7월 1일';
       ageYears = 2026 - ry + 1; if(ageYears>12) ageYears=12;
-      if(ageYears>=3){ reduceRate = Math.min(0.5, 0.05*(ageYears-2)); }
+      if(ageYears>=TAX_RULES.ageRelief.startYear){ reduceRate = Math.min(TAX_RULES.ageRelief.max, TAX_RULES.ageRelief.perYear*(ageYears-2)); }
     }
   }
   var reduced = Math.floor(base*(1-reduceRate)/10)*10;
