@@ -243,7 +243,9 @@ function cCalc(){
   var box=document.getElementById('c-result');
   if(!base){ box.innerHTML=EMPTY.car+docsHtml(); updateSticky('',null); return; }
   var baseFull=base;
-  var share=Number(document.getElementById('c-share').value); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
+  var shareRaw=Number(document.getElementById('c-share').value);
+  var shareOver = shareRaw>100;
+  var share=Math.max(0, Math.min(100, shareRaw||0)); if(isNaN(share)||share<=0)share=0; if(share>100)share=100;
   base=Math.floor(baseFull*share/100);
   var rate=taxRate(chong,use,light);
   var exempt50 = base>0 && base<=500000; // 취득세 면세점(취득가액 50만원 이하)
@@ -257,6 +259,7 @@ function cCalc(){
     {id:'gamyeon',   label:'감면',     done:true}
   ]);
   h+='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
+  if(shareOver){ h+='<div class="warn" style="margin-bottom:14px"><b>지분율 100% 초과</b> — 입력값('+shareRaw+'%)을 <b>100%로 조정</b>해 계산했습니다. 공동취득이면 본인 지분만 입력하세요.</div>'; }
   h+=baseDerivationHtml(t);
   if(share<100){
     h+='<div class="row"><div class="rk">전체 과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(baseFull)+' 원</div></div>';
@@ -1534,7 +1537,7 @@ function autoCalc(){
   }
 
   // 차령 반영: 연식별 세액 자동 차감 (비영업 승용 내연만)
-  var reduceRate=0, ageYears=0, giSan='', ageMissing=false;
+  var reduceRate=0, ageYears=0, giSan='', ageMissing=false, futureReg=false;
   if(ageEligible){
     var rd=document.getElementById('au-regdate').value;
     if(!rd) ageMissing=true;
@@ -1542,6 +1545,7 @@ function autoCalc(){
       var d=new Date(rd+'T00:00:00'), ry=d.getFullYear(), rm=d.getMonth()+1;
       giSan = (rm<=6)?'1월 1일':'7월 1일';
       ageYears = 2026 - ry + 1; if(ageYears>12) ageYears=12;
+      if(ageYears<1){ ageYears=0; futureReg=true; reduceRate=0; }
       if(ageYears>=TAX_RULES.ageRelief.startYear){ reduceRate = Math.min(TAX_RULES.ageRelief.max, TAX_RULES.ageRelief.perYear*(ageYears-2)); }
     }
   }
@@ -1559,6 +1563,7 @@ function autoCalc(){
   if(ageMissing){
     h+='<div class="warn" style="margin-top:12px"><b>최초 등록일 미입력</b> — 현재는 <b>차령 미반영</b> 금액입니다. 비영업 승용은 차령 3년째부터 세액이 매년 5%씩(최대 50%) 줄어드니, 등록일을 입력하면 실제 세액이 더 낮아질 수 있습니다.</div>';
   }
+  if(futureReg){ h+='<div class="warn" style="margin-top:12px"><b>등록일이 미래 날짜</b> — 최초 등록일이 기준연도(2026) 이후입니다. 차령 반영 없이 <b>신차 기준</b>으로 계산했습니다. 등록일을 확인하세요.</div>'; }
   if(reduceRate>0){
     var half=Math.floor(reduced/2/10)*10;
     h+='<div class="row sub"><div class="rk">제1기분 (1~6월)<small>A/2 − (A/2 × 5%)(n−2), 차령 '+ageYears+'년</small></div><div class="rv">'+won(half)+' 원</div></div>';
