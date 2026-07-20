@@ -2167,11 +2167,11 @@ function mCalc(){
   var tot=g.pay+edu+nong;
   var h='<div class="receipt-head">기계장비 취득세 (참고용)</div>';
   h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 '+(rate*100)+'% (기계장비)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 '+(rate*100)+'% (기계장비) · 지방세법 §12')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   if(!exempt50) h+='<div class="hint" style="text-align:right;margin-top:2px;">계산식: '+won(base)+' × '+(rate*100)+'% = '+won(acq)+'원</div>';
   if(kind==='other'){
-    h+='<div class="row"><div class="rk">지방교육세<small>취득세액 × 1/3 의 20% ((세율−2%)분 × 20%)</small></div><div class="rv">'+won(edu)+' 원</div></div>';
-    h+='<div class="row"><div class="rk">농어촌특별세<small>취득세액 × 2/3 의 10% (2%분 × 10%)</small></div><div class="rv">'+won(nong)+' 원</div></div>';
+    h+='<div class="row"><div class="rk">지방교육세<small>취득세액 × 1/3 의 20% ((세율−2%)분 × 20%) · §151</small></div><div class="rv">'+won(edu)+' 원</div></div>';
+    h+='<div class="row"><div class="rk">농어촌특별세<small>취득세액 × 2/3 의 10% (2%분 × 10%) · 농특법 §5</small></div><div class="rv">'+won(nong)+' 원</div></div>';
   } else if(kind==='dump'){
     h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>덤프·믹서트럭 → 해당 없음</small></div><div class="rv">0 원</div></div>';
   } else {
@@ -2253,7 +2253,7 @@ function mtCalc(){
   var g=gamyeonG('mt',acq,base,rate); g.acq=acq; var tot=g.pay;
   var h='<div class="receipt-head">이륜자동차 취득세 (참고용)</div>';
   h+='<div class="row"><div class="rk">과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 2% (이륜자동차)')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">취득세<small>'+(exempt50?'취득가액 50만원 이하 → 면세점(과세 제외)':'세율 2% (이륜자동차) · 지방세법 §12')+'</small></div><div class="rv">'+won(acq)+' 원</div></div>';
   if(!exempt50) h+='<div class="hint" style="text-align:right;margin-top:2px;">계산식: '+won(base)+'원 × 2% = '+won(acq)+'원</div>';
   h+='<div class="row sub"><div class="rk">지방교육세·농어촌특별세<small>세율 2%로 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+=gamyeonRow(g);
@@ -2785,7 +2785,7 @@ function autoCalc(){
   var payable = annual - discount;
 
   var h='<div class="receipt-head">자동차세 산정 (연세액)</div>';
-  h+='<div class="row"><div class="rk">자동차세 본세<small>'+info+'</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">자동차세 본세<small>'+info+' · 지방세법 §127</small></div><div class="rv">'+won(base)+' 원</div></div>';
   if(reduceRate>0) h+='<div class="row sub"><div class="rk">차령 반영 (연식)<small>차령 '+ageYears+'년 · 세액 '+Math.round(reduceRate*100)+'% 차감 · 기산일 '+giSan+' · 자동 적용</small></div><div class="rv">−'+won(base-reduced)+' 원</div></div>';
   if(ageMissing){
     h+='<div class="warn" style="margin-top:12px"><b>최초 등록일 미입력</b> — 현재는 <b>차령 미반영</b> 금액입니다. 비영업 승용은 차령 3년째부터 세액이 매년 5%씩(최대 50%) 줄어드니, 등록일을 입력하면 실제 세액이 더 낮아질 수 있습니다.</div>';
@@ -2795,7 +2795,7 @@ function autoCalc(){
     h+='<div class="row sub"><div class="rk">제1기분 (1~6월)<small>A/2 − (A/2 × 5%)(n−2), 차령 '+ageYears+'년</small></div><div class="rv">'+won(half)+' 원</div></div>';
     h+='<div class="row sub"><div class="rk">제2기분 (7~12월)</div><div class="rv">'+won(reduced-half)+' 원</div></div>';
   }
-  if(eduApplies) h+='<div class="row"><div class="rk">지방교육세<small>자동차세 × 30%</small></div><div class="rv">'+won(edu)+' 원</div></div>';
+  if(eduApplies) h+='<div class="row"><div class="rk">지방교육세<small>자동차세 × 30% · §150,§151</small></div><div class="rv">'+won(edu)+' 원</div></div>';
   else h+='<div class="row sub"><div class="rk">지방교육세<small>비영업 승용만 부과 → 해당 없음</small></div><div class="rv">0 원</div></div>';
   h+='<div class="total"><span class="tk">연세액</span><span class="tv">'+won(annual)+'<span class="u">원</span></span></div>';
   var _m=pressed('au-mode');
