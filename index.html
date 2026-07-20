@@ -259,6 +259,8 @@
   .lp-title-sm{display:inline-block;font-size:.46em;letter-spacing:.02em;color:var(--sub);margin-top:.12em;}
   .lp-sub{margin:28px 0 0;font-size:13px;letter-spacing:.06em;color:var(--muted);line-height:1.9;text-transform:uppercase;}
   .lp-sub span{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px;}
+  .lp-trust{margin:48px 0 8px;}
+  .lp-trust .tr-line{font-family:var(--font-display);font-size:20px;color:var(--sub);line-height:1.5;letter-spacing:-.01em;}
   .lp-list{border-top:1px solid var(--line-strong);margin-top:8px;}
   .lp-group{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:26px 2px 8px;border-bottom:1px solid var(--line);}
   .lp-group:first-child{padding-top:18px;}
@@ -361,9 +363,20 @@
   .applied li{font-size:12px;color:var(--sub);display:flex;gap:7px;align-items:baseline;line-height:1.5;}
   .applied li .ck{color:var(--sage-ink);font-size:10px;flex:none;}
   .applied li b{color:var(--ink);font-weight:500;}
-  .applied .asof{margin-top:14px;padding-top:12px;border-top:1px dotted var(--dotted);
+  .applied .asof{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.03em;line-height:1.9;}
+  .asof span:not(:last-child)::after{content:'·';margin:0 8px;opacity:.5;}
+  .asof{margin-top:14px;padding-top:12px;border-top:1px dotted var(--dotted);
     font-size:11.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:-.02em;}
   @media(max-width:680px){.applied ul{grid-template-columns:1fr;}}
+
+  /* ===== 과세표준 결정 과정 ===== */
+  .derive{margin:0 0 20px;padding:14px 0 16px;border-bottom:1px dotted var(--dotted);}
+  .derive .dv-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .derive .drow{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;font-size:12.5px;color:var(--desc);font-variant-numeric:tabular-nums;}
+  .derive .drow.win{color:var(--ink);font-weight:500;}
+  .derive .drow.win span:first-child{color:var(--sage-ink);}
+  .derive .dv-note{margin-top:10px;font-size:11.5px;color:var(--muted);line-height:1.7;}
+  .derive .dv-note b{color:var(--sub);font-weight:500;}
 
   /* ===== 입력 순서 안내 (스테퍼) ===== */
   .steps{margin:0 0 22px;padding:0 0 18px;border-bottom:1px dotted var(--dotted);}
@@ -436,7 +449,11 @@
       <h1 class="lp-title">LOCAL TAX<br><span class="lp-title-sm">Calculator</span></h1>
       <p class="lp-sub">calm. precise. useful.<br><span>지방세 실무를 위한 계산 도구 · 2026 시가표준액 기준</span></p>
     </div>
-    <nav class="lp-list">
+    <div class="lp-trust">
+        <div class="tr-line">Clear calculation.</div>
+        <div class="tr-line">Grounded in practice.</div>
+      </div>
+      <nav class="lp-list">
       <div class="lp-group">Tax</div>
       <a class="lp-item" onclick="enter('chwi','car')">
         <span class="lp-ko">취득세</span>
@@ -1471,6 +1488,7 @@ function cCalc(){
     {id:'gamyeon',   label:'감면',     done:true}
   ]);
   h+='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
+  h+=baseDerivationHtml(t);
   if(share<100){
     h+='<div class="row"><div class="rk">전체 과세표준<small>'+baseLabel+'</small></div><div class="rv">'+won(baseFull)+' 원</div></div>';
     h+='<div class="row"><div class="rk">지분 과세표준<small>취득 지분 '+share+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
@@ -1502,7 +1520,7 @@ function cCalc(){
       h+='<div class="docs" style="border-color:var(--seal)"><h4>등록면허세(등록) — 취득세 면세점 대체</h4>';
       h+='<div class="sub">취득가액 50만원 이하는 취득세가 비과세(면세점)이나, 차량 등록을 위해 등록면허세가 부과됩니다.</div>';
       h+='<div class="row" style="padding-top:8px"><div class="rk">등록면허세<small>과표 × '+(lrate*100)+'%'+(minApplied?' → 최저한세 15,000원 적용':'')+'</small></div><div class="rv">'+won(lreg)+' 원</div></div>';
-      h+='<div class="row"><div class="rk">지방교육세<small>등록면허세 × 20%</small></div><div class="rv">'+won(ledu)+' 원</div></div>';
+      h+='<div class="row"><div class="rk">지방교육세<small>등록면허세 × 20% · 지방세법 §151</small></div><div class="rv">'+won(ledu)+' 원</div></div>';
       h+='<div class="total" style="margin-top:10px"><span class="tk">등록면허세 합계</span><span class="tv" style="font-size:20px">'+won(lreg+ledu)+'<span class="u">원</span></span></div>';
       h+='<div class="sub" style="margin-top:6px">※ 취득세가 감면 등으로 0원인 경우(면세점이 아닌 경우)에는 등록면허세가 부과되지 않습니다. 최종 세액은 위택스에서 확정됩니다.</div></div>';
     }
@@ -2395,7 +2413,12 @@ function appliedHtml(items){
   var d=new Date();
   var asof=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   return '<div class="applied"><div class="ap-h">이번 계산에 적용된 기준</div><ul>'+li+'</ul>'
-    +'<div class="asof">계산 기준일 '+asof+' · 2026 지방세법 / 시가표준액</div></div>';
+    +'<div class="asof">'
+    +'<span>계산일 '+asof+'</span>'
+    +'<span>적용 기준일 '+TAX_RULES.effectiveFrom+'</span>'
+    +'<span>데이터 '+TAX_RULES.version+'</span>'
+    +'<span>검토 '+TAX_RULES.reviewedAt+'</span>'
+    +'</div></div>';
 }
 
 /* 입력 순서 안내: 순서대로 짚어주되 막지 않음 */
@@ -2441,6 +2464,31 @@ var EMPTY={
   deung: emptySheet('Registration Licence','산출 준비','등기 종류와 과세표준을 입력하면 아래 순서로 기록됩니다.',
         ['과세표준 (등록 당시 가액)','적용 세율','등록면허세','지방교육세','신고·납부할 세액'])
 };
+
+/* 과세표준이 어떻게 정해졌는지 — 결정 과정을 보여줌 (지방세법 §10의2~10의7) */
+function baseDerivationHtml(kind){
+  var rows='', note='';
+  if(kind==='new'){
+    var sup=numv('c-supply'), vat=pressed('c-vat')==='in';
+    if(!sup) return '';
+    rows+='<div class="drow"><span>계약상 취득가격'+(vat?' (부가세 포함)':'')+'</span><span>'+won(sup)+'원</span></div>';
+    if(vat) rows+='<div class="drow"><span>부가가치세 제외 (÷1.1)</span><span>'+won(Math.floor(sup/1.1))+'원</span></div>';
+    note='신차는 <b>사실상 취득가격</b>이 과세표준입니다 (지방세법 §10의3①).';
+  } else if(kind==='trans'){
+    var rep=numv('c-report'), sig=numv('c-siga');
+    if(!rep && !sig) return '';
+    var pick = (rep>=sig&&rep>0)?'rep':'sig';
+    rows+='<div class="drow'+(pick==='rep'?' win':'')+'"><span>신고가액'+(pick==='rep'?' · 채택':'')+'</span><span>'+(rep?won(rep)+'원':'미입력')+'</span></div>';
+    rows+='<div class="drow'+(pick==='sig'?' win':'')+'"><span>시가표준액'+(pick==='sig'?' · 채택':'')+'</span><span>'+(sig?won(sig)+'원':'미입력')+'</span></div>';
+    note='유상 이전은 <b>신고가액과 시가표준액 중 큰 값</b>을 과세표준으로 합니다 (지방세법 §10의2, §4).';
+  } else {
+    var sig2=numv('c-siga');
+    if(!sig2) return '';
+    rows+='<div class="drow win"><span>시가표준액 · 채택</span><span>'+won(sig2)+'원</span></div>';
+    note='무상 취득(증여·상속)은 <b>시가표준액</b>이 과세표준입니다 (지방세법 §10의2②).';
+  }
+  return '<div class="derive"><div class="dv-h">과세표준 결정</div>'+rows+'<div class="dv-note">'+note+'</div></div>';
+}
 
 /* 영수증 점선 리더: 항목명과 금액 사이를 점선으로 채움 */
 function addLeaders(box){
