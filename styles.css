@@ -233,8 +233,6 @@
   .lp-title-sm{display:inline-block;font-size:.46em;letter-spacing:.02em;color:var(--sub);margin-top:.12em;}
   .lp-sub{margin:28px 0 0;font-size:13px;letter-spacing:.06em;color:var(--muted);line-height:1.9;text-transform:uppercase;}
   .lp-sub span{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px;}
-  .lp-trust{margin:48px 0 8px;}
-  .lp-trust .tr-line{font-family:var(--font-display);font-size:20px;color:var(--sub);line-height:1.5;letter-spacing:-.01em;}
   .lp-list{border-top:1px solid var(--line-strong);margin-top:8px;}
   .lp-group{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:26px 2px 8px;border-bottom:1px solid var(--line);}
   .lp-group:first-child{padding-top:18px;}
