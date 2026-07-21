@@ -152,7 +152,7 @@ function jaeAddrSearch(){
       var r=x.r;
       if(x.type==='apt'){
         var range = r.lo!==r.hi ? won(r.lo)+'~'+won(r.hi)+'원' : won(r.p)+'원';
-        return '<button class="addr-item" onclick="jaePick(\''+r.d+'\',\''+r.j+'\','+r.p+',\''+esc(r.n)+'\')">'
+        return '<button class="addr-item" onclick="jaePickApt('+APT.indexOf(r)+')">'
           +'<span class="addr-name">'+r.n+' <span class="addr-tag">공동주택</span><br><span class="addr-sub">'+r.d+' '+r.j+' · '+r.c+'세대</span></span>'
           +'<span class="addr-price">'+range+'</span></button>';
       } else {
@@ -164,6 +164,42 @@ function jaeAddrSearch(){
     }).join('');
     list.classList.add('on');
   });
+}
+/* 공동주택 선택 → 동·호 선택 단계 */
+var CUR_APT=null;
+function jaePickApt(idx){
+  var a=APT[idx]; CUR_APT=a;
+  var list=document.getElementById('j-addr-list');
+  var dongs=Object.keys(a.D);
+  document.getElementById('j-addr').value=a.n+' '+a.d+' '+a.j;
+  // 동 선택 (동이 하나뿐이면 바로 호 선택)
+  var h='<div class="apt-step"><div class="apt-step-h">'+a.n+' — 동 선택</div><div class="apt-grid">';
+  h+=dongs.map(function(d){return '<button class="apt-cell" onclick="jaePickDong(\''+d+'\')">'+Number(d)+'동</button>';}).join('');
+  h+='</div></div>';
+  list.innerHTML=h; list.classList.add('on');
+}
+function jaePickDong(dong){
+  var a=CUR_APT, hos=Object.keys(a.D[dong]);
+  var list=document.getElementById('j-addr-list');
+  var h='<div class="apt-step"><div class="apt-step-h">'+a.n+' '+Number(dong)+'동 — 호 선택</div><div class="apt-grid ho">';
+  h+=hos.map(function(ho){
+    var p=a.D[dong][ho];
+    return '<button class="apt-cell ho" onclick="jaePickHo(\''+dong+'\',\''+ho+'\')">'+Number(ho)+'호<span>'+wonShort(p)+'</span></button>';
+  }).join('');
+  h+='</div><button class="apt-back" onclick="jaePickApt(APT.indexOf(CUR_APT))">← 동 다시 선택</button></div>';
+  list.innerHTML=h; list.classList.add('on');
+}
+function jaePickHo(dong, ho){
+  var a=CUR_APT, price=a.D[dong][ho];
+  document.getElementById('j-addr').value=a.n+' '+Number(dong)+'동 '+Number(ho)+'호 ('+a.d+' '+a.j+')';
+  document.getElementById('j-gongsi').value=won(price);
+  document.getElementById('j-addr-list').classList.remove('on');
+  document.getElementById('j-gongsi-hint').innerHTML='<b>'+a.n+' '+Number(dong)+'동 '+Number(ho)+'호</b> · 2026년 공동주택 공시가격입니다.';
+  jaeCalc();
+}
+function wonShort(p){
+  if(p>=100000000) return (p/100000000).toFixed(1).replace(/\.0$/,'')+'억';
+  return Math.round(p/10000)+'만';
 }
 function esc(s){ return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 function jaePick(dong, jibun, price, aptName){
