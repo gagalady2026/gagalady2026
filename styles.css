@@ -488,9 +488,8 @@
 @media(max-width:900px){ .th-ko{font-size:30px;} .tax-glyph{width:48px;height:48px;} }
 
 /* ===== 선택 상태 강화 (진한 배경) ===== */
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper-1);box-shadow:none;border-color:var(--ink);position:relative;}
+.seg button[aria-pressed="true"]{color:var(--sage-ink);background:var(--sage-soft);border-color:rgba(119,130,106,.38);font-weight:600;box-shadow:none;position:relative;padding-left:22px;}
 .seg button[aria-pressed="true"]::before{content:"";position:absolute;left:9px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--sage);}
-.seg button[aria-pressed="true"]{padding-left:22px;}
 
 /* ===== 섹션 번호 (01·02) ===== */
 .grp-h{counter-increment:grp;}
@@ -516,3 +515,9 @@
 .legal-basis dt{font-size:12px;color:var(--muted);}
 .legal-basis dd{margin:0;font-size:13px;color:var(--sub);line-height:1.6;}
 @media(max-width:640px){ .legal-basis dl>div{grid-template-columns:96px 1fr;gap:14px;} }
+
+/* ===== 계산 영역 표제 (참조안: 브랜드/기능 분리) ===== */
+.calc-heading{margin:0 0 44px;padding:32px 0 22px;border-top:1px solid rgba(53,53,51,.10);border-bottom:1px solid var(--line-strong);}
+.calc-heading span{display:block;margin-bottom:10px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--sage-ink);text-transform:uppercase;}
+.calc-heading h2{margin:0;font-family:var(--font-display);font-size:25px;font-weight:400;letter-spacing:-.025em;color:var(--ink);}
+.calc-heading p{margin:8px 0 0;font-size:13px;color:var(--muted);}

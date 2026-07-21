@@ -141,6 +141,12 @@
         <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b></div><span class="th-en">Acquisition Tax</span><span class="th-ko">취득세</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 부동산·차량 등 자산의 취득 단계에서 발생하는 지방세를 계산합니다. 감면·면세점·공채·가산세를 함께 반영합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
 
         
+        
+        <div class="calc-heading">
+          <span>CALCULATION</span>
+          <h2>취득 정보 입력</h2>
+          <p>아래 항목을 순서대로 선택해 주세요.</p>
+        </div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="c-type">
             <button data-v="new" aria-pressed="true" onclick="pick('c-type','new',cCalc)">신차(신규등록)</button>
@@ -473,6 +479,12 @@
         <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>자동차세</b></div><span class="th-en">Automobile Tax · Ownership</span><span class="th-ko">자동차세</span><span class="th-basis">지방세법 §127 · 소유에 대한 자동차세(정기분) — 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="10" y1="20" x2="54" y2="20"/><line x1="10" y1="32" x2="54" y2="32"/><line x1="10" y1="44" x2="54" y2="44"/></svg></div></div>
 
         <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
+        
+        <div class="calc-heading">
+          <span>CALCULATION</span>
+          <h2>자동차세 정보 입력</h2>
+          <p>차량 정보를 입력해 주세요.</p>
+        </div>
         <div class="field"><label class="lbl">구분</label>
           <div class="seg" id="au-mode">
             <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">연세액</button>
@@ -678,6 +690,12 @@
     <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>등록면허세</b></div><span class="th-en">Registration Licence Tax</span><span class="th-ko">등록면허세</span><span class="th-basis">지방세법 §28 · 재산권·권리의 설정·변경·소멸을 공부에 등기·등록할 때 — 지방교육세(20%)를 함께 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="11"/></svg></div></div>
     <div class="grid2">
       <div class="card">
+        
+        <div class="calc-heading">
+          <span>CALCULATION</span>
+          <h2>등록면허세 정보 입력</h2>
+          <p>등록 종류와 과세표준을 선택해 주세요.</p>
+        </div>
         <div class="field"><label class="lbl">등기 구분</label>
           <div class="seg" id="d-kind">
             <button data-v="realty" aria-pressed="true" onclick="pick('d-kind','realty',onDeungKind)">부동산</button>
@@ -717,6 +735,12 @@
     <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>재산세</b> / 주택</div><span class="th-en">Property Tax</span><span class="th-ko">재산세</span><span class="th-basis">주택의 공시가격을 기준으로 연간 재산세를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="20" y1="10" x2="20" y2="54"/><line x1="32" y1="10" x2="32" y2="54"/><line x1="44" y1="10" x2="44" y2="54"/></svg></div></div>
     <div class="grid2">
       <div class="card">
+        
+        <div class="calc-heading">
+          <span>CALCULATION</span>
+          <h2>재산세 정보 입력</h2>
+          <p>주소를 검색하거나 공시가격을 입력해 주세요.</p>
+        </div>
         <div class="field"><label class="lbl">주소 검색</label>
           <div class="addr-wrap">
             <input type="text" id="j-addr" autocomplete="off" placeholder="동·지번 또는 아파트명" oninput="jaeAddrSearch()" onfocus="jaeAddrSearch()">
