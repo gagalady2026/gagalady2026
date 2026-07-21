@@ -51,6 +51,7 @@ var WORKLIST={
   auto:['영업용·비영업용 구분 확인','연납 신청 여부 확인','말소·이전등록 여부(일할 대상) 확인','차령(연식) 기산일 확인','비과세·감면 대상 여부 확인']
 };
 var NEXTCALC={
+  jae:[['취득세 계산','chwi'],['등록면허세','deung']],
   deung:[['취득세 계산','chwi'],['신고납부분 가산세','shingo']],
   car:[['자동차세 계산','보유 중 매년 내는 세금',"enter('auto')"],['신고납부분 가산세','기한 넘겼을 때',"enter('shingo')"],['다른 차량 계산','입력 초기화',"resetInputs()"]],
   machine:[['고지분 체납 가산세','고지서 미납 시',"enter('gozi')"],['자동차 취득세','승용·승합·화물',"enter('chwi','car')"]],
@@ -72,7 +73,7 @@ function nextCalcHtml(k){
 
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
 function sw(m){
-  ['chwi','auto','deung','gozi','shingo','faq'].forEach(function(x){
+  ['chwi','auto','deung','jae','gozi','shingo','faq'].forEach(function(x){
     var el=document.getElementById('m-'+x);
     el.classList.toggle('hidden',x!==m);
     document.getElementById('t-'+x).setAttribute('aria-selected',x===m);
@@ -111,6 +112,117 @@ var TAX_RULES = {
   // 가산세 (§20, 신고납부분)
   penalty: { noReport: 0.20, lateDaily: 0.00022, reportDeadlineDays: 60 }
 };
+
+/* ---------- 재산세 (주택) · 지방세법 §110~§113 ---------- */
+var HOUSING=null, HOUSING_LOADING=false;
+function loadHousing(cb){
+  if(HOUSING){ cb&&cb(); return; }
+  if(HOUSING_LOADING) return;
+  HOUSING_LOADING=true;
+  fetch('housing.json?v=2026.01').then(function(r){return r.json();}).then(function(d){
+    HOUSING=d; HOUSING_LOADING=false; cb&&cb();
+  }).catch(function(){ HOUSING_LOADING=false;
+    var el=document.getElementById('j-addr-list'); if(el) el.innerHTML='<div class="addr-empty">주소 데이터를 불러오지 못했습니다. 공시가격을 직접 입력하세요.</div>';
+  });
+}
+function jaeAddrSearch(){
+  var q=(document.getElementById('j-addr').value||'').trim();
+  var list=document.getElementById('j-addr-list');
+  if(q.length<1){ list.innerHTML=''; list.classList.remove('on'); return; }
+  loadHousing(function(){
+    var qn=q.replace(/\s+/g,'');
+    var hits=[];
+    for(var i=0;i<HOUSING.length && hits.length<30;i++){
+      var r=HOUSING[i];
+      var full=(r.d+r.j).replace(/\s+/g,'');
+      if(full.indexOf(qn)>=0) hits.push(r);
+    }
+    if(!hits.length){ list.innerHTML='<div class="addr-empty">일치하는 주소가 없습니다. 공시가격을 직접 입력하세요.</div>'; list.classList.add('on'); return; }
+    list.innerHTML=hits.map(function(r){
+      var multi=r.n?' <span class="addr-multi">'+r.n+'세대</span>':'';
+      return '<button class="addr-item" onclick="jaePick(\''+r.d+'\',\''+r.j+'\','+r.p+')">'
+        +'<span class="addr-name">'+r.d+' '+r.j+multi+'</span>'
+        +'<span class="addr-price">'+won(r.p)+'원</span></button>';
+    }).join('');
+    list.classList.add('on');
+  });
+}
+function jaePick(dong, jibun, price){
+  document.getElementById('j-addr').value=dong+' '+jibun;
+  var g=document.getElementById('j-gongsi'); g.value=won(price); 
+  document.getElementById('j-addr-list').classList.remove('on');
+  document.getElementById('j-gongsi-hint').innerHTML='<b>'+dong+' '+jibun+'</b> · 2026년 개별주택가격 적용가격입니다.';
+  jaeCalc();
+}
+/* 주택 재산세 누진세율 (지방세법 §111①3 / 특례 §111의2) */
+function jaeRate(base, one){
+  if(!one){
+    if(base<=60000000) return {tax:base*0.001, desc:'0.1%'};
+    if(base<=150000000) return {tax:60000+(base-60000000)*0.0015, desc:'6만원 + 6천만 초과분 0.15%'};
+    if(base<=300000000) return {tax:195000+(base-150000000)*0.0025, desc:'19.5만원 + 1.5억 초과분 0.25%'};
+    return {tax:570000+(base-300000000)*0.004, desc:'57만원 + 3억 초과분 0.4%'};
+  } else {
+    if(base<=60000000) return {tax:base*0.0005, desc:'특례 0.05%'};
+    if(base<=150000000) return {tax:30000+(base-60000000)*0.001, desc:'특례 3만원 + 6천만 초과분 0.1%'};
+    if(base<=300000000) return {tax:120000+(base-150000000)*0.002, desc:'특례 12만원 + 1.5억 초과분 0.2%'};
+    return {tax:420000+(base-300000000)*0.0035, desc:'특례 42만원 + 3억 초과분 0.35%'};
+  }
+}
+function jaeCalc(){
+  var box=document.getElementById('j-result');
+  var gongsi=numv('j-gongsi');
+  if(!gongsi){ box.innerHTML=EMPTY.jae; window._RESULTTEXT=''; return; }
+  var one=pressed('j-one')==='yes';
+  var urban=document.getElementById('j-urban').checked;
+  var shareRaw=Number(document.getElementById('j-share').value)||100;
+  var shareOver=shareRaw>100;
+  var share=Math.max(0,Math.min(100,shareRaw));
+
+  // 1세대 1주택 9억 초과면 특례 배제
+  var oneApplied=one && gongsi<=900000000;
+  var ratio=0.60;  // 2026 주택 공정시장가액비율
+  var base=Math.floor(gongsi*ratio);
+  var rr=jaeRate(base, oneApplied);
+  var tax=Math.floor(rr.tax/10)*10;
+  var urbanTax=urban?Math.floor(base*0.0014/10)*10:0;
+  var edu=Math.floor(tax*0.20/10)*10;
+  var sum=tax+urbanTax+edu;
+  // 지분 안분
+  var sh=share/100;
+  var taxS=Math.floor(tax*sh/10)*10, urbanS=Math.floor(urbanTax*sh/10)*10, eduS=Math.floor(edu*sh/10)*10;
+  var sumS=taxS+urbanS+eduS;
+
+  var h=appliedHtml([
+    ['공시가격', won(gongsi)+'원'],
+    ['공정시장가액비율', '60% (2026 주택)'],
+    ['1세대 1주택 특례', one?(oneApplied?'적용':'배제 (9억 초과)'):'미적용'],
+    ['도시지역분', urban?'적용 (0.14%)':'미적용'],
+    ['지분율', share+'%'],
+    ['근거', '지방세법 §110~§113']
+  ]);
+  if(shareOver) h='<div class="warn" style="margin-bottom:14px"><b>지분율 100% 초과</b> — 입력값('+shareRaw+'%)을 100%로 조정해 계산했습니다.</div>'+h;
+
+  h+='<div class="receipt-head">지방세 산정 결과 (참고용)</div>';
+  // 과세표준 결정 과정
+  h+='<div class="derive"><div class="dv-h">과세표준 결정</div>'
+    +'<div class="drow"><span>공시가격</span><span>'+won(gongsi)+'원</span></div>'
+    +'<div class="drow"><span>× 공정시장가액비율 60%</span><span>'+won(base)+'원</span></div>'
+    +'<div class="dv-note">주택 과세표준 = 공시가격 × 60% (2026년 공정시장가액비율, 지방세법 시행령 §109).</div></div>';
+
+  h+='<div class="row"><div class="rk">과세표준<small>공시가격 × 60%</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">재산세 본세<small>'+rr.desc+' · §111'+(oneApplied?'의2':'')+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
+  if(urban) h+='<div class="row"><div class="rk">도시지역분<small>과세표준 × 0.14% · §112</small></div><div class="rv">'+won(urbanS)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">지방교육세<small>재산세 본세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
+  h+='<div class="total"><span class="tk">연간 재산세 합계</span><span class="tv">'+won(sumS)+'<small>원</small></span></div>';
+  h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
+    +'<li>과세기준일은 <b>6월 1일</b>이며, 그날 소유자에게 그해 재산세가 부과됩니다.</li>'
+    +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 본세 20만원 이하면 7월에 전액 부과됩니다.</li>'
+    +'<li>세부담상한(공시가격 3억 이하 105% 등)·지역자원시설세는 별도이며, 최종 고지액은 위택스에서 확정됩니다.</li>'
+    +'</ul></div>';
+  h+=nextCalcHtml('jae');
+  box.innerHTML=h; addLeaders(box); animateTotals(box);
+  window._RESULTTEXT=box.innerText;
+}
 
 /* ---------- 등록면허세 (등록분) · 지방세법 §28 ---------- */
 var DEUNG={
@@ -1210,7 +1322,7 @@ function focusField(id){
 }
 
 function initEmpty(){
-  var map={'c-result':'car','mc-result':'machine','mt-result':'moto','au-result':'auto','d-result':'deung'};
+  var map={'c-result':'car','mc-result':'machine','mt-result':'moto','au-result':'auto','d-result':'deung','j-result':'jae'};
   for(var id in map){ var el=document.getElementById(id); if(el && el.querySelector('.empty')) el.innerHTML=EMPTY[map[id]]; }
 }
 /* 빈 상태 — 계산 기록지 (앞으로 나올 항목을 목차처럼 예고) */
@@ -1225,6 +1337,8 @@ function emptySheet(kicker, lead, sub, items){
     +'</div>';
 }
 var EMPTY={
+  jae: emptySheet('Property Tax','산출 준비','주소를 검색하거나 공시가격을 입력하면 아래 순서로 기록됩니다.',
+        ['공시가격','과세표준 (공시가격 × 60%)','재산세 본세 (누진세율)','도시지역분 · 지방교육세','연간 재산세 합계']),
   car:  emptySheet('Acquisition Tax','산출 준비','취득 정보를 입력하면 아래 순서로 기록됩니다.',
         ['과세표준 (취득가액)','적용 세율','산출 취득세','지방교육세 · 농어촌특별세','신고·납부할 세액']),
   machine: emptySheet('Machinery Acquisition','산출 준비','취득가액을 입력하면 아래 순서로 기록됩니다.',

@@ -52,6 +52,11 @@
         <span class="lp-en">Registration Licence Tax · 부동산 · 법인 · 기계장비 · 자동차</span>
         <span class="lp-arrow">→</span>
       </a>
+      <a class="lp-item" onclick="enter('jae')">
+        <span class="lp-ko">재산세</span>
+        <span class="lp-en">Property Tax · 주소 검색 · 공시가격 자동조회</span>
+        <span class="lp-arrow">→</span>
+      </a>
       <div class="lp-group">Administration</div>
       <a class="lp-item" onclick="enter('gozi')">
         <span class="lp-ko">고지분 체납 가산세</span>
@@ -96,6 +101,7 @@
     <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
     <button class="tab" id="t-auto" role="tab" aria-selected="false" onclick="sw('auto')">자동차세</button>
     <button class="tab" id="t-deung" role="tab" aria-selected="false" onclick="sw('deung')">등록면허세</button>
+    <button class="tab" id="t-jae" role="tab" aria-selected="false" onclick="sw('jae')">재산세</button>
     <button class="tab" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">고지분 체납 가산세</button>
     <button class="tab" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고납부분 가산세</button>
     <button class="tab" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">지방세 안내</button>
@@ -703,6 +709,47 @@
       </div>
 
       <div class="card"><h2>세액 산출 내역</h2><div id="d-result"><div class="empty"><b>세액 산출 대기</b>등기 종류와 과세표준을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ 재산세 (주택) ============ -->
+  <div id="m-jae" class="hidden">
+    <div class="tax-head"><span class="th-ko">재산세 (주택)</span><span class="th-en">Property Tax</span><span class="th-basis">지방세법 §110~§113 · 매년 6월 1일 소유자에게 과세 — 공시가격 × 공정시장가액비율(60%) × 누진세율. 도시지역분·지방교육세를 함께 계산합니다.</span></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="field"><label class="lbl">주소 검색</label>
+          <div class="addr-wrap">
+            <input type="text" id="j-addr" autocomplete="off" placeholder="예) 천곡동 506-4" oninput="jaeAddrSearch()" onfocus="jaeAddrSearch()">
+            <div class="addr-list" id="j-addr-list"></div>
+          </div>
+          <div class="hint">동 이름 또는 지번을 입력하면 공시가격을 자동으로 불러옵니다. (2026년 개별주택가격 기준)</div>
+        </div>
+
+        <div class="field"><label class="lbl">공시가격</label>
+          <div class="money-wrap"><input type="text" id="j-gongsi" inputmode="numeric" placeholder="0" oninput="fmt(this);jaeCalc()"><span class="won">원</span></div>
+          <div class="hint" id="j-gongsi-hint">주소를 선택하면 자동 입력됩니다. 직접 입력·수정도 가능합니다.</div>
+        </div>
+
+        <div class="field"><label class="lbl">1세대 1주택</label>
+          <div class="seg" id="j-one">
+            <button data-v="no" aria-pressed="true" onclick="pick('j-one','no',jaeCalc)">아니오</button>
+            <button data-v="yes" aria-pressed="false" onclick="pick('j-one','yes',jaeCalc)">예 (특례)</button>
+          </div>
+          <div class="hint">공시가격 9억원 이하 1세대 1주택은 특례세율(구간별 −0.05%p)이 적용됩니다(§111의2).</div>
+        </div>
+
+        <div class="field"><label class="lbl">도시지역분</label>
+          <label class="chk"><input type="checkbox" id="j-urban" checked onchange="jaeCalc()"> 도시지역 (재산세 도시지역분 0.14% 부과)</label>
+          <div class="hint">국토계획법상 도시지역 내 주택은 과세표준의 0.14%가 추가됩니다(§112).</div>
+        </div>
+
+        <div class="field"><label class="lbl">지분율 (%)</label>
+          <div class="money-wrap"><input type="text" id="j-share" inputmode="numeric" value="100" oninput="jaeCalc()"><span class="won">%</span></div>
+          <div class="hint">공동명의면 본인 지분만 입력하세요. 재산세는 지분별로 안분됩니다.</div>
+        </div>
+      </div>
+
+      <div class="card"><h2>세액 산출 내역</h2><div id="j-result"><div class="empty"><b>세액 산출 대기</b>주소를 검색하거나 공시가격을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
   </div>
 

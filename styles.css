@@ -412,3 +412,13 @@
   .lnk:hover{border-bottom-color:var(--teal);}
 
  
+/* 재산세 주소 검색 */
+.addr-wrap{position:relative;}
+.addr-list{position:absolute;top:100%;left:0;right:0;z-index:20;background:var(--paper-2);border:1px solid var(--line-strong);border-top:none;max-height:280px;overflow-y:auto;display:none;box-shadow:0 6px 20px rgba(53,53,51,.08);}
+.addr-list.on{display:block;}
+.addr-item{display:flex;justify-content:space-between;align-items:baseline;width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-bottom:1px dotted var(--hair);cursor:pointer;font-size:13px;color:var(--ink);gap:12px;}
+.addr-item:hover{background:var(--wall);}
+.addr-name{font-weight:500;}
+.addr-multi{font-size:10px;color:var(--sage-ink);margin-left:4px;}
+.addr-price{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-space:nowrap;}
+.addr-empty{padding:12px 14px;font-size:12px;color:var(--muted);}
