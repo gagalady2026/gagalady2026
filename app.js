@@ -219,9 +219,69 @@ function jaeCalc(){
     +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 본세 20만원 이하면 7월에 전액 부과됩니다.</li>'
     +'<li>세부담상한(공시가격 3억 이하 105% 등)·지역자원시설세는 별도이며, 최종 고지액은 위택스에서 확정됩니다.</li>'
     +'</ul></div>';
+  // 분납 시뮬레이션
+  h+=jaeInstallmentHtml(sumS);
   h+=nextCalcHtml('jae');
   box.innerHTML=h; addLeaders(box); animateTotals(box);
   window._RESULTTEXT=box.innerText;
+}
+/* 재산세 납부유예 (§118의2) — 요건 체크 + 이자상당가산액 */
+function toggleDefer(){
+  var p=document.getElementById('defer-panel'), btn=document.getElementById('defer-btn');
+  var open=p.style.display==='none';
+  p.style.display=open?'':'none';
+  btn.classList.toggle('on',open);
+  btn.childNodes[0].nodeValue=open?'－ 납부유예 알아보기 ':'＋ 납부유예 알아보기 ';
+  if(open){ 
+    document.querySelectorAll('.dq').forEach(function(c){c.onchange=deferVerdict;});
+    deferVerdict();
+  }
+}
+function deferVerdict(){
+  var boxes=document.querySelectorAll('.dq');
+  var checked=0; boxes.forEach(function(c){if(c.checked)checked++;});
+  var v=document.getElementById('defer-verdict');
+  if(checked===6){
+    v.innerHTML='<b class="ok">6개 요건 모두 충족</b> — 납부기한 만료 3일 전까지 신청할 수 있습니다.';
+    v.className='defer-verdict pass';
+  } else {
+    v.innerHTML='충족 <b>'+checked+' / 6</b> — 모든 요건을 충족해야 신청 가능합니다.';
+    v.className='defer-verdict';
+  }
+}
+function deferCalc(){
+  var amt=numv('df-amt'), days=Number((document.getElementById('df-days').value||'').replace(/[^0-9]/g,''))||0;
+  var box=document.getElementById('df-result');
+  if(!amt || !days){ box.innerHTML=''; return; }
+  var rate=0.031;  // 연 3.1‰ (국기법시행령 §43의3② · 2026.3.20 현재)
+  var interest=Math.floor(amt*days*rate/365);
+  box.innerHTML='<div class="dfr-row"><span>계산식</span><span class="mono">'+won(amt)+' × '+days+'일 × 3.1‰ ÷ 365</span></div>'
+    +'<div class="dfr-row"><span>이자상당가산액</span><span class="mono">'+won(interest)+'원</span></div>'
+    +'<div class="dfr-total"><span>총 징수액</span><span class="mono">'+won(amt+interest)+'원</span></div>'
+    +'<div class="dfr-note">유예 취소 시(양도·사망·요건 상실 등) 당초 납부기한 다음 날부터 취소일까지 이자율 <b>연 3.1‰</b>로 가산 징수됩니다(§⑤).</div>';
+}
+
+/* 재산세 분납 안내 — 7·9월 정기분할(§115) + 250만원 초과 분납(§118) */
+function jaeInstallmentHtml(total){
+  var h='<div class="installment"><div class="inst-h">분납 안내</div>';
+  // 7·9월 정기 분할 (주택분 20만원 초과)
+  if(total<=200000){
+    h+='<div class="inst-row"><span>정기 분할</span><span>세액 20만원 이하 → <b>7월 전액</b></span></div>';
+  } else {
+    var half1=Math.floor(total/2/10)*10, half2=total-half1;
+    h+='<div class="inst-row"><span>7월 (1기분)</span><span class="mono">'+won(half1)+'원</span></div>';
+    h+='<div class="inst-row"><span>9월 (2기분)</span><span class="mono">'+won(half2)+'원</span></div>';
+  }
+  // 250만원 초과 신청분납 (§118)
+  if(total>2500000){
+    var deferrable = total<=5000000 ? total-2500000 : Math.floor(total*0.5/10)*10;
+    h+='<div class="inst-div"></div>';
+    h+='<div class="inst-row"><span>신청 분납 가능액<small>250만원 초과 · §118</small></span><span class="mono">'+won(deferrable)+'원</span></div>';
+    h+='<div class="inst-note">납부기한 내 신청 시 <b>납부기한 다음 날부터 3개월 이내</b> 분납. '
+      +(total<=5000000?'500만원 이하는 250만원 초과분':'500만원 초과는 세액의 50% 이하')+'을 나눕니다.</div>';
+  }
+  h+='</div>';
+  return h;
 }
 
 /* ---------- 등록면허세 (등록분) · 지방세법 §28 ---------- */

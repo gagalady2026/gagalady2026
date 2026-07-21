@@ -422,3 +422,38 @@
 .addr-multi{font-size:10px;color:var(--sage-ink);margin-left:4px;}
 .addr-price{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-space:nowrap;}
 .addr-empty{padding:12px 14px;font-size:12px;color:var(--muted);}
+
+/* 재산세 분납 안내 */
+.installment{margin:22px 0 0;padding:16px 0 4px;border-top:1px dotted var(--dotted);}
+.installment .inst-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.installment .inst-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;font-size:12.5px;color:var(--desc);}
+.installment .inst-row .mono{font-family:var(--font-mono);color:var(--ink);}
+.installment .inst-row small{display:block;font-size:10px;color:var(--muted);margin-top:2px;}
+.installment .inst-div{height:1px;background:var(--hair);margin:10px 0;}
+.installment .inst-note{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.7;}
+.installment .inst-note b{color:var(--sage-ink);}
+
+/* 납부유예 */
+.defer-box{margin-top:28px;border-top:1px solid var(--line-strong);padding-top:20px;}
+.defer-toggle{width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:var(--font-display);font-size:16px;color:var(--ink);padding:0;letter-spacing:-.01em;}
+.defer-toggle span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);letter-spacing:.02em;margin-top:3px;text-transform:none;}
+.defer-toggle.on{color:var(--sage-ink);}
+.defer-panel{margin-top:18px;padding:18px;background:var(--wall);border:1px solid var(--line);}
+.defer-intro{font-size:12.5px;color:var(--desc);line-height:1.75;margin-bottom:16px;}
+.defer-intro b{color:var(--ink);font-weight:500;}
+.defer-reqs{display:flex;flex-direction:column;gap:9px;}
+.defer-req{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--desc);line-height:1.55;cursor:pointer;}
+.defer-req input{margin-top:2px;flex:none;}
+.defer-req b{color:var(--ink);font-weight:500;}
+.defer-verdict{margin:14px 0 0;padding:10px 12px;background:var(--paper-2);border-left:2px solid var(--line-strong);font-size:12px;color:var(--desc);}
+.defer-verdict.pass{border-left-color:var(--sage-ink);}
+.defer-verdict b.ok{color:var(--sage-ink);}
+.defer-calc{margin-top:18px;padding-top:16px;border-top:1px dotted var(--dotted);}
+.defer-calc-h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.defer-calc-h small{text-transform:none;letter-spacing:0;margin-left:6px;}
+.defer-result{margin-top:12px;}
+.dfr-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:12px;color:var(--desc);}
+.dfr-row .mono,.dfr-total .mono{font-family:var(--font-mono);color:var(--ink);}
+.dfr-total{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 4px;margin-top:4px;border-top:1px solid var(--line-strong);font-size:13px;font-weight:500;color:var(--ink);}
+.dfr-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.7;}
+.dfr-note b{color:var(--sage-ink);}
