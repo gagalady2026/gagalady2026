@@ -10,10 +10,10 @@
     --cream:#E8E3DB;           /* 괘선·경계 */
 
     /* 2. 층위 — 벽 → 종이 → 입력 (단조 증가) */
-    --wall:#F2EEE7;            /* ① 배경 — 바랜 한지 */
-    --wall-top:#F5F1EB;
-    --wall-bottom:#EDE8DF;
-    --paper-1:#F8F5EF;         /* ② 결과 종이 */
+    --wall:#EEE9DF;            /* ① 배경 — 바랜 한지 */
+    --wall-top:#F1ECE3;
+    --wall-bottom:#E9E3D8;
+    --paper-1:#FBF9F4;         /* ② 결과 종이 */
     --paper-2:#FCFAF5;         /* ③ 입력면 */
     --paper-3:#FFFFFF;         /* ④ 입력 포커스 */
 
@@ -80,7 +80,7 @@
   .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
   .tab{appearance:none;border:none;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);padding:11px 16px;border-bottom:1.5px solid transparent;margin-bottom:-1px;transition:.15s;letter-spacing:0;}
   .tab:hover{color:var(--sub);}
-  .tab[aria-selected="true"]{color:var(--ink);border-bottom:1.5px solid var(--teal);font-weight:600;}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom:2.5px solid var(--teal);font-weight:600;}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:64px;}
   .card h2{font-family:var(--font-display);font-size:17px;font-weight:400;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--label);letter-spacing:.12em;}
@@ -104,7 +104,7 @@
   .seg{display:flex;flex-wrap:wrap;gap:2px;}
   .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;height:44px;padding:0 14px;transition:.15s;letter-spacing:0;position:relative;}
   .seg button:hover{color:var(--sub);}
-  .seg button[aria-pressed="true"]{color:var(--ink);background:transparent;font-weight:600;box-shadow:inset 0 -1.5px 0 var(--teal);}
+  .seg button[aria-pressed="true"]{color:var(--ink);background:transparent;font-weight:600;box-shadow:inset 0 -2.5px 0 var(--teal-ink);}
   .hint{font-size:13px;font-weight:400;color:var(--muted);opacity:.75;margin-top:8px;line-height:1.65;letter-spacing:0;}
     .row{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-bottom:0;}
   .row .rk{flex:none;max-width:58%;}
@@ -112,7 +112,7 @@
   .row .rv{flex:none;margin-left:auto;}
   .row:first-of-type{padding-top:0;}
   .row .rk{font-size:12.5px;color:var(--muted);letter-spacing:.02em;}.row .rk small{display:block;color:var(--muted);opacity:.62;font-size:10.5px;margin-top:3px;letter-spacing:0;}
-  .row .rv{font-family:var(--font-mono);font-size:14px;font-weight:400;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+  .row .rv{font-family:var(--font-mono);font-size:15px;font-weight:500;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
   .row.sub .rk,.row.sub .rv{color:var(--muted);font-weight:500;}
   .docs{margin-top:24px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:16px 0;}
   .docs h4{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--ink);}
