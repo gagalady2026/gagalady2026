@@ -233,9 +233,18 @@ function jaeCalc(){
   var shareOver=shareRaw>100;
   var share=Math.max(0,Math.min(100,shareRaw));
 
-  // 1세대 1주택 9억 초과면 특례 배제
+  // 1세대 1주택 특례세율은 9억 이하만 (공정시장가액비율 특례와 별개)
   var oneApplied=one && gongsi<=900000000;
-  var ratio=0.60;  // 2026 주택 공정시장가액비율
+  // 공정시장가액비율: 1세대1주택 구간별 43~45% / 일반 60% (2026, 시행령 §109)
+  var ratio;
+  if(one){
+    if(gongsi<=300000000) ratio=0.43;
+    else if(gongsi<=600000000) ratio=0.44;
+    else ratio=0.45;
+  } else {
+    ratio=0.60;
+  }
+  var ratioPct=Math.round(ratio*100);
   var base=Math.floor(gongsi*ratio);
   var rr=jaeRate(base, oneApplied);
   var tax=Math.floor(rr.tax/10)*10;
@@ -249,7 +258,7 @@ function jaeCalc(){
 
   var h=appliedHtml([
     ['공시가격', won(gongsi)+'원'],
-    ['공정시장가액비율', '60% (2026 주택)'],
+    ['공정시장가액비율', ratioPct+'% ('+(one?'1세대 1주택 특례':'일반 주택')+')'],
     ['1세대 1주택 특례', one?(oneApplied?'적용':'배제 (9억 초과)'):'미적용'],
     ['도시지역분', urban?'적용 (0.14%)':'미적용'],
     ['지분율', share+'%'],
@@ -261,10 +270,10 @@ function jaeCalc(){
   // 과세표준 결정 과정
   h+='<div class="derive"><div class="dv-h">과세표준 결정</div>'
     +'<div class="drow"><span>공시가격</span><span>'+won(gongsi)+'원</span></div>'
-    +'<div class="drow"><span>× 공정시장가액비율 60%</span><span>'+won(base)+'원</span></div>'
-    +'<div class="dv-note">주택 과세표준 = 공시가격 × 60% (2026년 공정시장가액비율, 지방세법 시행령 §109).</div></div>';
+    +'<div class="drow"><span>× 공정시장가액비율 '+ratioPct+'%</span><span>'+won(base)+'원</span></div>'
+    +'<div class="dv-note">주택 과세표준 = 공시가격 × 공정시장가액비율. 2026년 '+(one?'1세대 1주택은 공시가격 구간별 43~45%':'일반 주택은 60%')+'가 적용됩니다(시행령 §109).</div></div>';
 
-  h+='<div class="row"><div class="rk">과세표준<small>공시가격 × 60%</small></div><div class="rv">'+won(base)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">과세표준<small>공시가격 × '+ratioPct+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
   h+='<div class="row"><div class="rk">재산세 본세<small>'+rr.desc+' · §111'+(oneApplied?'의2':'')+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
   if(urban) h+='<div class="row"><div class="rk">도시지역분<small>과세표준 × 0.14% · §112</small></div><div class="rv">'+won(urbanS)+' 원</div></div>';
   h+='<div class="row"><div class="rk">지방교육세<small>재산세 본세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
