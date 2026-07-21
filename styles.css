@@ -457,3 +457,9 @@
 .dfr-total{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 4px;margin-top:4px;border-top:1px solid var(--line-strong);font-size:13px;font-weight:500;color:var(--ink);}
 .dfr-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.7;}
 .dfr-note b{color:var(--sage-ink);}
+
+/* 공동주택/개별주택 검색 태그 */
+.addr-tag{display:inline-block;font-size:9px;letter-spacing:.06em;padding:1px 5px;background:var(--sage-ink);color:#fff;border-radius:2px;vertical-align:middle;margin-left:4px;}
+.addr-tag.alt{background:var(--muted);}
+.addr-sub{font-size:10px;color:var(--muted);font-weight:400;}
+.addr-item{align-items:flex-start;}

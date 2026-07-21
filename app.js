@@ -114,13 +114,16 @@ var TAX_RULES = {
 };
 
 /* ---------- 재산세 (주택) · 지방세법 §110~§113 ---------- */
-var HOUSING=null, HOUSING_LOADING=false;
+var HOUSING=null, APT=null, HOUSING_LOADING=false;
 function loadHousing(cb){
-  if(HOUSING){ cb&&cb(); return; }
+  if(HOUSING&&APT){ cb&&cb(); return; }
   if(HOUSING_LOADING) return;
   HOUSING_LOADING=true;
-  fetch('housing.json?v=2026.01').then(function(r){return r.json();}).then(function(d){
-    HOUSING=d; HOUSING_LOADING=false; cb&&cb();
+  Promise.all([
+    fetch('housing.json?v=2026.01').then(function(r){return r.json();}),
+    fetch('apt.json?v=2026.01').then(function(r){return r.json();})
+  ]).then(function(res){
+    HOUSING=res[0]; APT=res[1]; HOUSING_LOADING=false; cb&&cb();
   }).catch(function(){ HOUSING_LOADING=false;
     var el=document.getElementById('j-addr-list'); if(el) el.innerHTML='<div class="addr-empty">주소 데이터를 불러오지 못했습니다. 공시가격을 직접 입력하세요.</div>';
   });
@@ -132,26 +135,42 @@ function jaeAddrSearch(){
   loadHousing(function(){
     var qn=q.replace(/\s+/g,'');
     var hits=[];
-    for(var i=0;i<HOUSING.length && hits.length<30;i++){
-      var r=HOUSING[i];
+    // 공동주택(단지명) 우선 검색
+    for(var i=0;i<APT.length && hits.length<15;i++){
+      var a=APT[i];
+      var hay=(a.n+a.d+a.j).replace(/\s+/g,'');
+      if(hay.indexOf(qn)>=0) hits.push({type:'apt', r:a});
+    }
+    // 개별주택(지번) 검색
+    for(var j2=0;j2<HOUSING.length && hits.length<30;j2++){
+      var r=HOUSING[j2];
       var full=(r.d+r.j).replace(/\s+/g,'');
-      if(full.indexOf(qn)>=0) hits.push(r);
+      if(full.indexOf(qn)>=0) hits.push({type:'house', r:r});
     }
     if(!hits.length){ list.innerHTML='<div class="addr-empty">일치하는 주소가 없습니다. 공시가격을 직접 입력하세요.</div>'; list.classList.add('on'); return; }
-    list.innerHTML=hits.map(function(r){
-      var multi=r.n?' <span class="addr-multi">'+r.n+'세대</span>':'';
-      return '<button class="addr-item" onclick="jaePick(\''+r.d+'\',\''+r.j+'\','+r.p+')">'
-        +'<span class="addr-name">'+r.d+' '+r.j+multi+'</span>'
-        +'<span class="addr-price">'+won(r.p)+'원</span></button>';
+    list.innerHTML=hits.map(function(x){
+      var r=x.r;
+      if(x.type==='apt'){
+        var range = r.lo!==r.hi ? won(r.lo)+'~'+won(r.hi)+'원' : won(r.p)+'원';
+        return '<button class="addr-item" onclick="jaePick(\''+r.d+'\',\''+r.j+'\','+r.p+',\''+esc(r.n)+'\')">'
+          +'<span class="addr-name">'+r.n+' <span class="addr-tag">공동주택</span><br><span class="addr-sub">'+r.d+' '+r.j+' · '+r.c+'세대</span></span>'
+          +'<span class="addr-price">'+range+'</span></button>';
+      } else {
+        var multi=r.n?' <span class="addr-multi">'+r.n+'세대</span>':'';
+        return '<button class="addr-item" onclick="jaePick(\''+r.d+'\',\''+r.j+'\','+r.p+')">'
+          +'<span class="addr-name">'+r.d+' '+r.j+multi+' <span class="addr-tag alt">개별주택</span></span>'
+          +'<span class="addr-price">'+won(r.p)+'원</span></button>';
+      }
     }).join('');
     list.classList.add('on');
   });
 }
-function jaePick(dong, jibun, price){
-  document.getElementById('j-addr').value=dong+' '+jibun;
-  var g=document.getElementById('j-gongsi'); g.value=won(price); 
+function esc(s){ return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function jaePick(dong, jibun, price, aptName){
+  document.getElementById('j-addr').value=(aptName?aptName+' ':'')+dong+' '+jibun;
+  var g=document.getElementById('j-gongsi'); g.value=won(price);
   document.getElementById('j-addr-list').classList.remove('on');
-  document.getElementById('j-gongsi-hint').innerHTML='<b>'+dong+' '+jibun+'</b> · 2026년 개별주택가격 적용가격입니다.';
+  document.getElementById('j-gongsi-hint').innerHTML='<b>'+(aptName?aptName+' ':'')+dong+' '+jibun+'</b> · 2026년 '+(aptName?'공동주택 기준시가(중앙값). 호별로 다를 수 있어 직접 수정하세요.':'개별주택가격 적용가격입니다.');
   jaeCalc();
 }
 /* 주택 재산세 누진세율 (지방세법 §111①3 / 특례 §111의2) */
