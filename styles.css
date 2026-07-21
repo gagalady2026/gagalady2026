@@ -495,3 +495,24 @@
 /* ===== 섹션 번호 (01·02) ===== */
 .grp-h{counter-increment:grp;}
 .grp-h::before{content:counter(grp,decimal-leading-zero);font-family:var(--font-mono);font-size:10px;color:var(--sage-ink);letter-spacing:.1em;margin-right:10px;}
+
+/* ===== 재산세 주소 입력란 (문장형 텍스트) ===== */
+#j-addr{
+  width:100%;max-width:520px;height:48px;text-align:left;
+  font-family:var(--font-body);font-size:15px;font-weight:400;letter-spacing:-.015em;color:var(--ink);
+  background:rgba(251,249,244,.64);border:0;border-bottom:1px solid var(--line-strong);border-radius:2px 2px 0 0;padding:0 16px;
+}
+#j-addr::placeholder{font-family:var(--font-body);font-size:14px;font-weight:400;letter-spacing:-.01em;color:var(--muted);opacity:.72;}
+#j-addr:hover{background:var(--paper-1);border-bottom-color:var(--muted);}
+#j-addr:focus{background:var(--paper-1);border-bottom:1.5px solid var(--sage-ink);outline:none;}
+.field-example{margin:8px 0 0;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.03em;color:var(--muted);opacity:.72;}
+
+/* ===== 계산 기준 및 관련 법령 (페이지 하단) ===== */
+.legal-basis{margin-top:88px;padding-top:28px;border-top:1px solid var(--line-strong);max-width:760px;}
+.legal-index{margin-bottom:14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+.legal-basis h3{margin:0 0 24px;font-family:var(--font-display);font-size:20px;font-weight:400;color:var(--ink);letter-spacing:-.01em;}
+.legal-basis dl{margin:0;}
+.legal-basis dl>div{display:grid;grid-template-columns:130px 1fr;gap:24px;padding:12px 0;border-bottom:1px solid var(--line);}
+.legal-basis dt{font-size:12px;color:var(--muted);}
+.legal-basis dd{margin:0;font-size:13px;color:var(--sub);line-height:1.6;}
+@media(max-width:640px){ .legal-basis dl>div{grid-template-columns:96px 1fr;gap:14px;} }

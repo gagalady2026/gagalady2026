@@ -714,15 +714,16 @@
 
   <!-- ============ 재산세 (주택) ============ -->
   <div id="m-jae" class="hidden">
-    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>재산세</b> / 주택</div><span class="th-en">Property Tax</span><span class="th-ko">재산세</span><span class="th-basis">지방세법 §110~§113 · 매년 6월 1일 소유자에게 과세 — 공시가격 × 공정시장가액비율(60%) × 누진세율. 도시지역분·지방교육세를 함께 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="20" y1="10" x2="20" y2="54"/><line x1="32" y1="10" x2="32" y2="54"/><line x1="44" y1="10" x2="44" y2="54"/></svg></div></div>
+    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>재산세</b> / 주택</div><span class="th-en">Property Tax</span><span class="th-ko">재산세</span><span class="th-basis">주택의 공시가격을 기준으로 연간 재산세를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="20" y1="10" x2="20" y2="54"/><line x1="32" y1="10" x2="32" y2="54"/><line x1="44" y1="10" x2="44" y2="54"/></svg></div></div>
     <div class="grid2">
       <div class="card">
         <div class="field"><label class="lbl">주소 검색</label>
           <div class="addr-wrap">
-            <input type="text" id="j-addr" autocomplete="off" placeholder="예) 천곡동 506-4" oninput="jaeAddrSearch()" onfocus="jaeAddrSearch()">
+            <input type="text" id="j-addr" autocomplete="off" placeholder="동·지번 또는 아파트명" oninput="jaeAddrSearch()" onfocus="jaeAddrSearch()">
             <div class="addr-list" id="j-addr-list"></div>
           </div>
-          <div class="hint">동 이름 또는 지번을 입력하면 공시가격을 자동으로 불러옵니다. (2026년 개별주택가격 기준)</div>
+          <p class="field-example">예: 천곡동 506-4 · 현대1차</p>
+          <div class="hint">동 이름·지번·아파트명을 입력하면 공시가격을 자동으로 불러옵니다.</div>
         </div>
 
         <div class="field"><label class="lbl">공시가격</label>
@@ -773,6 +774,19 @@
 
       <div class="card"><h2>세액 산출 내역</h2><div id="j-result"><div class="empty"><b>세액 산출 대기</b>주소를 검색하거나 공시가격을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
+
+    <section class="legal-basis">
+      <div class="legal-index">REFERENCE · 01</div>
+      <h3>계산 기준 및 관련 법령</h3>
+      <dl>
+        <div><dt>과세기준일</dt><dd>매년 6월 1일 (그날 소유자에게 그해 재산세 부과)</dd></div>
+        <div><dt>과세표준</dt><dd>주택 공시가격 × 공정시장가액비율 (1세대 1주택 43~45% · 일반 60%)</dd></div>
+        <div><dt>세율</dt><dd>표준세율 0.1~0.4% 누진 · 1세대 1주택(9억 이하) 특례세율 0.05~0.35%</dd></div>
+        <div><dt>부가 세목</dt><dd>도시지역분 0.14% · 지방교육세 20%</dd></div>
+        <div><dt>관련 법령</dt><dd>지방세법 제110조 ~ 제113조 · 시행령 제109조</dd></div>
+        <div><dt>납부 시기</dt><dd>7월(1/2) · 9월(1/2) 분할 (세액 20만원 이하 시 7월 전액)</dd></div>
+      </dl>
+    </section>
   </div>
 
   <!-- ============ 고지분 체납 ============ -->
