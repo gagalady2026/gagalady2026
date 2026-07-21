@@ -253,11 +253,11 @@
   @media(max-width:680px){.lp-hero{min-height:40vh;padding:48px 0 40px;}.lp-item{padding:22px 2px;}.lp-ko{font-size:19px;}}
   .hidden{display:none !important;}
   /* ===== 세목 헤더 (법전 표제) ===== */
-  .tax-head{margin:0 0 56px;padding-bottom:24px;border-bottom:1px solid var(--line-strong);}
-  .tax-head .th-ko{font-family:var(--font-display);font-size:clamp(26px,3.2vw,34px);font-weight:400;
+  .tax-head-OLD{margin:0 0 56px;padding-bottom:24px;border-bottom:1px solid var(--line-strong);}
+  .tax-head .th-ko-OLD{font-family:var(--font-display);font-size:clamp(26px,3.2vw,34px);font-weight:400;
     letter-spacing:-.02em;color:var(--ink);line-height:1.15;display:block;}
-  .tax-head .th-en{display:block;margin-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
-  .tax-head .th-basis{display:block;margin-top:14px;font-size:12.5px;color:var(--muted);opacity:.8;line-height:1.7;}
+  .tax-head .th-en-OLD{display:block;margin-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+  .tax-head .th-basis-OLD{display:block;margin-top:14px;font-size:12.5px;color:var(--muted);opacity:.8;line-height:1.7;}
 
 
   /* ===== 인쇄 (민원 교부·결재 첨부용) ===== */
@@ -275,8 +275,8 @@
     .grid2>.card:nth-child(2){position:static;background:#fff !important;border:0;box-shadow:none;
       margin:0;padding:0;}
     .card{margin-bottom:4mm;}
-    .tax-head{border-bottom:1px solid #000;margin-bottom:4mm;padding-bottom:2mm;}
-    .tax-head .th-ko{font-size:15pt;}
+    .tax-head-OLD{border-bottom:1px solid #000;margin-bottom:4mm;padding-bottom:2mm;}
+    .tax-head .th-ko-OLD{font-size:15pt;}
     .row{border-bottom:1px solid #ccc;padding:1.5mm 0;}
     .row .rk{font-size:9pt;color:#444;} .row .rv{font-size:10.5pt;color:#000;}
     .total{border-top:1.5px solid #000;border-bottom:1px solid #000;margin-top:3mm;padding:2.5mm 0;}
@@ -475,3 +475,23 @@
 .apt-cell.ho span{font-family:var(--font-mono);font-size:9px;opacity:.7;}
 .apt-back{margin-top:12px;background:transparent;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px 0;}
 .apt-back:hover{color:var(--sage-ink);}
+
+/* ===== 세목 전용 헤더 (편집 디자인) ===== */
+.tax-head{position:relative;margin-bottom:52px;padding-bottom:22px;border-bottom:1px solid var(--line-strong);}
+.tax-crumb{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;}
+.tax-crumb b{color:var(--sage-ink);font-weight:500;}
+.th-en{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--sage-ink);text-transform:uppercase;margin-bottom:8px;}
+.th-ko{display:block;font-family:var(--font-display);font-size:38px;line-height:1.05;color:var(--ink);letter-spacing:-.01em;margin-bottom:14px;}
+.th-basis{display:block;font-size:12.5px;color:var(--desc);line-height:1.65;max-width:600px;}
+.tax-glyph{position:absolute;top:14px;right:2px;width:64px;height:64px;opacity:.5;}
+.tax-glyph svg{width:100%;height:100%;}
+@media(max-width:900px){ .th-ko{font-size:30px;} .tax-glyph{width:48px;height:48px;} }
+
+/* ===== 선택 상태 강화 (진한 배경) ===== */
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper-1);box-shadow:none;border-color:var(--ink);position:relative;}
+.seg button[aria-pressed="true"]::before{content:"";position:absolute;left:9px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--sage);}
+.seg button[aria-pressed="true"]{padding-left:22px;}
+
+/* ===== 섹션 번호 (01·02) ===== */
+.grp-h{counter-increment:grp;}
+.grp-h::before{content:counter(grp,decimal-leading-zero);font-family:var(--font-mono);font-size:10px;color:var(--sage-ink);letter-spacing:.1em;margin-right:10px;}

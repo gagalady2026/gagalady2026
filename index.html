@@ -138,7 +138,7 @@
     <div id="target-car">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><span class="th-ko">자동차 취득세</span><span class="th-en">Vehicle Acquisition Tax</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 감면·면세점·공채·가산세를 함께 반영합니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b></div><span class="th-en">Acquisition Tax</span><span class="th-ko">취득세</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 부동산·차량 등 자산의 취득 단계에서 발생하는 지방세를 계산합니다. 감면·면세점·공채·가산세를 함께 반영합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
 
         
         <div class="field"><label class="lbl">취득 유형</label>
@@ -175,7 +175,7 @@
         <!-- 신규: 공급가액 -->
         <div class="field" id="c-new-box">
           <label class="lbl">취득가액 (과세표준) <span class="tip" tabindex="0" data-tip="세금계산서·제작증(수입은 수입신고필증)의 '공급가액'(부가가치세 제외)을 넣으세요. 계약서 금액이 부가세 포함이면 아래 '부가세 포함가'를 선택하면 자동으로 나눠줍니다.">?</span></label>
-          <div class="money-wrap"><input type="text" id="c-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
+          <div class="money-wrap"><input type="text" id="c-supply" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
           <div class="seg" id="c-vat" style="margin-top:8px">
             <button data-v="ex" aria-pressed="true" onclick="pick('c-vat','ex',cCalc)">부가세 별도(공급가액)</button>
             <button data-v="in" aria-pressed="false" onclick="pick('c-vat','in',cCalc)">부가세 포함가</button>
@@ -186,7 +186,7 @@
         <!-- 이전/무상: 시가표준액 (+이전은 신고가액) -->
         <div class="field hidden" id="c-report-box">
           <label class="lbl">신고가액 (실거래가)</label>
-          <div class="money-wrap"><input type="text" id="c-report" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span></div>
+          <div class="money-wrap"><input type="text" id="c-report" inputmode="numeric" placeholder="0" oninput="fmt(this);cCalc()"><span class="won">원</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
           <div class="hint">실제 매매금액을 기준으로 합니다. 비우거나 시가표준액보다 낮으면 <b>시가표준액</b>이 과세표준이 됩니다.</div>
         </div>
         <div class="field hidden" id="c-siga-box">
@@ -331,7 +331,7 @@
     <div id="target-machine" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><span class="th-ko">기계장비 취득세</span><span class="th-en">Machinery Acquisition Tax</span><span class="th-basis">지방세법 §12①3 · 2026 기계장비 시가표준액 기준 — 취득세·지방교육세·농어촌특별세를 계산합니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 기계장비</div><span class="th-en">Machinery Acquisition Tax</span><span class="th-ko">기계장비 취득세</span><span class="th-basis">지방세법 §12①3 · 2026 기계장비 시가표준액 기준 — 취득세·지방교육세·농어촌특별세를 계산합니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mc-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
@@ -396,7 +396,7 @@
     <div id="target-moto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><span class="th-ko">이륜자동차 취득세</span><span class="th-en">Motorcycle Acquisition Tax</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 배기량 50cc 이상 이륜자동차가 과세대상입니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 이륜자동차</div><span class="th-en">Motorcycle Acquisition Tax</span><span class="th-ko">이륜자동차 취득세</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 배기량 50cc 이상 이륜자동차가 과세대상입니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mt-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mt-type','new',mtCalc)">신규(신차)</button>
@@ -470,7 +470,7 @@
   <div id="m-auto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><span class="th-ko">자동차세</span><span class="th-en">Automobile Tax · Ownership</span><span class="th-basis">지방세법 §127 · 소유에 대한 자동차세(정기분) — 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>자동차세</b></div><span class="th-en">Automobile Tax · Ownership</span><span class="th-ko">자동차세</span><span class="th-basis">지방세법 §127 · 소유에 대한 자동차세(정기분) — 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="10" y1="20" x2="54" y2="20"/><line x1="10" y1="32" x2="54" y2="32"/><line x1="10" y1="44" x2="54" y2="44"/></svg></div></div>
 
         <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
         <div class="field"><label class="lbl">구분</label>
@@ -675,7 +675,7 @@
 
   <!-- ============ 등록면허세 (등록분) ============ -->
   <div id="m-deung" class="hidden">
-    <div class="tax-head"><span class="th-ko">등록면허세 (등록)</span><span class="th-en">Registration Licence Tax</span><span class="th-basis">지방세법 §28 · 재산권·권리의 설정·변경·소멸을 공부에 등기·등록할 때 — 지방교육세(20%)를 함께 계산합니다.</span></div>
+    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>등록면허세</b></div><span class="th-en">Registration Licence Tax</span><span class="th-ko">등록면허세</span><span class="th-basis">지방세법 §28 · 재산권·권리의 설정·변경·소멸을 공부에 등기·등록할 때 — 지방교육세(20%)를 함께 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="11"/></svg></div></div>
     <div class="grid2">
       <div class="card">
         <div class="field"><label class="lbl">등기 구분</label>
@@ -714,7 +714,7 @@
 
   <!-- ============ 재산세 (주택) ============ -->
   <div id="m-jae" class="hidden">
-    <div class="tax-head"><span class="th-ko">재산세 (주택)</span><span class="th-en">Property Tax</span><span class="th-basis">지방세법 §110~§113 · 매년 6월 1일 소유자에게 과세 — 공시가격 × 공정시장가액비율(60%) × 누진세율. 도시지역분·지방교육세를 함께 계산합니다.</span></div>
+    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>재산세</b> / 주택</div><span class="th-en">Property Tax</span><span class="th-ko">재산세</span><span class="th-basis">지방세법 §110~§113 · 매년 6월 1일 소유자에게 과세 — 공시가격 × 공정시장가액비율(60%) × 누진세율. 도시지역분·지방교육세를 함께 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="20" y1="10" x2="20" y2="54"/><line x1="32" y1="10" x2="32" y2="54"/><line x1="44" y1="10" x2="44" y2="54"/></svg></div></div>
     <div class="grid2">
       <div class="card">
         <div class="field"><label class="lbl">주소 검색</label>
