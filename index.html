@@ -796,9 +796,12 @@
           <div class="hint">공동명의면 본인 지분만 입력하세요. 재산세는 지분별로 안분됩니다.</div>
         </div>
 
-        <div class="field"><label class="lbl">전년도 재산세 본세<span class="opt">선택</span></label>
-          <div class="money-wrap"><input type="text" id="j-prev" inputmode="numeric" placeholder="0" oninput="fmt(this);jaeCalc()"><span class="won">원</span></div>
-          <div class="hint">작년 재산세 고지서의 <b>본세</b>를 입력하면 세부담상한(전년 대비 105~130%)을 적용해 실제 고지액에 가깝게 계산합니다. 모르면 비워두세요.</div>
+        <div class="field"><label class="lbl">전년도 고지 반영<span class="opt">선택 · 기존주택</span></label>
+          <div class="prev-grid">
+            <div class="prev-cell"><span class="prev-lbl">전년 재산세 본세</span><div class="money-wrap sm"><input type="text" id="j-prev" inputmode="numeric" placeholder="0" oninput="fmt(this);jaeCalc()"><span class="won">원</span></div></div>
+            <div class="prev-cell"><span class="prev-lbl">전년 도시지역분</span><div class="money-wrap sm"><input type="text" id="j-prev-urban" inputmode="numeric" placeholder="0" oninput="fmt(this);jaeCalc()"><span class="won">원</span></div></div>
+          </div>
+          <div class="hint">2024년 이전부터 과세된 <b>기존 주택</b>은 종전 세부담상한(전년 대비 105~130%)이 2028년까지 적용됩니다. 작년 고지서의 <b>재산세 본세</b>와 <b>재산세 도시지역분</b>을 각각 입력하면 실제 고지액을 재현합니다. 모르면 비워두세요.</div>
         </div>
 
         <div class="defer-box">

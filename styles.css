@@ -567,3 +567,10 @@ input[type=text],input[type=date],input[type=number],select{background:var(--pap
   #m-gozi .grid2, #m-shingo .grid2{margin:0 -20px;padding:0 20px 32px;}
   .form-intro{margin:0 -20px 32px;padding:28px 20px 20px;}
 }
+
+/* 전년도 고지 반영 (본세·도시지역분) */
+.prev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.prev-cell{display:flex;flex-direction:column;gap:5px;}
+.prev-lbl{font-size:11px;color:var(--muted);letter-spacing:.01em;}
+.money-wrap.sm input{height:38px;font-size:14px;}
+@media(max-width:560px){ .prev-grid{grid-template-columns:1fr;} }
