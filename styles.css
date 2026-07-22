@@ -488,8 +488,8 @@
 @media(max-width:900px){ .th-ko{font-size:30px;} .tax-glyph{width:48px;height:48px;} }
 
 /* ===== 선택 상태 강화 (진한 배경) ===== */
-.seg button[aria-pressed="true"]{color:var(--sage-ink);background:var(--sage-soft);border-color:rgba(119,130,106,.38);font-weight:600;box-shadow:none;position:relative;padding-left:22px;}
-.seg button[aria-pressed="true"]::before{content:"";position:absolute;left:9px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--sage);}
+.seg button[aria-pressed="true"]{color:var(--ink);background:none;border-color:transparent;font-weight:500;box-shadow:inset 0 -1px 0 var(--sage-ink);padding-left:0;}
+
 
 /* ===== 섹션 번호 (01·02) ===== */
 .grp-h{counter-increment:grp;}
@@ -516,12 +516,11 @@
 .legal-basis dd{margin:0;font-size:13px;color:var(--sub);line-height:1.6;}
 @media(max-width:640px){ .legal-basis dl>div{grid-template-columns:96px 1fr;gap:14px;} }
 
-/* ===== 계산 영역 표제 (참조안: 브랜드/기능 분리) ===== */
-.calc-heading{margin:0 0 44px;padding:34px 0 22px;border-bottom:1px solid var(--line-strong);position:relative;}
-.calc-heading::before{content:"";position:absolute;top:0;left:0;width:48px;height:2px;background:var(--ink);}
-.calc-heading span{display:block;margin-bottom:10px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--sage-ink);text-transform:uppercase;}
-.calc-heading h2{margin:0;font-family:var(--font-display);font-size:25px;font-weight:400;letter-spacing:-.025em;color:var(--ink);}
-.calc-heading p{margin:8px 0 0;font-size:13px;color:var(--muted);}
+
+
+
+
+
 
 /* ===== 편집 디자인 리듬 (잡지 목차·짧은 룰) ===== */
 /* 랜딩 목차 번호 01~ */
@@ -539,3 +538,15 @@
 /* 결과 패널 표제 아래 짧은 룰 (calc-heading와 호응) */
 .grid2>.card:nth-child(2)>h2{position:relative;padding-bottom:16px;}
 .grid2>.card:nth-child(2)>h2::after{content:"";position:absolute;left:0;bottom:0;width:48px;height:2px;background:var(--ink);}
+
+.lbl .opt{margin-left:6px;font-size:9px;font-weight:400;color:var(--muted);letter-spacing:.04em;vertical-align:2px;}
+
+.tax-glyph{display:none;}
+
+/* ===== 폼 인트로 (조용한 구획) ===== */
+.form-intro{margin:0 0 40px;padding-top:36px;border-top:1px solid var(--line-strong);display:flex;align-items:baseline;justify-content:space-between;gap:16px;}
+.form-intro h2{margin:0;font-family:var(--font-display);font-size:22px;font-weight:400;letter-spacing:-.02em;color:var(--ink);}
+.form-intro span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--sage-ink);text-transform:uppercase;white-space:nowrap;}
+
+/* ④ 헤더 설명 텍스트 폭 제한 강화 (430~500px) */
+.th-basis{max-width:460px;}

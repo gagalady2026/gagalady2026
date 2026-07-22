@@ -142,11 +142,7 @@
 
         
         
-        <div class="calc-heading">
-          <span>CALCULATION</span>
-          <h2>취득 정보 입력</h2>
-          <p>아래 항목을 순서대로 선택해 주세요.</p>
-        </div>
+        <div class="form-intro"><h2>취득 정보</h2><span>01 — 기본 사항</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="c-type">
             <button data-v="new" aria-pressed="true" onclick="pick('c-type','new',cCalc)">신차(신규등록)</button>
@@ -493,11 +489,7 @@
 
         <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
         
-        <div class="calc-heading">
-          <span>CALCULATION</span>
-          <h2>자동차세 정보 입력</h2>
-          <p>차량 정보를 입력해 주세요.</p>
-        </div>
+        <div class="form-intro"><h2>자동차 정보</h2><span>01 — 기본 사항</span></div>
         <div class="field"><label class="lbl">구분</label>
           <div class="seg" id="au-mode">
             <button data-v="full" aria-pressed="true" onclick="pick('au-mode','full',onAutoMode)">연세액</button>
@@ -717,11 +709,7 @@
     <div class="grid2">
       <div class="card">
         
-        <div class="calc-heading">
-          <span>CALCULATION</span>
-          <h2>등록면허세 정보 입력</h2>
-          <p>등록 종류와 과세표준을 선택해 주세요.</p>
-        </div>
+        <div class="form-intro"><h2>등록·면허 정보</h2><span>01 — 기본 사항</span></div>
         <div class="field"><label class="lbl">등기 구분</label>
           <div class="seg" id="d-kind">
             <button data-v="realty" aria-pressed="true" onclick="pick('d-kind','realty',onDeungKind)">부동산</button>
@@ -775,11 +763,7 @@
     <div class="grid2">
       <div class="card">
         
-        <div class="calc-heading">
-          <span>CALCULATION</span>
-          <h2>재산세 정보 입력</h2>
-          <p>주소를 검색하거나 공시가격을 입력해 주세요.</p>
-        </div>
+        <div class="form-intro"><h2>재산 정보</h2><span>01 — 기본 사항</span></div>
         <div class="field"><label class="lbl">주소 검색</label>
           <div class="addr-wrap">
             <input type="text" id="j-addr" autocomplete="off" placeholder="동·지번 또는 아파트명" oninput="jaeAddrSearch()" onfocus="jaeAddrSearch()">
@@ -810,6 +794,11 @@
         <div class="field"><label class="lbl">지분율 (%)</label>
           <div class="money-wrap"><input type="text" id="j-share" inputmode="numeric" value="100" oninput="jaeCalc()"><span class="won">%</span></div>
           <div class="hint">공동명의면 본인 지분만 입력하세요. 재산세는 지분별로 안분됩니다.</div>
+        </div>
+
+        <div class="field"><label class="lbl">전년도 재산세 본세<span class="opt">선택</span></label>
+          <div class="money-wrap"><input type="text" id="j-prev" inputmode="numeric" placeholder="0" oninput="fmt(this);jaeCalc()"><span class="won">원</span></div>
+          <div class="hint">작년 재산세 고지서의 <b>본세</b>를 입력하면 세부담상한(전년 대비 105~130%)을 적용해 실제 고지액에 가깝게 계산합니다. 모르면 비워두세요.</div>
         </div>
 
         <div class="defer-box">

@@ -247,7 +247,16 @@ function jaeCalc(){
   var ratioPct=Math.round(ratio*100);
   var base=Math.floor(gongsi*ratio);
   var rr=jaeRate(base, oneApplied);
-  var tax=Math.floor(rr.tax/10)*10;
+  var taxRaw=Math.floor(rr.tax/10)*10;   // 산출 본세 (상한 전)
+  // 세부담상한: 전년 본세 입력 시 전년×상한율과 비교해 낮은 값 (지방세법 §122)
+  var prev=numv('j-prev');
+  var capRate = gongsi<=300000000 ? 1.05 : (gongsi<=600000000 ? 1.10 : 1.30);
+  var capped=false, cap=0;
+  var tax=taxRaw;
+  if(prev>0){
+    cap=Math.floor(prev*capRate/10)*10;
+    if(cap<taxRaw){ tax=cap; capped=true; }
+  }
   var urbanTax=urban?Math.floor(base*0.0014/10)*10:0;
   var edu=Math.floor(tax*0.20/10)*10;
   var sum=tax+urbanTax+edu;
@@ -262,6 +271,7 @@ function jaeCalc(){
     ['1세대 1주택 특례', one?(oneApplied?'적용':'배제 (9억 초과)'):'미적용'],
     ['도시지역분', urban?'적용 (0.14%)':'미적용'],
     ['지분율', share+'%'],
+    ['세부담상한', prev>0?(capped?'적용 ('+won(prev)+'원 × '+Math.round(capRate*100)+'%)':'미해당 (산출액 < 상한)'):'미적용 (전년세액 미입력)'],
     ['근거', '지방세법 §110~§113']
   ]);
   if(shareOver) h='<div class="warn" style="margin-bottom:14px"><b>지분율 100% 초과</b> — 입력값('+shareRaw+'%)을 100%로 조정해 계산했습니다.</div>'+h;
@@ -274,7 +284,7 @@ function jaeCalc(){
     +'<div class="dv-note">주택 과세표준 = 공시가격 × 공정시장가액비율. 2026년 '+(one?'1세대 1주택은 공시가격 구간별 43~45%':'일반 주택은 60%')+'가 적용됩니다(시행령 §109).</div></div>';
 
   h+='<div class="row"><div class="rk">과세표준<small>공시가격 × '+ratioPct+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  h+='<div class="row"><div class="rk">재산세 본세<small>'+rr.desc+' · §111'+(oneApplied?'의2':'')+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
+  h+='<div class="row"><div class="rk">재산세 본세<small>'+(capped?'세부담상한 적용 (전년 '+won(prev)+'×'+Math.round(capRate*100)+'%)':rr.desc+' · §111'+(oneApplied?'의2':''))+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
   if(urban) h+='<div class="row"><div class="rk">도시지역분<small>과세표준 × 0.14% · §112</small></div><div class="rv">'+won(urbanS)+' 원</div></div>';
   h+='<div class="row"><div class="rk">지방교육세<small>재산세 본세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
   h+='<div class="total"><span class="tk">연간 재산세 합계</span><span class="tv">'+won(sumS)+'<small>원</small></span></div>';
