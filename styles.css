@@ -3,18 +3,18 @@
     /* ===== LEEDONGJOON 디자인 토큰 ===== */
 
     /* 1. 색 — 로고 공식 3색 */
-    --charcoal:#353533;        /* 잉크 */
-    --sage:#77826A;            /* 포인트(그래픽 전용) */
-    --sage-ink:#616B57;        /* 포인트(글자용, 5.0:1) */
-    --sage-soft:#E9EBE3;
+    --charcoal:#30302D;        /* 잉크 */
+    --sage:#68745F;            /* 포인트(그래픽 전용) */
+    --sage-ink:#4E5948;        /* 포인트(글자용, 5.0:1) */
+    --sage-soft:#E3E7DD;
     --cream:#E8E3DB;           /* 괘선·경계 */
 
     /* 2. 층위 — 벽 → 종이 → 입력 (단조 증가) */
-    --wall:#EEE9DF;            /* ① 배경 — 바랜 한지 */
-    --wall-top:#F1ECE3;
-    --wall-bottom:#E9E3D8;
-    --paper-1:#FBF9F4;         /* ② 결과 종이 */
-    --paper-2:#FCFAF5;         /* ③ 입력면 */
+    --wall:#EEEAE2;            /* ① 배경 — 바랜 한지 */
+    --wall-top:#F2EEE7;
+    --wall-bottom:#E8E3DA;
+    --paper-1:#FBFAF7;         /* ② 결과 종이 */
+    --paper-2:#F4F1EB;         /* ③ 입력면 */
     --paper-3:#FFFFFF;         /* ④ 입력 포커스 */
 
     /* 3. 텍스트 */
@@ -25,8 +25,8 @@
     --desc:#5D5B55;            /* 설명 — 6.1:1 */
 
     /* 4. 선 */
-    --line:#EBE7DF;            /* 기본 괘선 — 거의 안 보이게 */
-    --line-strong:var(--cream);
+    --line:#E3DED5;            /* 기본 괘선 — 거의 안 보이게 */
+    --line-strong:#CEC7BC;
     --hair:rgba(53,53,51,.11); /* 결과 항목 구분 */
     --dotted:rgba(53,53,51,.30);
     --scrim:rgba(53,53,51,.32); /* 오버레이 */
@@ -80,7 +80,7 @@
   .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
   .tab{appearance:none;border:none;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);padding:11px 16px;border-bottom:1.5px solid transparent;margin-bottom:-1px;transition:.15s;letter-spacing:0;}
   .tab:hover{color:var(--sub);}
-  .tab[aria-selected="true"]{color:var(--ink);border-bottom:2.5px solid var(--teal);font-weight:600;}
+  .tab[aria-selected="true"]{color:var(--ink);background:rgba(229,233,224,.82);border:1px solid rgba(97,107,87,.22);border-radius:3px;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.65);}
   .card{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:64px;}
   .card h2{font-family:var(--font-display);font-size:17px;font-weight:400;letter-spacing:-.02em;color:var(--ink);text-transform:none;margin:0 0 36px;padding-bottom:16px;border-bottom:1px solid var(--ink);}
   label.lbl{display:block;font-size:11.5px;font-weight:500;margin-bottom:8px;color:var(--label);letter-spacing:.12em;}
@@ -104,7 +104,7 @@
   .seg{display:flex;flex-wrap:wrap;gap:2px;}
   .seg button{appearance:none;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:0;background:transparent;color:var(--muted);border-radius:5px;height:44px;padding:0 14px;transition:.15s;letter-spacing:0;position:relative;}
   .seg button:hover{color:var(--sub);}
-  .seg button[aria-pressed="true"]{color:var(--ink);background:transparent;font-weight:600;box-shadow:inset 0 -2.5px 0 var(--teal-ink);}
+  .seg button[aria-pressed="true"]{color:#41483C;background:#E3E7DD;border:1px solid #CBD1C4;border-radius:3px;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 0 rgba(53,53,51,.025);padding:0 12px;}
   .hint{font-size:13px;font-weight:400;color:var(--muted);opacity:.75;margin-top:8px;line-height:1.65;letter-spacing:0;}
     .row{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-bottom:0;}
   .row .rk{flex:none;max-width:58%;}
@@ -284,7 +284,7 @@
     .basis{page-break-before:avoid;} .basis ul li{font-size:8pt;color:#333;line-height:1.5;} .derive,.applied,.steps{page-break-inside:avoid;}
     .hint,.disc,.sub{color:#555;}
     input,select{border:0;border-bottom:1px solid #999;color:#000;}
-    .seg button[aria-pressed="true"]{box-shadow:none;font-weight:700;padding:0;}
+    .seg button[aria-pressed="true"]{color:#41483C;background:#E3E7DD;border:1px solid #CBD1C4;border-radius:3px;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 0 rgba(53,53,51,.025);padding:0 12px;}
     a{text-decoration:none;color:#000;}
     .docs{border-color:#999;}
   }
@@ -488,7 +488,7 @@
 @media(max-width:900px){ .th-ko{font-size:30px;} .tax-glyph{width:48px;height:48px;} }
 
 /* ===== 선택 상태 강화 (진한 배경) ===== */
-.seg button[aria-pressed="true"]{color:var(--ink);background:none;border-color:transparent;font-weight:500;box-shadow:inset 0 -1px 0 var(--sage-ink);padding-left:0;}
+.seg button[aria-pressed="true"]{color:#41483C;background:#E3E7DD;border:1px solid #CBD1C4;border-radius:3px;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 0 rgba(53,53,51,.025);padding:0 12px;}
 
 
 /* ===== 섹션 번호 (01·02) ===== */
@@ -544,9 +544,26 @@
 .tax-glyph{display:none;}
 
 /* ===== 폼 인트로 (조용한 구획) ===== */
-.form-intro{margin:0 0 40px;padding-top:36px;border-top:1px solid var(--line-strong);display:flex;align-items:baseline;justify-content:space-between;gap:16px;}
+.form-intro{margin:0 -40px 40px;padding:34px 40px 24px;background:var(--paper-1);border-top:1px solid rgba(48,48,45,.08);box-shadow:0 -1px 0 rgba(255,255,255,.45);display:flex;align-items:baseline;justify-content:space-between;gap:16px;}
 .form-intro h2{margin:0;font-family:var(--font-display);font-size:22px;font-weight:400;letter-spacing:-.02em;color:var(--ink);}
 .form-intro span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--sage-ink);text-transform:uppercase;white-space:nowrap;}
 
 /* ④ 헤더 설명 텍스트 폭 제한 강화 (430~500px) */
 .th-basis{max-width:460px;}
+
+/* ===== 계산 영역 색면 (참조안: 위아래 색면 분리) ===== */
+#m-chwi .grid2, #m-auto .grid2, #m-deung .grid2, #m-jae .grid2,
+#m-gozi .grid2, #m-shingo .grid2{
+  background:var(--paper-1);
+  margin:0 -40px;
+  padding:0 40px 48px;
+}
+/* 입력 필드: 계산존 안에서 조금 더 밝은 종이 */
+input[type=text],input[type=date],input[type=number],select{background:var(--paper-2);}
+/* 결과 카드: 살짝 더 따뜻한 페이퍼 (참조안) */
+.grid2 > .card:nth-child(2){background:#F5F2EC;}
+@media(max-width:900px){
+  #m-chwi .grid2, #m-auto .grid2, #m-deung .grid2, #m-jae .grid2,
+  #m-gozi .grid2, #m-shingo .grid2{margin:0 -20px;padding:0 20px 32px;}
+  .form-intro{margin:0 -20px 32px;padding:28px 20px 20px;}
+}
