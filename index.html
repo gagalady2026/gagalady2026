@@ -138,7 +138,7 @@
     <div id="target-car">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b></div><span class="th-en">Acquisition Tax</span><span class="th-ko">취득세</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 부동산·차량 등 자산의 취득 단계에서 발생하는 지방세를 계산합니다. 감면·면세점·공채·가산세를 함께 반영합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b></div><span class="th-en">Acquisition Tax</span><span class="th-ko">취득세</span><span class="th-basis">자산을 취득할 때 취득가액을 기준으로 취득세를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><rect x="12" y="12" width="30" height="30"/><rect x="22" y="22" width="30" height="30"/></svg></div></div>
 
         
         
@@ -337,7 +337,7 @@
     <div id="target-machine" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 기계장비</div><span class="th-en">Machinery Acquisition Tax</span><span class="th-ko">기계장비 취득세</span><span class="th-basis">지방세법 §12①3 · 2026 기계장비 시가표준액 기준 — 취득세·지방교육세·농어촌특별세를 계산합니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 기계장비</div><span class="th-en">Machinery Acquisition Tax</span><span class="th-ko">기계장비 취득세</span><span class="th-basis">기계장비 취득가액을 기준으로 취득세를 계산합니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mc-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mc-type','new',mCalc)">신규(신규등록)</button>
@@ -402,7 +402,7 @@
     <div id="target-moto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 이륜자동차</div><span class="th-en">Motorcycle Acquisition Tax</span><span class="th-ko">이륜자동차 취득세</span><span class="th-basis">지방세법 §12 · 2026 시가표준액 기준 — 배기량 50cc 이상 이륜자동차가 과세대상입니다.</span></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>취득세</b> / 이륜자동차</div><span class="th-en">Motorcycle Acquisition Tax</span><span class="th-ko">이륜자동차 취득세</span><span class="th-basis">이륜자동차 취득가액을 기준으로 취득세를 계산합니다.</span></div>
         <div class="field"><label class="lbl">취득 유형</label>
           <div class="seg" id="mt-type">
             <button data-v="new" aria-pressed="true" onclick="pick('mt-type','new',mtCalc)">신규(신차)</button>
@@ -470,13 +470,26 @@
       <div class="card"><h2>세액 산출 내역</h2><div id="mt-result"><div class="empty"><b>세액 산출 대기</b>취득가액(과세표준)을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
     </div><!-- /target-moto -->
+  
+    <section class="legal-basis">
+      <div class="legal-index">REFERENCE · 01</div>
+      <h3>계산 기준 및 관련 법령</h3>
+      <dl>
+        <div><dt>과세표준</dt><dd>신차: 사실상 취득가격 · 이전: 신고가액과 시가표준액 중 큰 값 · 무상: 시가표준액</dd></div>
+        <div><dt>세율</dt><dd>자동차 비영업 승용 7% · 승합·화물 5% · 경차 4% · 영업 4% · 기계장비 3% · 이륜 2%</dd></div>
+        <div><dt>부가 세목</dt><dd>지방교육세 (세율−2%)×20% · 농어촌특별세 2%분×10%</dd></div>
+        <div><dt>신고·납부</dt><dd>취득일부터 60일 이내 (상속 6개월) · 초과 시 무신고가산세 20% + 납부지연가산세</dd></div>
+        <div><dt>관련 법령</dt><dd>지방세법 제10조의2~제10조의7 · 제12조 · 제20조</dd></div>
+      </dl>
+    </section>
+
   </div>
 
   <!-- ============ 자동차세 (소유분 정기분) ============ -->
   <div id="m-auto" class="hidden">
     <div class="grid2">
       <div class="card">
-        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>자동차세</b></div><span class="th-en">Automobile Tax · Ownership</span><span class="th-ko">자동차세</span><span class="th-basis">지방세법 §127 · 소유에 대한 자동차세(정기분) — 연세액과 지방교육세(비영업 승용 30%)를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="10" y1="20" x2="54" y2="20"/><line x1="10" y1="32" x2="54" y2="32"/><line x1="10" y1="44" x2="54" y2="44"/></svg></div></div>
+        <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>자동차세</b></div><span class="th-en">Automobile Tax · Ownership</span><span class="th-ko">자동차세</span><span class="th-basis">자동차 소유에 대한 연간 자동차세를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><line x1="10" y1="20" x2="54" y2="20"/><line x1="10" y1="32" x2="54" y2="32"/><line x1="10" y1="44" x2="54" y2="44"/></svg></div></div>
 
         <div class="grp-h"><span>산정 구분</span><span class="en">Basis of assessment</span></div>
         
@@ -683,11 +696,24 @@
       </ul>
       <div class="disc">※ 승합·화물·특수차는 정액·적재중량 기준이라 이 계산기(승용 중심)에 미포함입니다. 실제 세액·연납 공제율은 매년 바뀌며 위택스(wetax.go.kr)에서 차량번호로 확정 조회할 수 있습니다.</div>
     </div>
+  
+    <section class="legal-basis">
+      <div class="legal-index">REFERENCE · 01</div>
+      <h3>계산 기준 및 관련 법령</h3>
+      <dl>
+        <div><dt>과세표준</dt><dd>배기량(cc) × cc당 세액 (영업·비영업 구분)</dd></div>
+        <div><dt>차령 경감</dt><dd>비영업 승용 3년째부터 매년 5%씩 경감 (최대 50%)</dd></div>
+        <div><dt>부가 세목</dt><dd>지방교육세 — 비영업 승용 자동차세액의 30%</dd></div>
+        <div><dt>연납·일할</dt><dd>연납 시 잔여기간분 공제 · 소유권 이전 시 일수 계산 (이전일 당일은 양수인)</dd></div>
+        <div><dt>관련 법령</dt><dd>지방세법 제127조~제129조 · 제150조·제151조</dd></div>
+      </dl>
+    </section>
+
   </div>
 
   <!-- ============ 등록면허세 (등록분) ============ -->
   <div id="m-deung" class="hidden">
-    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>등록면허세</b></div><span class="th-en">Registration Licence Tax</span><span class="th-ko">등록면허세</span><span class="th-basis">지방세법 §28 · 재산권·권리의 설정·변경·소멸을 공부에 등기·등록할 때 — 지방교육세(20%)를 함께 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="11"/></svg></div></div>
+    <div class="tax-head"><div class="tax-crumb">LOCAL TAX / <b>등록면허세</b></div><span class="th-en">Registration Licence Tax</span><span class="th-ko">등록면허세</span><span class="th-basis">등기·등록 시 과세표준을 기준으로 등록면허세를 계산합니다.</span><div class="tax-glyph"><svg viewBox="0 0 64 64" fill="none" stroke="var(--sage)" stroke-width="1.5"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="11"/></svg></div></div>
     <div class="grid2">
       <div class="card">
         
@@ -728,6 +754,19 @@
 
       <div class="card"><h2>세액 산출 내역</h2><div id="d-result"><div class="empty"><b>세액 산출 대기</b>등기 종류와 과세표준을 입력하면<br>산출 내역이 표시됩니다.</div></div></div>
     </div>
+  
+    <section class="legal-basis">
+      <div class="legal-index">REFERENCE · 01</div>
+      <h3>계산 기준 및 관련 법령</h3>
+      <dl>
+        <div><dt>과세표준</dt><dd>부동산 가액 · 채권금액 · 자본금 등 등기·등록 종류별 기준</dd></div>
+        <div><dt>세율</dt><dd>부동산 보존 0.8% · 유상 2% · 무상 1.5% · 저당권 0.2% · 그 밖 6,000원</dd></div>
+        <div><dt>부가 세목</dt><dd>지방교육세 등록면허세의 20% (자동차·덤프·믹서는 제외)</dd></div>
+        <div><dt>대도시 중과</dt><dd>대도시 내 법인 설립·전입 등은 3배 중과 (제28조②)</dd></div>
+        <div><dt>관련 법령</dt><dd>지방세법 제23조~제28조 · 제150조·제151조</dd></div>
+      </dl>
+    </section>
+
   </div>
 
   <!-- ============ 재산세 (주택) ============ -->
