@@ -517,7 +517,25 @@
 @media(max-width:640px){ .legal-basis dl>div{grid-template-columns:96px 1fr;gap:14px;} }
 
 /* ===== 계산 영역 표제 (참조안: 브랜드/기능 분리) ===== */
-.calc-heading{margin:0 0 44px;padding:32px 0 22px;border-top:1px solid rgba(53,53,51,.10);border-bottom:1px solid var(--line-strong);}
+.calc-heading{margin:0 0 44px;padding:34px 0 22px;border-bottom:1px solid var(--line-strong);position:relative;}
+.calc-heading::before{content:"";position:absolute;top:0;left:0;width:48px;height:2px;background:var(--ink);}
 .calc-heading span{display:block;margin-bottom:10px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--sage-ink);text-transform:uppercase;}
 .calc-heading h2{margin:0;font-family:var(--font-display);font-size:25px;font-weight:400;letter-spacing:-.025em;color:var(--ink);}
 .calc-heading p{margin:8px 0 0;font-size:13px;color:var(--muted);}
+
+/* ===== 편집 디자인 리듬 (잡지 목차·짧은 룰) ===== */
+/* 랜딩 목차 번호 01~ */
+.lp-list{counter-reset:lpi;}
+.lp-item{counter-increment:lpi;}
+.lp-item .lp-ko::before{content:counter(lpi,decimal-leading-zero);font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--sage-ink);letter-spacing:.08em;margin-right:16px;vertical-align:6px;opacity:.85;}
+
+/* 태그라인 아래 짧은 세이지 룰 */
+.lp-sub::after{content:"";display:block;width:44px;height:2px;background:var(--sage);margin-top:26px;opacity:.85;}
+
+/* 그룹 라벨: 세이지 잉크 + 리딩 틱 */
+.lp-group{color:var(--sage-ink);}
+.lp-group::before{content:"";display:inline-block;width:14px;height:1px;background:var(--sage-ink);margin-right:9px;vertical-align:4px;opacity:.7;}
+
+/* 결과 패널 표제 아래 짧은 룰 (calc-heading와 호응) */
+.grid2>.card:nth-child(2)>h2{position:relative;padding-bottom:16px;}
+.grid2>.card:nth-child(2)>h2::after{content:"";position:absolute;left:0;bottom:0;width:48px;height:2px;background:var(--ink);}
