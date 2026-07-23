@@ -98,13 +98,17 @@
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
-    <button class="tab" id="t-auto" role="tab" aria-selected="false" onclick="sw('auto')">자동차세</button>
-    <button class="tab" id="t-deung" role="tab" aria-selected="false" onclick="sw('deung')">등록면허세</button>
-    <button class="tab" id="t-jae" role="tab" aria-selected="false" onclick="sw('jae')">재산세</button>
-    <button class="tab" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">고지분 체납 가산세</button>
-    <button class="tab" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고납부분 가산세</button>
-    <button class="tab" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">지방세 안내</button>
+    <div class="tabs-main">
+      <button class="tab" id="t-chwi" role="tab" aria-selected="true" onclick="sw('chwi')">취득세</button>
+      <button class="tab" id="t-auto" role="tab" aria-selected="false" onclick="sw('auto')">자동차세</button>
+      <button class="tab" id="t-deung" role="tab" aria-selected="false" onclick="sw('deung')">등록면허세</button>
+      <button class="tab" id="t-jae" role="tab" aria-selected="false" onclick="sw('jae')">재산세</button>
+    </div>
+    <div class="tabs-sub">
+      <button class="tab tab-s" id="t-gozi" role="tab" aria-selected="false" onclick="sw('gozi')">체납가산세</button>
+      <button class="tab tab-s" id="t-shingo" role="tab" aria-selected="false" onclick="sw('shingo')">신고가산세</button>
+      <button class="tab tab-s" id="t-faq" role="tab" aria-selected="false" onclick="sw('faq')">안내</button>
+    </div>
   </div>
 
   <!-- ============ 취득세 (대상별 챕터) ============ -->
