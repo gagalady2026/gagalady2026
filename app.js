@@ -209,6 +209,16 @@ function jaePick(dong, jibun, price, aptName){
   document.getElementById('j-gongsi-hint').innerHTML='<b>'+(aptName?aptName+' ':'')+dong+' '+jibun+'</b> · 2026년 '+(aptName?'공동주택 기준시가(중앙값). 호별로 다를 수 있어 직접 수정하세요.':'개별주택가격 적용가격입니다.');
   jaeCalc();
 }
+/* 보정 본세 합계에 대응하는 유효 과세표준 역산 (이분 탐색) */
+function jaeEffectiveBase(target, maxBase, urban, one){
+  var lo=0, hi=maxBase, mid, v;
+  for(var i=0;i<60;i++){
+    mid=(lo+hi)/2;
+    v=jaeRate(mid, one).tax + (urban?mid*0.0014:0);
+    if(v<target) lo=mid; else hi=mid;
+  }
+  return (lo+hi)/2;
+}
 /* 주택 재산세 누진세율 (지방세법 §111①3 / 특례 §111의2) */
 function jaeRate(base, one){
   if(!one){
@@ -248,21 +258,23 @@ function jaeCalc(){
   var base=Math.floor(gongsi*ratio);
   var rr=jaeRate(base, oneApplied);
   var taxRaw=Math.floor(rr.tax/10)*10;   // 산출 본세 (상한 전)
-  // 종전 세부담상한 (지방세법 §122, 기존주택 2028년까지 경과조치)
-  // 본세와 도시지역분에 각각 별도로 전년세액×상한율 적용, 산출액과 비교해 낮은 값
-  var prev=numv('j-prev');            // 전년 재산세 본세
-  var prevUrban=numv('j-prev-urban'); // 전년 도시지역분
+  // 종전 세부담상한 보정 (지방세법 §122, 기존주택 2028년까지 경과조치)
+  // 작년 재산세액(본세 합계) × 상한율과 올해 정상 본세 합계 중 낮은 값으로 보정
+  var prev=numv('j-prev');   // 작년 재산세액 = 재산세 + 도시지역분 (교육세·시설세 제외)
   var capRate = gongsi<=300000000 ? 1.05 : (gongsi<=600000000 ? 1.10 : 1.30);
   var urbanRaw=urban?Math.floor(base*0.0014/10)*10:0;
+  var mainRaw=taxRaw+urbanRaw;          // 올해 정상 본세 합계
   var capped=false;
   var tax=taxRaw, urbanTax=urbanRaw;
   if(prev>0){
-    var capB=Math.floor(prev*capRate/10)*10;
-    tax=Math.min(taxRaw, capB); capped=true;
-  }
-  if(prevUrban>0 && urban){
-    var capU=Math.floor(prevUrban*capRate/10)*10;
-    urbanTax=Math.min(urbanRaw, capU); capped=true;
+    var corrected=Math.min(mainRaw, prev*capRate);
+    if(corrected<mainRaw){
+      capped=true;
+      // 보정 본세 합계에 대응하는 유효 과세표준을 역산해 재산세·도시지역분으로 분리
+      var eff=jaeEffectiveBase(corrected, base, urban, oneApplied);
+      tax=Math.floor(jaeRate(eff, oneApplied).tax/10)*10;
+      urbanTax=urban?Math.floor(eff*0.0014/10)*10:0;
+    }
   }
   var edu=Math.floor(tax*0.20/10)*10;
   var sum=tax+urbanTax+edu;
@@ -277,7 +289,7 @@ function jaeCalc(){
     ['1세대 1주택 특례', one?(oneApplied?'적용':'배제 (9억 초과)'):'미적용'],
     ['도시지역분', urban?'적용 (0.14%)':'미적용'],
     ['지분율', share+'%'],
-    ['세부담상한', capped?'적용 · 전년 대비 '+Math.round(capRate*100)+'% (기존주택 경과조치)':'미적용 (전년 고지액 미입력)'],
+    ['세부담상한', capped?'반영 · 작년 '+won(prev)+'원 × '+Math.round(capRate*100)+'%':'미반영 (작년 세액 미입력)'],
     ['근거', '지방세법 §110~§113']
   ]);
   if(shareOver) h='<div class="warn" style="margin-bottom:14px"><b>지분율 100% 초과</b> — 입력값('+shareRaw+'%)을 100%로 조정해 계산했습니다.</div>'+h;
@@ -290,11 +302,18 @@ function jaeCalc(){
     +'<div class="dv-note">주택 과세표준 = 공시가격 × 공정시장가액비율. 2026년 '+(one?'1세대 1주택은 공시가격 구간별 43~45%':'일반 주택은 60%')+'가 적용됩니다(시행령 §109).</div></div>';
 
   h+='<div class="row"><div class="rk">과세표준<small>공시가격 × '+ratioPct+'%</small></div><div class="rv">'+won(base)+' 원</div></div>';
-  var bonseNote=(prev>0)?'세부담상한 · 전년 '+won(prev)+'×'+Math.round(capRate*100)+'%':(rr.desc+' · §111'+(oneApplied?'의2':''));
-  h+='<div class="row"><div class="rk">재산세 본세<small>'+bonseNote+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
-  if(urban){ var urbanNote=(prevUrban>0)?'세부담상한 · 전년 '+won(prevUrban)+'×'+Math.round(capRate*100)+'%':'과세표준 × 0.14% · §112'; h+='<div class="row"><div class="rk">도시지역분<small>'+urbanNote+'</small></div><div class="rv">'+won(urbanS)+' 원</div></div>'; }
-  h+='<div class="row"><div class="rk">지방교육세<small>재산세 본세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
-  h+='<div class="total"><span class="tk">연간 재산세 합계'+(capped?'':' · 산출 기준')+'</span><span class="tv">'+won(sumS)+'<small>원</small></span></div>';
+  var est=capped?'(추정)':'';
+  var bonseNote=capped?('작년 세액 기준 보정 · '+won(prev)+'×'+Math.round(capRate*100)+'%'):(rr.desc+' · §111'+(oneApplied?'의2':''));
+  h+='<div class="row"><div class="rk">재산세'+est+'<small>'+bonseNote+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
+  if(urban){ var urbanNote=capped?'보정 본세 합계에서 분리':'과세표준 × 0.14% · §112'; h+='<div class="row"><div class="rk">도시지역분'+est+'<small>'+urbanNote+'</small></div><div class="rv">'+won(urbanS)+' 원</div></div>'; }
+  h+='<div class="row"><div class="rk">지방교육세'+est+'<small>재산세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
+  // 최종 합계 — 결과표의 마지막 행 (별도 색면 없이)
+  var rawSum=taxRaw+urbanRaw+Math.floor(taxRaw*0.20/10)*10;
+  h+='<div class="result-total">'
+    +'<div class="result-total-copy"><span class="result-total-label">'+(capped?'세부담상한 반영 예상액':'공시가격 기준 예상액')+'</span>'
+    +'<small>'+(capped?('작년 세액 반영 전 산출액 '+won(rawSum)+'원 · 단수 처리에 따라 실제 세액과 차이가 날 수 있습니다.')
+                      :'작년 재산세액을 입력하면 세부담상한을 반영해 보정합니다.')+'</small></div>'
+    +'<strong class="result-total-value">'+won(sumS)+'원</strong></div>';
   h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
     +'<li>과세기준일은 <b>6월 1일</b>이며, 그날 소유자에게 그해 재산세가 부과됩니다.</li>'
     +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 본세 20만원 이하면 7월에 전액 부과됩니다.</li>'
@@ -302,7 +321,7 @@ function jaeCalc(){
     +'<li>지역자원시설세(소방분)는 건축물 시가표준액 기준으로 별도 부과되며, 이 계산기에는 포함되지 않습니다.</li>'
     +'</ul></div>';
   // 분납 시뮬레이션 (세부담상한 적용된 sumS 기준)
-  h+=jaeInstallmentHtml(sumS, capped);
+  h+=jaeInstallmentHtml(sumS);
   h+=nextCalcHtml('jae');
   box.innerHTML=h; addLeaders(box); animateTotals(box);
   window._RESULTTEXT=box.innerText;
@@ -344,11 +363,9 @@ function deferCalc(){
 }
 
 /* 재산세 분납 안내 — 7·9월 정기분할(§115) + 250만원 초과 분납(§118) */
-function jaeInstallmentHtml(total, capped){
-  var h='<div class="installment"><div class="inst-h">분납 안내</div>';
-  if(!capped){
-    h+='<div class="inst-caution">아래는 <b>세부담상한 적용 전 산출 기준</b>입니다. 기존 주택은 전년도 본세·도시지역분을 입력하면 실제 고지액에 맞춰 재계산됩니다.</div>';
-  }
+function jaeInstallmentHtml(total){
+  var h='<div class="installment"><div class="inst-h">납부 예상</div>';
+
   // 7·9월 정기 분할 (주택분 20만원 초과)
   if(total<=200000){
     h+='<div class="inst-row"><span>정기 분할</span><span>세액 20만원 이하 → <b>7월 전액</b></span></div>';

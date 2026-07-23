@@ -189,9 +189,9 @@
   #sticky-total .st-l{font-size:12px;font-weight:500;opacity:.8;}
   #sticky-total .st-v{font-size:19px;font-weight:700;}
   @media (min-width:761px){ #sticky-total{display:none !important;} }
-    .total{margin:32px -40px -48px;padding:24px 40px 30px;background:var(--moss-deep);color:var(--paper-1);border:0;border-radius:0;}
-  .total .tk{color:rgba(248,246,241,.72);}
-  .total .tv{color:var(--paper-1);}
+    .total{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin:18px 0 0;padding:18px 0 0;border:0;border-top:1px solid var(--line-strong);background:none;border-radius:0;}
+  .total .tk{font-size:13px;color:var(--ink);}
+  .total .tv{font-family:var(--font-mono);font-size:25px;font-weight:500;color:var(--moss-deep);white-space:nowrap;}
   .total .tv .u{font-size:19px;font-weight:500;margin-left:4px;color:var(--muted);letter-spacing:0;}
     .empty{color:var(--muted);font-size:12.5px;padding:36px 4px 30px;letter-spacing:.01em;line-height:1.85;}
   .empty .em-kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:16px;border-bottom:1px solid var(--line-strong);margin-bottom:22px;}
@@ -209,11 +209,11 @@
   .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:0;align-items:start;
     }
   .grid2>.card:nth-child(1){padding-right:56px;}
-  .grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;}
+  .grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;padding:34px 32px 36px;}
   .grid2>.card:nth-child(2)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
     background:radial-gradient(circle at 5px -2px, transparent 5px, var(--paper) 5.5px);
     background-size:10px 10px;background-repeat:repeat-x;}
-  @media(max-width:900px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;}}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;background-image:none;}.grid2>.card:nth-child(1){padding-right:0;}.grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;padding:34px 32px 36px;}}
   .btn{appearance:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);letter-spacing:.04em;padding:9px 16px;border-radius:2px;transition:.2s;}
   .btn:hover{color:var(--ink);border-color:var(--ink);}
   .btn.sm{font-size:11.5px;padding:7px 13px;}
@@ -282,14 +282,14 @@
     .wrap{width:100%;max-width:100%;padding:0;}
     .grid2{display:block;}
     .grid2>.card:nth-child(1){padding-right:0;}
-    .grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;}
+    .grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;padding:34px 32px 36px;}
     .card{margin-bottom:4mm;}
     .tax-head-OLD{border-bottom:1px solid #000;margin-bottom:4mm;padding-bottom:2mm;}
     .tax-head .th-ko-OLD{font-size:15pt;}
     .row{border-bottom:1px solid #ccc;padding:1.5mm 0;}
     .row .rk{font-size:9pt;color:#444;} .row .rv{font-size:10.5pt;color:#000;}
-    .total{margin:32px -40px -48px;padding:24px 40px 30px;background:var(--moss-deep);color:var(--paper-1);border:0;border-radius:0;}
-    .total .tv{color:var(--paper-1);}
+    .total{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin:18px 0 0;padding:18px 0 0;border:0;border-top:1px solid var(--line-strong);background:none;border-radius:0;}
+    .total .tv{font-family:var(--font-mono);font-size:25px;font-weight:500;color:var(--moss-deep);white-space:nowrap;}
     .basis{page-break-before:avoid;} .basis ul li{font-size:8pt;color:#333;line-height:1.5;} .derive,.applied,.steps{page-break-inside:avoid;}
     .hint,.disc,.sub{color:#555;}
     input,select{border:0;border-bottom:1px solid #999;color:#000;}
@@ -407,7 +407,7 @@
   @keyframes inkSet{from{opacity:0;} to{opacity:1;}}
   .total.ink-set .tv{animation:inkSet .28s ease-out both;}
   @media (prefers-reduced-motion: reduce){
-    .anim,.anim-soft,#landing .lp-item,#landing .lp-hero,#landing .lp-group,.row,.total{margin:32px -40px -48px;padding:24px 40px 30px;background:var(--moss-deep);color:var(--paper-1);border:0;border-radius:0;}
+    .anim,.anim-soft,#landing .lp-item,#landing .lp-hero,#landing .lp-group,.row,.total{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin:18px 0 0;padding:18px 0 0;border:0;border-top:1px solid var(--line-strong);background:none;border-radius:0;}
     *{transition:none !important;}
   }
   #search-results{max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:8px;}
@@ -570,7 +570,7 @@
 /* 입력 필드: 계산존 안에서 조금 더 밝은 종이 */
 input[type=text],input[type=date],input[type=number],select{background:var(--paper-2);}
 /* 결과 카드: 살짝 더 따뜻한 페이퍼 (참조안) */
-.grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;}
+.grid2 > .card:nth-child(2){background:var(--result);border:0;border-radius:0;box-shadow:none;padding:34px 32px 36px;}
 @media(max-width:900px){
   #m-chwi .grid2, #m-auto .grid2, #m-deung .grid2, #m-jae .grid2,
   #m-gozi .grid2, #m-shingo .grid2{margin:0 -20px;padding:0 20px 32px;}
@@ -609,5 +609,11 @@ input[type=text],input[type=date],input[type=number],select{background:var(--pap
 .tab[aria-selected="true"]::after{content:"";position:absolute;left:2px;bottom:-2px;width:16px;height:2px;background:var(--moss);}
 .tab.tab-s[aria-selected="true"]{color:var(--moss-deep);font-weight:600;opacity:1;}
 
-.inst-caution{margin-bottom:14px;padding:10px 12px;background:var(--clay-soft);border-left:2px solid var(--clay);font-size:11.5px;line-height:1.6;color:var(--sub);}
-.inst-caution b{color:var(--clay);font-weight:600;}
+/* 결과 최종 합계 — 표의 마지막 행 */
+.result-total{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line-strong);background:none;}
+.result-total-copy{display:flex;flex-direction:column;gap:5px;min-width:0;}
+.result-total-label{font-size:13px;color:var(--ink);}
+.result-total-copy small{font-size:10.5px;color:var(--muted);line-height:1.6;}
+.result-total-value{font-family:var(--font-mono);font-size:25px;font-weight:500;color:var(--moss-deep);white-space:nowrap;}
+
+@media(max-width:900px){ .grid2 > .card:nth-child(2){padding:26px 20px 28px;} }
