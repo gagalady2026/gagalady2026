@@ -72,7 +72,22 @@ function nextCalcHtml(k){
 }
 
 function pressed(group){var b=document.querySelector('#'+group+' button[aria-pressed="true"]');return b?b.dataset.v:null;}
+var TAXNAME={chwi:'취득세',auto:'자동차세',deung:'등록면허세',jae:'재산세',gozi:'체납가산세',shingo:'신고가산세',faq:'안내'};
+function toggleTabs(){
+  var el=document.getElementById('tabs'), btn=document.getElementById('tabbar-btn');
+  var open=el.hasAttribute('hidden');
+  if(open){ el.removeAttribute('hidden'); } else { el.setAttribute('hidden',''); }
+  btn.setAttribute('aria-expanded', open?'true':'false');
+}
 function sw(m){
+  var now=document.getElementById('tabnow');
+  if(now && TAXNAME[m]) now.textContent=TAXNAME[m];
+  var el=document.getElementById('tabs'), btn=document.getElementById('tabbar-btn');
+  if(el){ el.setAttribute('hidden',''); }
+  if(btn){ btn.setAttribute('aria-expanded','false'); }
+  return sw_(m);
+}
+function sw_(m){
   ['chwi','auto','deung','jae','gozi','shingo','faq'].forEach(function(x){
     var el=document.getElementById('m-'+x);
     el.classList.toggle('hidden',x!==m);
@@ -310,15 +325,14 @@ function jaeCalc(){
   // 최종 합계 — 결과표의 마지막 행 (별도 색면 없이)
   var rawSum=taxRaw+urbanRaw+Math.floor(taxRaw*0.20/10)*10;
   h+='<div class="result-total">'
-    +'<div class="result-total-copy"><span class="result-total-label">'+(capped?'세부담상한 반영 예상액':'공시가격 기준 예상액')+'</span>'
-    +'<small>'+(capped?('작년 세액 반영 전 산출액 '+won(rawSum)+'원 · 단수 처리에 따라 실제 세액과 차이가 날 수 있습니다.')
+    +'<div class="result-total-copy"><span class="result-total-label">'+(capped?'작년 재산세액 반영 예상액':'공시가격 기준 예상세액')+'</span>'
+    +'<small>'+(capped?('작년 세액 반영 전 산출액 '+won(rawSum)+'원')
                       :'작년 재산세액을 입력하면 세부담상한을 반영해 보정합니다.')+'</small></div>'
-    +'<strong class="result-total-value">'+won(sumS)+'원</strong></div>';
+    +'<strong class="result-total-value"><em>약</em> '+won(sumS)+'원</strong></div>';
   h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
     +'<li>과세기준일은 <b>6월 1일</b>이며, 그날 소유자에게 그해 재산세가 부과됩니다.</li>'
-    +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 본세 20만원 이하면 7월에 전액 부과됩니다.</li>'
-    +'<li>실제 고지액은 <b>세부담상한</b>(전년세액 대비 105~130%)이 적용돼 산출세액과 다를 수 있습니다. 전년도 본세를 입력하면 상한을 반영합니다.</li>'
-    +'<li>지역자원시설세(소방분)는 건축물 시가표준액 기준으로 별도 부과되며, 이 계산기에는 포함되지 않습니다.</li>'
+    +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 세액 20만원 이하면 7월에 전액 부과됩니다.</li>'
+    +'<li>공시가격과 입력한 정보를 기준으로 산출한 <b>예상 금액</b>입니다. 감면·과세자료·단수 처리 및 지방자치단체의 부과 방식에 따라 실제 고지세액과 차이가 날 수 있으며, <b>소방분 지역자원시설세는 포함되지 않습니다</b>.</li>'
     +'</ul></div>';
   // 분납 시뮬레이션 (세부담상한 적용된 sumS 기준)
   h+=jaeInstallmentHtml(sumS);
