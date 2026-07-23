@@ -294,15 +294,15 @@ function jaeCalc(){
   h+='<div class="row"><div class="rk">재산세 본세<small>'+bonseNote+'</small></div><div class="rv">'+won(taxS)+' 원</div></div>';
   if(urban){ var urbanNote=(prevUrban>0)?'세부담상한 · 전년 '+won(prevUrban)+'×'+Math.round(capRate*100)+'%':'과세표준 × 0.14% · §112'; h+='<div class="row"><div class="rk">도시지역분<small>'+urbanNote+'</small></div><div class="rv">'+won(urbanS)+' 원</div></div>'; }
   h+='<div class="row"><div class="rk">지방교육세<small>재산세 본세 × 20% · §151</small></div><div class="rv">'+won(eduS)+' 원</div></div>';
-  h+='<div class="total"><span class="tk">연간 재산세 합계</span><span class="tv">'+won(sumS)+'<small>원</small></span></div>';
+  h+='<div class="total"><span class="tk">연간 재산세 합계'+(capped?'':' · 산출 기준')+'</span><span class="tv">'+won(sumS)+'<small>원</small></span></div>';
   h+='<div class="docs" style="margin-top:24px"><h4>참고</h4><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.85;">'
     +'<li>과세기준일은 <b>6월 1일</b>이며, 그날 소유자에게 그해 재산세가 부과됩니다.</li>'
     +'<li>주택분은 <b>7월(1/2)·9월(1/2)</b>에 나눠 부과되며, 본세 20만원 이하면 7월에 전액 부과됩니다.</li>'
     +'<li>실제 고지액은 <b>세부담상한</b>(전년세액 대비 105~130%)이 적용돼 산출세액과 다를 수 있습니다. 전년도 본세를 입력하면 상한을 반영합니다.</li>'
     +'<li>지역자원시설세(소방분)는 건축물 시가표준액 기준으로 별도 부과되며, 이 계산기에는 포함되지 않습니다.</li>'
     +'</ul></div>';
-  // 분납 시뮬레이션
-  h+=jaeInstallmentHtml(sumS);
+  // 분납 시뮬레이션 (세부담상한 적용된 sumS 기준)
+  h+=jaeInstallmentHtml(sumS, capped);
   h+=nextCalcHtml('jae');
   box.innerHTML=h; addLeaders(box); animateTotals(box);
   window._RESULTTEXT=box.innerText;
@@ -344,8 +344,11 @@ function deferCalc(){
 }
 
 /* 재산세 분납 안내 — 7·9월 정기분할(§115) + 250만원 초과 분납(§118) */
-function jaeInstallmentHtml(total){
+function jaeInstallmentHtml(total, capped){
   var h='<div class="installment"><div class="inst-h">분납 안내</div>';
+  if(!capped){
+    h+='<div class="inst-caution">아래는 <b>세부담상한 적용 전 산출 기준</b>입니다. 기존 주택은 전년도 본세·도시지역분을 입력하면 실제 고지액에 맞춰 재계산됩니다.</div>';
+  }
   // 7·9월 정기 분할 (주택분 20만원 초과)
   if(total<=200000){
     h+='<div class="inst-row"><span>정기 분할</span><span>세액 20만원 이하 → <b>7월 전액</b></span></div>';
