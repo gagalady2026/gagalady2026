@@ -6,15 +6,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Gothic+A1:wght@300;400;500;600&display=swap" rel="stylesheet">
 <title>지방세 실무 계산기 · LOCAL TAX</title>
-<meta name="description" content="자동차·기계장비·이륜자동차 취득세, 자동차세, 체납 가산세를 2026년 지방세법 기준으로 계산합니다. 감면·면세점·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
-<meta name="theme-color" content="#F2EEE7">
+<meta name="description" content="취득세·자동차세·등록면허세·재산세·가산세를 2026년 지방세법 기준으로 계산합니다. 공시가격 자동조회, 감면·연납·일할계산까지 반영한 지방세 실무 계산 도구.">
+<meta name="theme-color" content="#EEEAE2">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!-- 링크 미리보기 (카톡·슬랙·메신저) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LOCAL TAX · 지방세 실무 계산기">
 <meta property="og:title" content="LOCAL TAX · 지방세 실무 계산기">
-<meta property="og:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
+<meta property="og:description" content="취득세 · 자동차세 · 등록면허세 · 재산세 · 가산세 — 2026년 지방세법 기준 실무 계산 도구">
 <link rel="canonical" href="https://gagalady2026.github.io/gagalady2026/">
   <meta property="og:url" content="https://gagalady2026.github.io/gagalady2026/">
 <meta property="og:image" content="https://gagalady2026.github.io/gagalady2026/og.png">
@@ -22,7 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="LOCAL TAX · 지방세 실무 계산기">
-<meta name="twitter:description" content="자동차·기계장비 취득세, 자동차세, 체납 가산세 — 2026년 지방세법 기준 실무 계산 도구">
+<meta name="twitter:description" content="취득세 · 자동차세 · 등록면허세 · 재산세 · 가산세 — 2026년 지방세법 기준 실무 계산 도구">
 <meta name="twitter:image" content="https://gagalady2026.github.io/gagalady2026/og.png">
 <link rel="stylesheet" href="styles.css?v=2026.01">
 </head>
@@ -70,7 +70,7 @@
       </a>
       <a class="lp-item" onclick="enter('faq')">
         <span class="lp-ko">지방세 안내</span>
-        <span class="lp-en">Guide &amp; FAQ</span>
+        <span class="lp-en">지방세 실무에서 자주 묻는 내용을 정리했습니다</span>
         <span class="lp-arrow">→</span>
       </a>
     </nav>
@@ -850,7 +850,8 @@
         <div><dt>세율</dt><dd>표준세율 0.1~0.4% 누진 · 1세대 1주택(9억 이하) 특례세율 0.05~0.35%</dd></div>
         <div><dt>부가 세목</dt><dd>도시지역분 0.14% · 지방교육세 20%</dd></div>
         <div><dt>관련 법령</dt><dd>지방세법 제110조 ~ 제113조 · 시행령 제109조</dd></div>
-        <div><dt>납부 시기</dt><dd>7월(1/2) · 9월(1/2) 분할 (세액 20만원 이하 시 7월 전액)</dd></div>
+        <div><dt>세부담상한</dt><dd>기존 주택은 전년 세액의 105~130% 한도 (제122조 · 2028년까지 경과조치)</dd></div>
+        <div><dt>납부 시기</dt><dd>7월(1/2) · 9월(1/2) 분할 (세액 20만원 이하 시 7월 전액) · 250만원 초과 시 3개월 이내 분납 가능(제118조)</dd></div>
       </dl>
     </section>
   </div>
@@ -925,7 +926,7 @@
 
       <div class="cat">체납 · 분납 · 감면</div>
       <details><summary>납기를 지나면 어떻게 되나요?</summary><div class="a">납기가 지나면 <b>가산금(가산세)</b>이 부과됩니다. 2024년 이후 성립분은 최초 3% + 매달 0.66%(최대 60개월)입니다. 계속 미납 시 <b>재산 압류(부동산·예금·급여 등)</b>, 공매, 자동차세 체납 시 <b>번호판 영치</b>, 관허사업 제한 등 체납처분으로 이어집니다. 정확한 가산세는 이 사이트의 "고지분 체납 가산세" 탭에서 계산할 수 있습니다.</div></details>
-      <details><summary>한 번에 납부하기 어려운데 분할납부가 가능한가요?</summary><div class="a">재산세는 세액이 <b>250만원을 초과</b>하면 납기가 지난 날부터 <b>2개월 이내</b> 분할납부가 가능합니다. 그 밖에 재해·실직 등으로 납부가 어려우면 <b>징수유예·분할고지</b> 제도가 있습니다. 요건과 절차는 관할 시·군·구청 확인이 필요합니다.</div></details>
+      <details><summary>한 번에 납부하기 어려운데 분할납부가 가능한가요?</summary><div class="a">재산세는 세액이 <b>250만원을 초과</b>하면 납기가 지난 날부터 <b>3개월 이내</b> 분할납부가 가능합니다(지방세법 §118). 그 밖에 재해·실직 등으로 납부가 어려우면 <b>징수유예·분할고지</b> 제도가 있습니다. 요건과 절차는 관할 시·군·구청 확인이 필요합니다.</div></details>
 
       <div class="cat">납부 방법 · 증명서</div>
       <details><summary>어디서 어떻게 납부하나요?</summary><div class="a"><b>위택스(wetax.go.kr)</b>·인터넷지로·가상계좌·ARS·신용카드·은행 CD/ATM 등으로 납부할 수 있습니다. 타인 명의 대납은 고지서의 <b>전자납부번호</b>가 필요합니다.<br><br><b>이체수수료 면제</b>: 가상계좌로 납부할 때 다른 은행에서 이체하면 수수료가 발생할 수 있는데, 입금 은행을 <b>[지방세입]</b>으로 선택하고 계좌번호에 고지서의 <b>[전자납부번호]</b>를 입력하면 이체수수료가 전액 면제됩니다.</div></details>
