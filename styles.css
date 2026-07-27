@@ -30,7 +30,7 @@
     /* 3. 텍스트 */
     --ink:#2B2D29;
     --sub:#504D47;
-    --muted:#777168;           /* 힌트 — 4.96:1 */
+    --muted:#6A645B;           /* 힌트 — 4.96:1 */
     --label:#4A4844;           /* 라벨 — 8.2:1, 본문 다음 위계 */
     --desc:#5D5B55;            /* 설명 — 6.1:1 */
 
@@ -657,3 +657,16 @@ input[type=text],input[type=date],input[type=number],select{background:var(--pap
 
 /* 계산 화면은 더 밝은 작업면 (랜딩은 스톤 유지) */
 body.in-app{--paper:#F1EEE8;--wall:#F1EEE8;--wall-top:#F4F1EB;--wall-bottom:#EDE9E1;}
+
+/* ===== 가산세·안내 탭 카드 일관성 ===== */
+/* 결과가 없는 단일 카드형 탭도 같은 작업면 위에 놓이도록 */
+#m-gozi > .card, #m-faq > .card{
+  background:var(--paper-1);
+  margin:0 -40px;
+  padding:32px 40px 40px;
+  border:0;border-radius:0;box-shadow:none;
+}
+#m-gozi > .card + .card, #m-faq > .card + .card{padding-top:0;}
+@media(max-width:900px){
+  #m-gozi > .card, #m-faq > .card{margin:0 -20px;padding:24px 20px 28px;}
+}
