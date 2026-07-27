@@ -1717,6 +1717,7 @@ function autoDailyDays(){
 
 /* ===== 랜딩 ↔ 계산기 ===== */
 function enter(tab, target){
+  document.body.classList.add('in-app');
   document.getElementById('landing').classList.add('hidden');
   var app=document.getElementById('app');
   app.classList.remove('hidden');
@@ -1726,6 +1727,7 @@ function enter(tab, target){
   app.classList.remove('anim'); void app.offsetWidth; app.classList.add('anim');
 }
 function goHome(){
+  document.body.classList.remove('in-app');
   document.getElementById('app').classList.add('hidden');
   document.getElementById('landing').classList.remove('hidden');
   updateSticky('',null);

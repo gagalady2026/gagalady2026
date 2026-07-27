@@ -248,15 +248,15 @@
   .lp-group:first-child{padding-top:18px;}
   .lp-item{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:4px 16px;
     padding:26px 2px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;transition:.22s ease;position:relative;}
-  .lp-item:hover .lp-en{transform:translate(-6px,-2px);}
-  .lp-item:hover .lp-ko{transform:translateX(-6px);}
+  
+  
   .lp-ko{grid-column:1;font-family:var(--font-display);font-size:23px;font-weight:400;color:var(--ink);letter-spacing:-.02em;transition:transform .28s var(--ease),color .28s var(--ease);}
   .lp-en{grid-column:1;grid-row:2;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:transform .28s var(--ease);}
   .lp-arrow{grid-column:2;grid-row:1/3;align-self:center;font-size:16px;color:var(--muted);opacity:0;transform:translateX(-5px);transition:opacity .28s var(--ease),transform .28s var(--ease);}
   /* 버드나무 — hover 시 부드럽게 흔들림 (0.28s) */
-  .lp-item:hover .lp-ko{transform:translateX(-6px);}
-  .lp-item:hover .lp-en{transform:translate(-6px,-2px);}
-  .lp-item:hover .lp-arrow{opacity:.7;transform:translateX(0);}
+  
+  
+  
   .lp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:56px;font-size:11.5px;color:var(--muted);flex-wrap:wrap;}
   .lp-foot a{color:var(--muted);border-bottom:1px solid var(--line);text-decoration:none;}
   .lp-foot a:hover{color:var(--ink);}
@@ -644,3 +644,16 @@ input[type=text],input[type=date],input[type=number],select{background:var(--pap
 .tabbar-now:hover em{color:var(--moss-deep);border-bottom-color:var(--moss);}
 .tabbar .tabs{margin-top:16px;padding:16px 0 4px;border-top:1px solid var(--line);}
 .tabbar .tabs[hidden]{display:none;}
+
+/* ===== 랜딩 목차 호버 (편집된 인덱스) ===== */
+.lp-item{transition:none;}
+.lp-item .lp-ko,.lp-item .lp-en{transition:transform .3s var(--ease),color .3s var(--ease);}
+.lp-item .lp-ko::before{transition:color .3s var(--ease);}
+.lp-item:hover{background:none;}
+.lp-item:hover .lp-ko{transform:translateX(6px);}
+.lp-item:hover .lp-en{transform:translateX(6px);color:var(--sub);}
+.lp-item:hover .lp-ko::before{color:var(--moss-deep);opacity:1;}
+.lp-item:hover .lp-arrow{opacity:1;color:var(--moss);transform:translateX(2px);}
+
+/* 계산 화면은 더 밝은 작업면 (랜딩은 스톤 유지) */
+body.in-app{--paper:#F1EEE8;--wall:#F1EEE8;--wall-top:#F4F1EB;--wall-bottom:#EDE9E1;}
