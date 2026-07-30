@@ -1,5 +1,6 @@
 
     :root{
+  --build:"2026.07.27";
   --paper-clean:#FCFBF8;
   --field-focus:#FFFFFF;
   --result:#E4E9E1;
@@ -669,4 +670,117 @@ body.in-app{--paper:#F1EEE8;--wall:#F1EEE8;--wall-top:#F4F1EB;--wall-bottom:#EDE
 #m-gozi > .card + .card, #m-faq > .card + .card{padding-top:0;}
 @media(max-width:900px){
   #m-gozi > .card, #m-faq > .card{margin:0 -20px;padding:24px 20px 28px;}
+}
+
+/* 파일 버전 불일치 경고 */
+.build-warn{position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;padding:12px 16px;background:var(--clay-soft);border-left:3px solid var(--clay);font-size:12px;line-height:1.6;color:var(--sub);box-shadow:0 6px 24px rgba(48,48,45,.14);}
+.build-warn b{color:var(--clay);}
+@media print{ .build-warn{display:none;} }
+
+/* ============================================================
+   랜딩 재구성 · TAX INDEX — Editorial Cover
+   ============================================================ */
+#landing{padding:0;}
+
+/* ---- 01 COVER ---- */
+.lp-cover{min-height:80vh;display:flex;flex-direction:column;justify-content:space-between;padding:26px 0 32px;}
+.lp-cover-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;}
+.lp-brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.lp-brand .lp-mark{width:15px;height:auto;opacity:.85;}
+.lp-top-right{display:inline-flex;align-items:center;gap:20px;}
+.lp-year{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);}
+.lp-search{background:transparent;border:0;padding:0 0 2px;cursor:pointer;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line-strong);}
+.lp-search em{font-style:normal;opacity:.55;margin-left:5px;}
+.lp-search:hover{color:var(--moss-deep);border-bottom-color:var(--moss);}
+
+.lp-cover-mid{padding:5vh 0 0;}
+.lp-word{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(58px,11.2vw,150px);line-height:.9;letter-spacing:-.025em;color:var(--ink);}
+.lp-word span{display:block;padding-left:.15em;}
+.lp-lede{margin:36px 0 0;font-family:var(--font-body);font-weight:300;font-size:clamp(19px,2.3vw,28px);line-height:1.45;letter-spacing:-.02em;color:var(--sub);}
+.lp-desc{margin:22px 0 0;font-size:12.5px;line-height:1.9;color:var(--muted);max-width:440px;}
+
+.lp-cover-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;}
+.lp-scroll{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;color:var(--muted);}
+.lp-scroll em{font-style:normal;display:inline-block;margin-left:7px;animation:lpDown 2.6s var(--ease) infinite;}
+@keyframes lpDown{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(4px);opacity:1}}
+.lp-sign{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--muted);opacity:.75;}
+
+/* ---- 섹션 표제 ---- */
+.lp-sec-h{display:flex;align-items:baseline;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--line-strong);}
+.lp-sec-h span{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--moss-deep);}
+.lp-sec-h em{font-style:normal;font-size:11.5px;color:var(--muted);}
+
+/* ---- 02 PRIMARY TAXES (비대칭 12열) ---- */
+.lp-index{padding-top:92px;}
+.lp-grid{display:grid;grid-template-columns:repeat(12,1fr);}
+.lp-block{position:relative;display:flex;flex-direction:column;background:var(--paper-1);
+  padding:34px 30px 30px;min-height:236px;cursor:pointer;text-decoration:none;
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  transition:background .42s var(--ease);}
+.lp-block.w7{grid-column:span 7;}
+.lp-block.w5{grid-column:span 5;}
+.lp-block:nth-child(2n){border-right:0;}
+/* 제목 위치 비대칭 */
+.lp-grid .lp-block:nth-child(2){padding-top:62px;}
+.lp-grid .lp-block:nth-child(3){padding-top:62px;}
+
+.lb-no{font-family:var(--font-mono);font-size:clamp(54px,6.2vw,92px);line-height:1;letter-spacing:-.035em;
+  color:var(--moss);opacity:.15;transition:color .42s var(--ease),opacity .42s var(--ease);}
+.lb-ko{margin-top:auto;font-family:var(--font-display);font-size:clamp(26px,3.1vw,37px);line-height:1.08;
+  letter-spacing:-.02em;color:var(--ink);transition:color .42s var(--ease);}
+.lb-en{margin-top:9px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);transition:color .42s var(--ease);}
+.lb-desc{margin-top:15px;font-size:12.5px;color:var(--muted);transition:color .42s var(--ease);}
+.lb-arrow{position:absolute;top:32px;right:28px;font-size:15px;color:var(--muted);
+  transition:transform .38s var(--ease),color .42s var(--ease);}
+
+.lp-block:hover{background:var(--moss-deep);}
+.lp-block:hover .lb-ko{color:var(--paper-1);}
+.lp-block:hover .lb-desc{color:rgba(248,246,241,.82);}
+.lp-block:hover .lb-en{color:rgba(248,246,241,.74);}
+.lp-block:hover .lb-no{color:var(--moss-soft);opacity:.32;}
+.lp-block:hover .lb-arrow{color:var(--moss-soft);transform:translate(4px,-4px);}
+
+/* ---- 03 TOOLS & GUIDES ---- */
+.lp-tools{padding-top:92px;}
+.lp-tool-row{display:grid;grid-template-columns:repeat(3,1fr);background:var(--moss-soft);}
+.lp-tool{display:flex;flex-direction:column;justify-content:flex-end;gap:7px;min-height:186px;
+  padding:26px 26px 28px;cursor:pointer;text-decoration:none;
+  border-right:1px solid rgba(63,73,60,.10);transition:background .34s var(--ease);}
+.lp-tool:last-child{border-right:0;}
+.lp-tool:hover{background:rgba(63,73,60,.09);}
+.lt-ko{font-family:var(--font-display);font-size:18px;letter-spacing:-.01em;color:var(--moss-deep);}
+.lt-desc{font-size:12px;color:var(--sub);}
+
+/* ---- 04 ABOUT ---- */
+.lp-about{padding-top:92px;}
+.lp-about-list{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.lp-about-list li{position:relative;padding-left:17px;font-size:13px;color:var(--sub);}
+.lp-about-list li::before{content:"";position:absolute;left:0;top:.66em;width:8px;height:1px;background:var(--moss);}
+.lp-about-note{margin:26px 0 0;font-size:12px;color:var(--muted);}
+
+/* ---- 05 FOOTER ---- */
+#landing .lp-foot{margin-top:84px;padding-top:22px;border-top:1px solid var(--line-strong);
+  display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;}
+.lp-foot-sign{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.lp-foot-ver{font-size:11px;color:var(--muted);}
+
+/* ---- 모바일 ---- */
+@media(max-width:900px){
+  .lp-cover{min-height:78vh;padding:20px 0 26px;}
+  .lp-cover-mid{padding:4vh 0 0;}
+  .lp-lede{margin-top:28px;}
+  .lp-index,.lp-tools,.lp-about{padding-top:62px;}
+  .lp-block.w7,.lp-block.w5{grid-column:span 12;border-right:0;}
+  .lp-grid .lp-block:nth-child(2),.lp-grid .lp-block:nth-child(3){padding-top:34px;}
+  .lp-block{min-height:0;padding:30px 22px 26px;}
+  .lp-tool-row{grid-template-columns:1fr;}
+  .lp-tool{min-height:0;border-right:0;border-bottom:1px solid rgba(63,73,60,.10);padding:22px;}
+  .lp-tool:last-child{border-bottom:0;}
+  .lp-about-list{grid-template-columns:1fr;gap:13px;}
+  #landing .lp-foot{margin-top:64px;}
+}
+@media(max-width:560px){
+  .lp-top-right{gap:14px;}
+  .lp-cover-foot{flex-direction:column;align-items:flex-start;gap:10px;}
 }
